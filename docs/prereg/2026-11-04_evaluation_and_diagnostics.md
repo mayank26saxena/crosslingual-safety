@@ -138,4 +138,39 @@ Every output in this step is reported whether or not it supports a hypothesis. T
 
 ## Addenda
 
-None yet.
+### 2026-11-05: implementation details fixed after the freeze
+
+Written after some Step 1 and Step 2 outputs were seen. None of these change a pass rule.
+
+- **E1 outputs seen before this addendum:** Llama-3.1-8B three-way verdict rates. The Step 1 summary had not run.
+- **E2 translation:** Qwen2.5-14B-Instruct with a stricter prompt, up to three sampled retries for format faults, and
+  back-translation. Items that still fail the format check are excluded. 405 of 450 prompts pass, including 222 of 250
+  safe prompts.
+- **E2 trigger check:** `trigger_preserved` is automatic, testing whether the XSTest focus word survives back-translation.
+  It has not been reviewed by a Bengali reader.
+- **E2 guard measurement:** unchanged-model replies on format-passing safe prompts, 3 replies and 150 tokens per prompt,
+  graded REFUSE or COMPLY by Qwen2.5-14B-Instruct.
+- **D1 code correction:** the first run compared Bengali AUC with an English AUC that also included items excluded from
+  the Bengali set, contrary to "on the same items". The corrected run restricts English to the same items. The
+  first-run output is kept as `results/step2/diagnostics_before_same_items_fix.json`. The verdict did not change:
+  same-source Bengali AUC 0.845 and English AUC 0.997, a difference of 0.1518 after correction and 0.1519 before,
+  against the 0.15 limit. D1 is therefore NO-GO under the rule as written, and the rule is not changed.
+- **No human audit:** no Bengali reader is available, so the optional audit in E1 and the review in E2 will not run. If
+  Gate E1 calls for the audit, later results cannot be called positive under this pre-registration, and any report must
+  say so.
+- **Claude translation (sensitivity analysis, added after the D1 NO-GO was seen):** Claude Opus 5.5 translated all 450
+  XSTest prompts into Bengali, without native review, as an alternative from outside the Qwen family. Qwen2.5-14B-Instruct
+  back-translates them as a check. D1 and the unchanged-model guard measurement are repeated on this set. The registered
+  D1 verdict stays NO-GO whatever this shows. Any later use of this set must be stated as a new pre-registered decision.
+- **Claude judge (exploratory, added after the Llama-3.1-8B and Gemma-2-9B-it rates were seen):** a cloud Claude session
+  grades the same 900 dev replies with the three-way rubric plus an explicit-refusal flag, reading Bengali directly. It
+  sees shuffled, anonymised replies and no earlier verdicts. No confirm-split item is included. This does not change Gate
+  E1 and does not replace the human audit.
+- **Over-refusal rubric correction:** the first `xstest_answer` wording marked wrong or confused answers as refusals (71.8%
+  refusal). The wording now counts only explicit refusals, and judged replies were regraded (18.0%). The first output is kept as
+  `results/step1/guard_v2_first_rubric.jsonl`. The rubric was changed after its output was seen.
+- **Claude judge outcome:** the cloud session graded the 472 over-refusal replies but committed no verdicts for the 900 harm
+  replies.
+- **Third judge (added after seeing the Llama-3.1-8B rates):** Gemma-2-9B-it grades the same 900 replies and the 150
+  translated replies with the three-way rubric. This addition is exploratory. It does not change Gate E1 and does not
+  replace the human audit.

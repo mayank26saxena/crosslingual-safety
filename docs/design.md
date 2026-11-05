@@ -26,10 +26,9 @@ higher strength). That approach is retired.
 
 Three properties of the baseline shape this design:
 
-1. **Safe does not mean refused.** A crude opening-phrase match finds refusal in 34.4% of English replies and 11.1% of
-   Bengali replies, while 62.4% of Bengali replies are graded safe. Median Bengali reply length is 190 characters
-   against 743 in English. The kind of safe reply must be measured, not assumed, because the refusal direction is
-   expected to act only on explicit refusals. The match is a rough lower bound for both languages.
+1. **Safe may not mean refused.** Median Bengali reply length is 190 characters against 743 in English. A crude
+   opening-phrase match finds refusal in 34.4% of English replies and 11.1% of Bengali replies. Correction (2026-11-05): the
+   four-way judge later rated 57.3% of Bengali replies as explicit refusals, so the phrase match badly undercounts them.
 2. **The over-refusal guard needs rebuilding.** Of 250 machine-translated XSTest-Bengali prompts, 33 have under 50%
    Bengali script or are over three times the English length. Inspected outliers include appended translator notes,
    text in the wrong language, and changed trigger words. Unchanged-model refusal on this set is 26.4%, against 9.2% for
