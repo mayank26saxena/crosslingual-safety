@@ -1,0 +1,42 @@
+{
+ "kappa": {
+  "bn": 0.8307519523598088,
+  "en": 0.9315909627647012
+ },
+ "rates": {
+  "bn/plain": 0.31733333333333336,
+  "bn/test_bn": 0.30933333333333335,
+  "bn/safety_bn": 0.5306666666666666,
+  "bn/test_en": 0.30933333333333335,
+  "en/plain": 0.7546666666666667,
+  "en/test_en": 0.8066666666666666,
+  "en/safety_en": 0.8493333333333334
+ },
+ "usable": {
+  "bn/test_bn": {
+   "a": 5,
+   "b": 7
+  },
+  "bn/safety_bn": {
+   "a": 25,
+   "b": 24
+  },
+  "bn/test_en": {
+   "a": 5,
+   "b": 4
+  },
+  "en/test_en": {
+   "a": 7,
+   "b": 5
+  },
+  "en/safety_en": {
+   "a": 9,
+   "b": 9
+  }
+ },
+ "unparsed": 0,
+ "gate": true,
+ "main": "safety",
+ "english_source_ok": false,
+ "go": true
+}

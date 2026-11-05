@@ -1,0 +1,230 @@
+{
+ "unchanged": {
+  "bn": 0.3173333333333333,
+  "en": 0.7546666666666666
+ },
+ "languages": {
+  "bn": {
+   "random": 0.31037037037037035,
+   "own_x2": {
+    "refusal": 0.9933333333333333,
+    "over_unchanged": 0.676,
+    "over_unchanged_ci": [
+     0.6173333333333333,
+     0.7316333333333332
+    ],
+    "p_unchanged": 0.002,
+    "over_random": 0.682962962962963,
+    "over_random_ci": [
+     0.6266481481481482,
+     0.7363148148148149
+    ],
+    "p_random": 0.002,
+    "over_random_by_half": {
+     "a": 0.6846846846846847,
+     "b": 0.6812865497076024
+    },
+    "usable": 1.0,
+    "bengali": 1.0,
+    "p_unchanged_holm": 0.002,
+    "p_random_holm": 0.002
+   },
+   "english_x2": {
+    "refusal": 0.9355555555555556,
+    "over_unchanged": 0.6182222222222221,
+    "over_unchanged_ci": [
+     0.5466,
+     0.6791111111111111
+    ],
+    "p_unchanged": 0.002,
+    "over_random": 0.6251851851851852,
+    "over_random_ci": [
+     0.557037037037037,
+     0.6918518518518518
+    ],
+    "p_random": 0.002,
+    "over_random_by_half": {
+     "a": 0.6711711711711711,
+     "b": 0.5804093567251463
+    },
+    "usable": 1.0,
+    "bengali": 0.8955555555555555
+   },
+   "own_x4": {
+    "refusal": 0.82,
+    "over_unchanged": 0.5026666666666667,
+    "over_unchanged_ci": [
+     0.42218888888888884,
+     0.5751222222222223
+    ],
+    "p_unchanged": 0.002,
+    "over_random": 0.5096296296296298,
+    "over_random_ci": [
+     0.4274074074074074,
+     0.5970370370370369
+    ],
+    "p_random": 0.002,
+    "over_random_by_half": {
+     "a": 0.6846846846846847,
+     "b": 0.33918128654970764
+    },
+    "usable": 1.0,
+    "bengali": 0.9
+   },
+   "english_x4": {
+    "refusal": 0.6155555555555555,
+    "over_unchanged": 0.2982222222222222,
+    "over_unchanged_ci": [
+     0.21555555555555553,
+     0.3884555555555555
+    ],
+    "p_unchanged": 0.002,
+    "over_random": 0.3051851851851852,
+    "over_random_ci": [
+     0.21481481481481485,
+     0.3881666666666666
+    ],
+    "p_random": 0.002,
+    "over_random_by_half": {
+     "a": 0.3783783783783784,
+     "b": 0.23391812865497083
+    },
+    "usable": 0.9088888888888889,
+    "bengali": 0.6444444444444445
+   },
+   "plain_bengali": 1.0
+  },
+  "en": {
+   "random": 0.7733333333333333,
+   "own_x4": {
+    "refusal": 1.0,
+    "over_unchanged": 0.24533333333333332,
+    "over_unchanged_ci": [
+     0.18396666666666667,
+     0.30933333333333335
+    ],
+    "p_unchanged": 0.002,
+    "over_random": 0.22666666666666666,
+    "over_random_ci": [
+     0.16,
+     0.29561111111111116
+    ],
+    "p_random": 0.002,
+    "over_random_by_half": {
+     "a": 0.22972972972972974,
+     "b": 0.22368421052631585
+    },
+    "usable": 1.0,
+    "bengali": 0.0
+   },
+   "english_x4": {
+    "refusal": 0.9555555555555554,
+    "over_unchanged": 0.20088888888888892,
+    "over_unchanged_ci": [
+     0.13111111111111112,
+     0.2689333333333333
+    ],
+    "p_unchanged": 0.002,
+    "over_random": 0.1822222222222222,
+    "over_random_ci": [
+     0.11333333333333333,
+     0.2488888888888889
+    ],
+    "p_random": 0.002,
+    "over_random_by_half": {
+     "a": 0.20720720720720723,
+     "b": 0.15789473684210523
+    },
+    "usable": 0.5688888888888889,
+    "bengali": 0.0
+   },
+   "plain_bengali": 0.0
+  }
+ },
+ "steer_kappa": {
+  "bn": 0.7532782585890375,
+  "en": 0.7733419188667097
+ },
+ "help": {
+  "bn": {
+   "unchanged": 0.9487179487179488,
+   "own_x4": 0.056410256410256404,
+   "own_x2": 0.005128205128205128,
+   "random0_x4": 0.9435897435897436,
+   "english_x4": 0.1358974358974359,
+   "english_x2": 0.017948717948717947
+  },
+  "en": {
+   "unchanged": 0.8974358974358974,
+   "own_x4": 0.0,
+   "own_x2": 0.002564102564102564,
+   "random0_x4": 0.8871794871794871,
+   "english_x4": 0.028205128205128206,
+   "english_x2": 0.010256410256410256
+  }
+ },
+ "exploratory_english": {
+  "english_x2": {
+   "refusal": 0.9355555555555556,
+   "over_unchanged": 0.6182222222222221,
+   "over_unchanged_ci": [
+    0.5466,
+    0.6791111111111111
+   ],
+   "p_unchanged": 0.002,
+   "over_random": 0.6251851851851852,
+   "over_random_ci": [
+    0.557037037037037,
+    0.6918518518518518
+   ],
+   "p_random": 0.002,
+   "over_random_by_half": {
+    "a": 0.6711711711711711,
+    "b": 0.5804093567251463
+   },
+   "usable": 1.0,
+   "bengali": 0.8955555555555555,
+   "help": 0.017948717948717947
+  },
+  "english_x4": {
+   "refusal": 0.6155555555555555,
+   "over_unchanged": 0.2982222222222222,
+   "over_unchanged_ci": [
+    0.21555555555555553,
+    0.3884555555555555
+   ],
+   "p_unchanged": 0.002,
+   "over_random": 0.3051851851851852,
+   "over_random_ci": [
+    0.21481481481481485,
+    0.3881666666666666
+   ],
+   "p_random": 0.002,
+   "over_random_by_half": {
+    "a": 0.3783783783783784,
+    "b": 0.23391812865497083
+   },
+   "usable": 0.9088888888888889,
+   "bengali": 0.6444444444444445,
+   "help": 0.1358974358974359
+  }
+ },
+ "verdict": {
+  "own": {
+   "strength": 2,
+   "checks": {
+    "usable": true,
+    "bengali": true,
+    "help": false
+   },
+   "passes": false
+  },
+  "reading": "Transfer comparison cannot be read: no usable English source"
+ },
+ "overlap_top5000": {
+  "own_vs_english_half_a": 763,
+  "own_vs_english_half_b": 986,
+  "own_half_a_vs_b": 2796,
+  "english_half_a_vs_b": 2175
+ }
+}
