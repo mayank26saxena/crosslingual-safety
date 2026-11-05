@@ -14,6 +14,7 @@ replies, while only 6.2% of Bengali replies fail to engage. This project diagnos
 |---|---|
 | `docs/design.md` | Questions, plan, data discipline, pass rule, related work |
 | `docs/prereg/` | Dated pre-registrations, with later changes as dated addenda |
+| `docs/results/` | Dated results, including failed gates and exploratory analyses |
 | `data/README.md` | Dataset sources, licenses, and how to rebuild local files |
 | `data/splits/splits.json` | Fixed development and confirmation splits (ids only) |
 | `scripts/` | Rendering, translation, judging, splits, baseline summary |
