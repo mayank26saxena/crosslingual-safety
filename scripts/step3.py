@@ -16,6 +16,7 @@ Usage: python scripts/step3.py {render,cache,s1s3,harmful,harmless,report}
 import argparse
 import csv
 import json
+import os
 import random
 import re
 from collections import Counter, defaultdict
@@ -24,19 +25,32 @@ import numpy as np
 
 from common import ROOT, read_jsonl, write_jsonl
 
-OUT = ROOT / "results/step3"
+MODEL = os.environ.get("CS_MODEL", "Qwen/Qwen2.5-7B-Instruct")
+OUT = ROOT / os.environ.get("CS_STEP_DIR", "results/step3")
 LANGS = ("en", "zh", "ar", "bn", "sw")
 OTHERS = ("zh", "ar", "bn", "sw")
 XS = {"bn": "data/rendered/xstest_v3_bn.jsonl", "zh": "data/rendered/xstest_s3_zh.jsonl",
       "ar": "data/rendered/xstest_s3_ar.jsonl", "sw": "data/rendered/xstest_s3_sw.jsonl"}
 SYSTEM = {"role": "system", "content": "You are a helpful assistant."}
 SEED = 20261105
-REFUSAL_LAYER, HARM_LAYER = 17, 15
+HARM_LAYER, REFUSAL_LAYER, ROBUST_LAYER = (int(x) for x in os.environ.get("CS_LAYERS", "15,17,21").split(","))
 N_RANDOM = 5
 
 
 def splits():
     return json.loads((ROOT / "data/splits/splits.json").read_text())
+
+
+def refusal_vector(layer):
+    """English harmful minus harmless at the last template token, fit on half A."""
+    if MODEL.startswith("Qwen/Qwen2.5-7B"):
+        return np.load(ROOT / "results/step2/refusal_directions.npz")[f"L{layer}"]
+    rows = read_jsonl(ROOT / "data/rendered/s3_items.jsonl")
+    data = np.load(OUT / "activations.npz")
+    post = data["post"][:, list(data["layers"]).index(layer)]
+    en_a = [r["lang"] == "en" and r["half"] == "a" for r in rows]
+    pick = lambda ds, label: [i for i, r in enumerate(rows) if en_a[i] and r["dataset"] == ds and r["label"] == label]
+    return post[pick("multijail", "harmful")].mean(0) - post[pick("xstest", "harmless")].mean(0)
 
 
 def boot(values, rng, n=1000):
@@ -65,6 +79,8 @@ def render():
                          lang="en", half=xhalf[task], category=r["type"], hidden_fact=r["prompt"],
                          messages=[SYSTEM, {"role": "user", "content": r["prompt"]}]))
     for lang, path in XS.items():
+        if not (ROOT / path).exists():  # harmful-prompt stages run before the translations finish
+            continue
         for it in read_jsonl(ROOT / path):
             if it["format_ok"]:
                 rows.append(dict(id=f"{it['task_id']}__{lang}", task_id=it["task_id"], dataset="xstest",
@@ -78,13 +94,14 @@ def cache():
     import torch
     from common import load_model, prompt_text
     rows = read_jsonl(ROOT / "data/rendered/s3_items.jsonl")
-    tok, model = load_model("Qwen/Qwen2.5-7B-Instruct")
-    close = tok.convert_tokens_to_ids("<|im_end|>")
+    tok, model = load_model(MODEL)
+    closers = {tok.convert_tokens_to_ids(t) for t in ("<|im_end|>", "<|eot_id|>", "<end_of_turn>")} - {tok.unk_token_id, None}
     for r in rows:
         r["ids"] = tok(prompt_text(tok, r), add_special_tokens=False)["input_ids"]
-    keep = [HARM_LAYER, REFUSAL_LAYER, 21]
+    keep = [HARM_LAYER, REFUSAL_LAYER, ROBUST_LAYER]
+    width_d = model.config.hidden_size
     order = sorted(range(len(rows)), key=lambda i: len(rows[i]["ids"]))
-    inst, post = np.zeros((len(rows), 3, 3584), np.float32), np.zeros((len(rows), 3, 3584), np.float32)
+    inst, post = np.zeros((len(rows), 3, width_d), np.float32), np.zeros((len(rows), 3, width_d), np.float32)
     for start in range(0, len(order), 32):
         idx = order[start: start + 32]
         width = max(len(rows[i]["ids"]) for i in idx)
@@ -98,7 +115,7 @@ def cache():
             hs = model(batch.to(model.device), attention_mask=mask.to(model.device), output_hidden_states=True).hidden_states
         for b, i in enumerate(idx):
             ids = rows[i]["ids"]
-            pos = [p for p, t in enumerate(ids) if t == close][1] - 1 + width - len(ids)
+            pos = [p for p, t in enumerate(ids) if t in closers][-1] - 1 + width - len(ids)  # last token of the user turn
             for k, L in enumerate(keep):
                 inst[i, k] = hs[L][b, pos].float().cpu().numpy()
                 post[i, k] = hs[L][b, -1].float().cpu().numpy()
@@ -132,7 +149,7 @@ def s1s3():
     for k, tag in ((0, "primary"), (2, "robust_layer21")):
         harm_k, ref_k = k, (1 if k == 0 else 2)
         H, R = data["inst"][:, harm_k], data["post"][:, ref_k]
-        d = np.load(ROOT / "results/step2/refusal_directions.npz")[f"L{data['layers'][ref_k]}"]
+        d = refusal_vector(int(data["layers"][ref_k]))
         unit = d / np.linalg.norm(d)
         r_all = R @ unit
         fit = sel("multijail", "en", "a")
@@ -201,8 +218,8 @@ def s1s3():
 def directions(device):
     import torch
     rows = read_jsonl(ROOT / "data/rendered/s3_items.jsonl")
-    post = np.load(OUT / "activations.npz")["post"][:, 1]
-    d = np.load(ROOT / "results/step2/refusal_directions.npz")[f"L{REFUSAL_LAYER}"]
+    post = np.load(OUT / "activations.npz")["post"][:, 1]  # the refusal layer
+    d = refusal_vector(REFUSAL_LAYER)
     pick = lambda cat: [i for i, r in enumerate(rows) if r["lang"] == "en" and r["label"] == "harmless" and r.get("category") == cat]
     matched = post[pick("historical_events")].mean(0) - post[pick("figurative_language")].mean(0)
     matched = matched / np.linalg.norm(matched) * np.linalg.norm(d)
@@ -218,6 +235,7 @@ def run_conditions(items, modes, out_path):
     import torch
     import patching
     patching.BATCH = 32
+    patching.MODEL = MODEL
     run = patching.Runner()
     dirs = directions(run.model.device)
     out = []

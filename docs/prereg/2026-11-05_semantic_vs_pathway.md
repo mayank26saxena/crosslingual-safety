@@ -103,4 +103,17 @@ family do not generalise. Every outcome is reported, including those against the
 
 ## Addenda
 
-None yet.
+### 2026-11-05: replication on Gemma-2-9B-it and Llama-3.1-8B-Instruct
+
+Written before any Step 3 result was seen and before any Gemma or Llama activation or Step 3 reply. S1, S2 and S3 repeat with the
+same languages, prompts, rules and analysis code. These are confirmatory tests of generality; the Qwen run stays the primary
+result.
+
+- **Layers (fixed by proportional depth to Qwen's 15, 17 and 21 of 28):** Gemma 42 layers: harm 22, refusal 25, robustness 31.
+  Llama 32 layers: harm 17, refusal 19, robustness 24. No layer is selected on results.
+- **Refusal direction:** fit for each model on English half A, in the same way as for Qwen. English under S2 is the positive
+  control. If removal does not work in English for a model, its other-language S2 results are reported but cannot support or
+  count against a shared mechanism.
+- **Judges:** Qwen2.5-14B-Instruct grades all replies. The second judge on the 20% sample is from another family than the graded
+  model: Llama for Gemma replies, Gemma for Llama replies, and Llama for Qwen replies as already stated.
+- **Generality rule:** a reading is called general only if it holds in the same language on at least two of three models.
