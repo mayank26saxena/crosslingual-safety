@@ -1,0 +1,15 @@
+[project]
+name = "crosslingual-safety"
+version = "0.1.0"
+description = "Mechanistic diagnosis and activation-level repair of the cross-lingual safety gap in open chat models"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+  "numpy>=1.26",
+  "pandas>=2.0",
+  "scikit-learn>=1.4",
+  "torch>=2.5",
+  "transformers>=4.50",
+  "accelerate>=1.0",
+  "huggingface_hub>=0.30",
+  "matplotlib>=3.8",
+]

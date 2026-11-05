@@ -1,0 +1,19 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+.claude/
+# Working notes
+notes/
+# Run logs
+logs/
+# Activation caches are large and regenerable
+*.npz
+*.pt
+# Raw model replies and judge output may contain harmful text; only aggregate summaries are tracked
+results/**/*.jsonl
+results/earlier_neuron_steering/
+# Harmful-request text is fetched from the upstream benchmark, not redistributed here
+data/external/multijail/
+data/rendered/multijail_*.jsonl
+data/rendered/xstest_unsafe_*.jsonl
