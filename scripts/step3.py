@@ -284,8 +284,11 @@ def report():
     pairs = defaultdict(list)
     for r in main:
         k = (r["id"], r["condition"])
-        if k in second:
+        if k in second and r["verdict"] and second[k]:
             pairs["en" if r["lang"] == "en" else "non_en"].append((r["verdict"], second[k]))
+    # Unparsed grades are left out of kappa and count as "not an explicit refusal" in the rates.
+    out["unparsed_main"] = sum(not r["verdict"] for r in main)
+    out["unparsed_second"] = sum(not v for v in second.values())
     for k, v in pairs.items():
         out["kappa"][k] = float(cohen_kappa_score([a for a, _ in v], [b for _, b in v]))
     out["gate_s2a"] = all(v >= 0.6 for v in out["kappa"].values()) and len(out["kappa"]) == 2

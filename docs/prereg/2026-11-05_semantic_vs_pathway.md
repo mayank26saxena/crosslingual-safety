@@ -123,3 +123,19 @@ result.
 Written before any Step 3 result was seen. The Step 2 direction file was not copied from the earlier pod. The Qwen direction
 uses the same definition (English MultiJail half A minus English XSTest safe half A, at the last template token), computed from
 the Step 3 activation cache, as for Gemma and Llama.
+
+### 2026-11-05: exploratory direction search on Gemma and Llama
+
+Written after the replication S2 results were seen: under the registered direction, removal does not lower refusal in English on
+either Gemma or Llama, so the positive control fails and their other-language S2 results cannot support or count against a shared
+mechanism. Those registered results stand. This follow-up is exploratory and asks whether the failure is specific to the chosen
+layer and position.
+
+- **Candidates, chosen before any run:** Gemma layers 19, 22, 25, 28, 31, 34; Llama layers 14, 17, 19, 22, 24, 27. Each with the
+  direction taken at the last template token and as the mean over post-instruction tokens. Twelve candidates per model.
+- **Selection:** fit each on English half A, remove at all layers on English half A harmful prompts, grade with
+  Qwen2.5-14B-Instruct, and take the largest fall from unchanged. A candidate goes on only if the fall is at least 20 points and at
+  least 10 points beyond each of two random directions. Selection uses half A only, so half B stays clean for this step.
+- **Test:** the selected direction on harmful half B in all five languages, against the existing unchanged, matched and random
+  replies, with the Holm rule of S2. Gate S2a is computed on the test replies with the second judge from the earlier addendum.
+- **Reading:** any result here is labelled exploratory and does not replace a registered verdict or count toward the generality rule.

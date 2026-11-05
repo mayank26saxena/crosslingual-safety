@@ -22,3 +22,5 @@ results_pod/
 # Translated benchmark prompts, including unsafe contrast items
 data/rendered/xstest_v*
 data/translations/
+data/rendered/xstest_s3_*
+data/rendered/s3_items.jsonl
