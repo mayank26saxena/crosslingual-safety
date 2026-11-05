@@ -111,3 +111,15 @@ rule of Step 3, a reading is general only if it holds on at least two of three m
 
 **If Stage 0 stops the study:** the fallback is a difference-in-differences contrast of English and Bengali on requests where language
 does and does not change behaviour. That would be pre-registered separately.
+
+## Addenda
+
+### 2026-11-05: Stage 0 outcome and exploratory English source
+
+Written after Stage 0 on Llama and before any neuron or steering result. Judge kappa is 0.831 on Bengali and 0.932 on English, so the
+gate passes. `test_bn` has 5 and 7 usable pairs by half, so the go rule selects `safety_bn`, with 25 and 24, and it is labelled an
+instruction cue. `safety_en` has 9 and 9, below the count of 15, so the registered rule stands: the transfer comparison cannot be read,
+and no shared-or-specific reading will be declared on Llama.
+
+The `english` source still runs on those 9 pairs per half as an exploratory measure. It is corrected and reported separately, it is
+not part of any verdict, and the `mixed` source does not apply because the main cue is not `test_bn`.

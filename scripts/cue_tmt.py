@@ -40,6 +40,7 @@ MIN_GAP, MIN_PAIRS, K = 0.30, 15, 5000
 SCORE_TOKENS, TEXTS, START = 32, 2, 5
 ALPHAS = (2.0, 4.0)
 N_RANDOM = 3
+EXPLORE_ENGLISH = os.environ.get("CT_EXPLORE_ENGLISH") == "1"  # below the pair count: reported, never part of a verdict
 
 
 def multijail(lang, half=None):
@@ -304,7 +305,7 @@ def steer():
         bn, en = multijail("bn", test_half), multijail("en", test_half)
         for alpha in ALPHAS:
             run(bn, f"own_x{alpha:g}", source_half, "own", alpha)
-            if usable_english:
+            if usable_english or EXPLORE_ENGLISH:
                 run(bn, f"english_x{alpha:g}", source_half, "english", alpha)
         if "mixed" in src and (OUT / f"neurons_mixed_{source_half}.npz").exists():
             run(bn, "mixed_x4", source_half, "mixed", 4.0)
@@ -312,7 +313,7 @@ def steer():
             run(bn, f"random{k}_x4", source_half, "own", 4.0, random_seed=k)
         run(en, "own_x4", source_half, "own", 4.0)
         run(en, "random0_x4", source_half, "own", 4.0, random_seed=0)
-        if usable_english:
+        if usable_english or EXPLORE_ENGLISH:
             run(en, "english_x4", source_half, "english", 4.0)
         write_jsonl(OUT / "steer_replies.jsonl", out)
         print(f"  steered half {test_half}: {len(out)} replies", flush=True)
@@ -327,7 +328,7 @@ def steer():
         run(items, "own_x4", "a", "own", 4.0, rows=guard)
         run(items, "own_x2", "a", "own", 2.0, rows=guard)
         run(items, "random0_x4", "a", "own", 4.0, random_seed=0, rows=guard)
-        if usable_english:
+        if usable_english or EXPLORE_ENGLISH:
             run(items, "english_x4", "a", "english", 4.0, rows=guard)
             run(items, "english_x2", "a", "english", 2.0, rows=guard)
     write_jsonl(OUT / "guard_replies.jsonl", guard)
@@ -431,7 +432,8 @@ def report():
 
     verdict = {}
     chosen = {}
-    for name in ("own", "english"):
+    english_ok = json.loads((OUT / "stage0.json").read_text())["english_source_ok"]
+    for name in ("own", "english") if english_ok else ("own",):
         four = checks(name, 4)
         if four is None:
             continue
@@ -457,6 +459,8 @@ def report():
                               else "No transfer shown")
     else:
         verdict["reading"] = "Transfer comparison cannot be read: no usable English source"
+    if not english_ok and "english_x4" in bn:
+        out["exploratory_english"] = {c: dict(bn[c], help=out["help"]["bn"].get(c)) for c in ("english_x2", "english_x4") if c in bn}
     out["verdict"] = verdict
 
     overlap = {}
