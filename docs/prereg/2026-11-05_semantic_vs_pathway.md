@@ -117,3 +117,9 @@ result.
 - **Judges:** Qwen2.5-14B-Instruct grades all replies. The second judge on the 20% sample is from another family than the graded
   model: Llama for Gemma replies, Gemma for Llama replies, and Llama for Qwen replies as already stated.
 - **Generality rule:** a reading is called general only if it holds in the same language on at least two of three models.
+
+### 2026-11-05: Qwen direction computed from the Step 3 cache
+
+Written before any Step 3 result was seen. The Step 2 direction file was not copied from the earlier pod. The Qwen direction
+uses the same definition (English MultiJail half A minus English XSTest safe half A, at the last template token), computed from
+the Step 3 activation cache, as for Gemma and Llama.

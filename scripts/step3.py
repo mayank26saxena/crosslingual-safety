@@ -43,8 +43,6 @@ def splits():
 
 def refusal_vector(layer):
     """English harmful minus harmless at the last template token, fit on half A."""
-    if MODEL.startswith("Qwen/Qwen2.5-7B"):
-        return np.load(ROOT / "results/step2/refusal_directions.npz")[f"L{layer}"]
     rows = read_jsonl(ROOT / "data/rendered/s3_items.jsonl")
     data = np.load(OUT / "activations.npz")
     post = data["post"][:, list(data["layers"]).index(layer)]
