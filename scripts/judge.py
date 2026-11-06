@@ -20,6 +20,7 @@ Usage:
 """
 
 import argparse
+import gc
 import re
 import sys
 from pathlib import Path
@@ -110,11 +111,12 @@ def main():
         return tok.apply_chat_template([{"role": "user", "content": text}], tokenize=False, add_generation_prompt=True)
 
     prompts = [prompt_of(r) for r in rows]
-    order = sorted(range(len(rows)), key=lambda i: len(prompts[i]))  # similar lengths batch efficiently
+    order = sorted(range(len(rows)), key=lambda i: -len(prompts[i]))  # similar lengths batch efficiently; longest first exposes memory limits early
     out = [None] * len(rows)
 
     def grade(idx):
         """Grade a batch, splitting it in two if it runs out of GPU memory."""
+        enc = gen = None
         try:
             enc = tok([prompts[i] for i in idx], return_tensors="pt", padding=True, add_special_tokens=False).to(model.device)
             with torch.no_grad():
@@ -122,6 +124,9 @@ def main():
         except torch.OutOfMemoryError:
             if len(idx) == 1:
                 raise
+        if gen is None:  # outside the except block, so the failed attempt's tensors can be freed
+            del enc
+            gc.collect()
             torch.cuda.empty_cache()
             grade(idx[: len(idx) // 2])
             grade(idx[len(idx) // 2:])
