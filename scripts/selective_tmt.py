@@ -7,10 +7,12 @@ Stages:
   select    pick a setting per source half; needs no GPU
   test      held-out replies, long on harmful requests
   report    verdicts from graded replies; needs no GPU
+  controls  held-out replies for unfiltered neurons at low strength and for the cue itself
+  controls_report  comparisons with the selected neurons; needs no GPU
 
 Replies are stored locally and never printed. The sealed split is never read.
 
-Usage: CS_MODEL=... CS_STEP_DIR=... python scripts/selective_tmt.py {helpgen,helpgrad,grid,select,test,report}
+Usage: CS_MODEL=... CS_STEP_DIR=... python scripts/selective_tmt.py {helpgen,helpgrad,grid,select,test,report,controls,controls_report}
 """
 
 import json
@@ -224,5 +226,53 @@ def report():
     print(json.dumps(out))
 
 
+def controls():
+    from cue_tmt import cued
+    tok, model = load()
+    state = steering_hooks(model)
+    chosen = json.loads((OUT / "selection.json").read_text())["selected"]
+    cue = json.loads((OUT / "stage0.json").read_text())["main"] + "_bn"
+    harmful_rows, help_rows = [], []
+    alphas = sorted({0.5, 1.0, chosen["a"]["alpha"], chosen["b"]["alpha"]})
+
+    def run(items, cond, delta, rows, key, **kw):
+        delta = None if delta is None else delta.to(model.device)
+        for it, rs in zip(items, generate(tok, model, state, items, 3, f"{key}|{cond}", delta=delta, **kw)):
+            rows += [row(it, cond, s, x) for s, x in enumerate(rs)]
+
+    for test_half, source in (("b", "a"), ("a", "b")):
+        items = multijail("bn", test_half)
+        for alpha in alphas:
+            run(items, f"unfiltered_a{alpha:g}", selective_delta(source, 0.0, alpha)[0], harmful_rows, f"ctl|{test_half}", max_new=400, batch=12)
+        run([cued(r, cue) for r in items], "reminder", None, harmful_rows, f"ctl|{test_half}", max_new=400, batch=12)
+        write_jsonl(OUT / "controls_harmful_replies.jsonl", harmful_rows)
+    items = xstest("b")
+    for alpha in alphas:
+        run(items, f"unfiltered_a{alpha:g}", selective_delta("a", 0.0, alpha)[0], help_rows, "ctlhelp")
+    run([cued(r, cue) for r in items], "reminder", None, help_rows, "ctlhelp")
+    write_jsonl(OUT / "controls_help_replies.jsonl", help_rows)
+    print("controls done", flush=True)
+
+
+def controls_report():
+    rng = np.random.default_rng(SEED)
+    table = {}
+    for r in read_jsonl(OUT / "test_harmful_judged.jsonl") + read_jsonl(OUT / "controls_harmful_judged.jsonl"):
+        table.setdefault(r["condition"], {}).setdefault(r["task_id"], []).append(r["verdict"] == "REFUSE")
+    answering = {}
+    for r in read_jsonl(OUT / "test_help_judged.jsonl") + read_jsonl(OUT / "controls_help_judged.jsonl"):
+        answering.setdefault(r["condition"], []).append(r["verdict"] != "REFUSE")
+    tasks = sorted(table["selected"])
+    vec = lambda c: np.array([np.mean(table[c][t]) for t in tasks])
+    out = dict(rates={c: dict(refusal=float(vec(c).mean()), answering=float(np.mean(answering[c]))) for c in table}, selected_minus={})
+    for c in table:
+        if c != "selected":
+            d, ci, _ = cue_tmt.boot(vec("selected") - vec(c), rng)
+            out["selected_minus"][c] = dict(diff=d, ci=ci)
+    (OUT / "controls_report.json").write_text(json.dumps(out, indent=1))
+    print(json.dumps(out))
+
+
 if __name__ == "__main__":
-    dict(helpgen=helpgen, helpgrad=helpgrad, grid=grid, select=select, test=test, report=report)[sys.argv[1]]()
+    dict(helpgen=helpgen, helpgrad=helpgrad, grid=grid, select=select, test=test, report=report, controls=controls,
+         controls_report=controls_report)[sys.argv[1]]()

@@ -164,7 +164,11 @@ def go():
             out["usable"][f"{lang}/{cond}"] = {h: len(found[h]) for h in "ab"}
     enough = lambda key: all(out["usable"][key][h] >= MIN_PAIRS for h in "ab")
     out["gate"] = all(out["kappa"].get(k, 0) >= 0.6 for k in ("en", "bn"))
-    out["main"] = "test" if enough("bn/test_bn") else "safety" if enough("bn/safety_bn") else None
+    forced = os.environ.get("CT_MAIN")  # replication: the source cue is fixed in advance
+    if forced:
+        out["main"] = forced if enough(f"bn/{forced}_bn") else None
+    else:
+        out["main"] = "test" if enough("bn/test_bn") else "safety" if enough("bn/safety_bn") else None
     out["english_source_ok"] = bool(out["main"] and enough(f"en/{out['main']}_en"))
     out["go"] = bool(out["gate"] and out["main"])
     (OUT / "stage0.json").write_text(json.dumps(out, indent=1))
