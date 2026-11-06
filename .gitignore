@@ -24,3 +24,9 @@ data/rendered/xstest_v*
 data/translations/
 data/rendered/xstest_s3_*
 data/rendered/s3_items.jsonl
+data/external/multilingual_harmless_harmful/
+data/external/indicguard/
+data/external/indicsafe/
+data/external/surakshaeval/
+data/external/banglashield/
+data/manifest/manifest.jsonl

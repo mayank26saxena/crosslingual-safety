@@ -49,3 +49,28 @@ Non-commercial licences limit redistribution, so the published manifest should h
 - **The sealed MultiJail split** stays unread and has no Hindi. Whether it remains part of final evaluation is an open decision.
 
 The Qwen and Gemma replication of Step 5 was stopped on 2026-11-06 before any neuron result. Partial Stage 0 replies are kept outside version control and are not reported as results.
+
+## Steps 2-5: dataset status, 2026-11-06
+
+Downloaded at pinned revisions: Multilingual Harmless-Harmful `67520a76`, IndicGuard `f6025076`, IndicSafe `9a12fe45`. SurakshaEval and BanglaShield still need their access terms accepted.
+
+| Manifest | Value |
+|---|---|
+| Unique rows, English, Hindi and Bengali | 111,128 |
+| Source-prompt groups | 35,909 |
+| Exact duplicates removed | 10,543 |
+| Near-duplicate links on English source (TF-IDF cosine at least 0.92) | 799 |
+| Rows dropped for no prompt label | 2,970 |
+| Largest group, distinct English prompts | 22 |
+| Groups crossing splits | 0 |
+
+Splits are by group: discovery 50%, development 20%, held-out 30%. All IndicSafe and IndicGuard test groups go to held-out. Harmful and harmless twins in Multilingual Harmless-Harmful stay together. Counts are in `data/manifest/summary.json`. The prompt manifest is not tracked.
+
+**Provenance finding:** none of the three downloaded datasets is native-authored in Bengali. IndicGuard is translated with the Google Translate API, except that its culture-adaptive subset starts from Hindi. Multilingual Harmless-Harmful is translated from English with partial checks by its author, and IndicSafe is translated. Native-authored evaluation depends on the gated datasets, which are not yet inspected. Duplicate thresholds have not been reviewed by a person.
+
+## Grading plan
+
+- **Hindi:** the project lead grades a blinded sample directly. This is the human reference, for Hindi only.
+- **Bengali:** replies are translated into English with the Google Cloud Translation API and then graded, following the MultiJail method. No native review is available, and results are labelled that way.
+- **Calibration:** the same Hindi replies are also translated and graded the same way. Agreement with the direct Hindi grades estimates what translation loses. It is an estimate for Hindi and is applied to Bengali only as an assumption.
+- **Agreement gate:** kappa at least 0.6 between translated and direct Hindi grades, before translated Bengali harm grades are used in any claim.

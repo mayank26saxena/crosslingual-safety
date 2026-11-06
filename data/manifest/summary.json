@@ -1,0 +1,341 @@
+{
+ "rows": 111128,
+ "groups": 35909,
+ "exact_duplicates_removed": {
+  "multilingual_harmless_harmful": 3,
+  "indicsafe": 6,
+  "indicguard": 10534
+ },
+ "near_duplicate_links": 799,
+ "dropped": {
+  "no_prompt_label": 2970
+ },
+ "largest_group_english_prompts": 22,
+ "groups_with_over_10_english_prompts": 6,
+ "groups_in_more_than_one_split": 0,
+ "authorship": {
+  "original_en": 832,
+  "machine_translated_partly_checked": 1661,
+  "translated": 994,
+  "source_en": 28875,
+  "google_translated": 71431,
+  "source_hi": 7335
+ },
+ "counts": [
+  {
+   "dataset": "indicguard",
+   "language": "bn",
+   "label": "harmful",
+   "split": "development",
+   "n": 3591
+  },
+  {
+   "dataset": "indicguard",
+   "language": "bn",
+   "label": "harmful",
+   "split": "discovery",
+   "n": 8803
+  },
+  {
+   "dataset": "indicguard",
+   "language": "bn",
+   "label": "harmful",
+   "split": "heldout",
+   "n": 6878
+  },
+  {
+   "dataset": "indicguard",
+   "language": "bn",
+   "label": "harmless",
+   "split": "development",
+   "n": 3060
+  },
+  {
+   "dataset": "indicguard",
+   "language": "bn",
+   "label": "harmless",
+   "split": "discovery",
+   "n": 7654
+  },
+  {
+   "dataset": "indicguard",
+   "language": "bn",
+   "label": "harmless",
+   "split": "heldout",
+   "n": 5758
+  },
+  {
+   "dataset": "indicguard",
+   "language": "en",
+   "label": "harmful",
+   "split": "development",
+   "n": 3592
+  },
+  {
+   "dataset": "indicguard",
+   "language": "en",
+   "label": "harmful",
+   "split": "discovery",
+   "n": 8791
+  },
+  {
+   "dataset": "indicguard",
+   "language": "en",
+   "label": "harmful",
+   "split": "heldout",
+   "n": 6851
+  },
+  {
+   "dataset": "indicguard",
+   "language": "en",
+   "label": "harmless",
+   "split": "development",
+   "n": 3064
+  },
+  {
+   "dataset": "indicguard",
+   "language": "en",
+   "label": "harmless",
+   "split": "discovery",
+   "n": 7665
+  },
+  {
+   "dataset": "indicguard",
+   "language": "en",
+   "label": "harmless",
+   "split": "heldout",
+   "n": 5756
+  },
+  {
+   "dataset": "indicguard",
+   "language": "hi",
+   "label": "harmful",
+   "split": "development",
+   "n": 3588
+  },
+  {
+   "dataset": "indicguard",
+   "language": "hi",
+   "label": "harmful",
+   "split": "discovery",
+   "n": 8787
+  },
+  {
+   "dataset": "indicguard",
+   "language": "hi",
+   "label": "harmful",
+   "split": "heldout",
+   "n": 6858
+  },
+  {
+   "dataset": "indicguard",
+   "language": "hi",
+   "label": "harmless",
+   "split": "development",
+   "n": 3055
+  },
+  {
+   "dataset": "indicguard",
+   "language": "hi",
+   "label": "harmless",
+   "split": "discovery",
+   "n": 7654
+  },
+  {
+   "dataset": "indicguard",
+   "language": "hi",
+   "label": "harmless",
+   "split": "heldout",
+   "n": 5739
+  },
+  {
+   "dataset": "indicsafe",
+   "language": "bn",
+   "label": "ambiguous",
+   "split": "heldout",
+   "n": 45
+  },
+  {
+   "dataset": "indicsafe",
+   "language": "bn",
+   "label": "harmful",
+   "split": "heldout",
+   "n": 330
+  },
+  {
+   "dataset": "indicsafe",
+   "language": "bn",
+   "label": "harmless",
+   "split": "heldout",
+   "n": 122
+  },
+  {
+   "dataset": "indicsafe",
+   "language": "en",
+   "label": "ambiguous",
+   "split": "heldout",
+   "n": 45
+  },
+  {
+   "dataset": "indicsafe",
+   "language": "en",
+   "label": "harmful",
+   "split": "heldout",
+   "n": 330
+  },
+  {
+   "dataset": "indicsafe",
+   "language": "en",
+   "label": "harmless",
+   "split": "heldout",
+   "n": 122
+  },
+  {
+   "dataset": "indicsafe",
+   "language": "hi",
+   "label": "ambiguous",
+   "split": "heldout",
+   "n": 45
+  },
+  {
+   "dataset": "indicsafe",
+   "language": "hi",
+   "label": "harmful",
+   "split": "heldout",
+   "n": 330
+  },
+  {
+   "dataset": "indicsafe",
+   "language": "hi",
+   "label": "harmless",
+   "split": "heldout",
+   "n": 122
+  },
+  {
+   "dataset": "multilingual_harmless_harmful",
+   "language": "bn",
+   "label": "harmful",
+   "split": "development",
+   "n": 96
+  },
+  {
+   "dataset": "multilingual_harmless_harmful",
+   "language": "bn",
+   "label": "harmful",
+   "split": "discovery",
+   "n": 208
+  },
+  {
+   "dataset": "multilingual_harmless_harmful",
+   "language": "bn",
+   "label": "harmful",
+   "split": "heldout",
+   "n": 109
+  },
+  {
+   "dataset": "multilingual_harmless_harmful",
+   "language": "bn",
+   "label": "harmless",
+   "split": "development",
+   "n": 97
+  },
+  {
+   "dataset": "multilingual_harmless_harmful",
+   "language": "bn",
+   "label": "harmless",
+   "split": "discovery",
+   "n": 209
+  },
+  {
+   "dataset": "multilingual_harmless_harmful",
+   "language": "bn",
+   "label": "harmless",
+   "split": "heldout",
+   "n": 110
+  },
+  {
+   "dataset": "multilingual_harmless_harmful",
+   "language": "en",
+   "label": "harmful",
+   "split": "development",
+   "n": 97
+  },
+  {
+   "dataset": "multilingual_harmless_harmful",
+   "language": "en",
+   "label": "harmful",
+   "split": "discovery",
+   "n": 209
+  },
+  {
+   "dataset": "multilingual_harmless_harmful",
+   "language": "en",
+   "label": "harmful",
+   "split": "heldout",
+   "n": 110
+  },
+  {
+   "dataset": "multilingual_harmless_harmful",
+   "language": "en",
+   "label": "harmless",
+   "split": "development",
+   "n": 97
+  },
+  {
+   "dataset": "multilingual_harmless_harmful",
+   "language": "en",
+   "label": "harmless",
+   "split": "discovery",
+   "n": 209
+  },
+  {
+   "dataset": "multilingual_harmless_harmful",
+   "language": "en",
+   "label": "harmless",
+   "split": "heldout",
+   "n": 110
+  },
+  {
+   "dataset": "multilingual_harmless_harmful",
+   "language": "hi",
+   "label": "harmful",
+   "split": "development",
+   "n": 97
+  },
+  {
+   "dataset": "multilingual_harmless_harmful",
+   "language": "hi",
+   "label": "harmful",
+   "split": "discovery",
+   "n": 209
+  },
+  {
+   "dataset": "multilingual_harmless_harmful",
+   "language": "hi",
+   "label": "harmful",
+   "split": "heldout",
+   "n": 110
+  },
+  {
+   "dataset": "multilingual_harmless_harmful",
+   "language": "hi",
+   "label": "harmless",
+   "split": "development",
+   "n": 97
+  },
+  {
+   "dataset": "multilingual_harmless_harmful",
+   "language": "hi",
+   "label": "harmless",
+   "split": "discovery",
+   "n": 209
+  },
+  {
+   "dataset": "multilingual_harmless_harmful",
+   "language": "hi",
+   "label": "harmless",
+   "split": "heldout",
+   "n": 110
+  }
+ ]
+}
