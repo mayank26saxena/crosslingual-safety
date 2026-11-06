@@ -65,13 +65,19 @@ def generate():
     tok, model = load()
     state = steering_hooks(model)
     rows = read_jsonl(ITEMS)
-    out = []
+    path = OUT / "replies.jsonl"
+    out = read_jsonl(path) if path.exists() else []
+    done = {r["id"] for r in out}
     for lang in LANGS:
-        group = [r for r in rows if r["lang"] == lang]
-        for r, rs in zip(group, gen(tok, model, state, group, 1, f"baseline|{lang}", max_new=400, batch=16)):
-            out.append(dict(id=r["id"], task_id=r["task_id"], lang=lang, set=r["set"], label=r["label"], condition="baseline", sample=0, response=rs[0]))
-        write_jsonl(OUT / "replies.jsonl", out)
-        print(f"  {lang}: {len(out)} replies", flush=True)
+        group = [r for r in rows if r["lang"] == lang and r["id"] not in done]
+        long_prompt = lambda r: len(tok(r["messages"][1]["content"], add_special_tokens=False)["input_ids"]) > 150
+        for size, part in ((16, [r for r in group if not long_prompt(r)]), (2, [r for r in group if long_prompt(r)])):
+            for start in range(0, len(part), 240):
+                chunk = part[start:start + 240]
+                for r, rs in zip(chunk, gen(tok, model, state, chunk, 1, f"baseline|{lang}|{size}|{start}", max_new=400, batch=size)):
+                    out.append(dict(id=r["id"], task_id=r["task_id"], lang=lang, set=r["set"], label=r["label"], condition="baseline", sample=0, response=rs[0]))
+                write_jsonl(path, out)
+                print(f"  {lang}: {len(out)} replies", flush=True)
     print("generation done", flush=True)
 
 
