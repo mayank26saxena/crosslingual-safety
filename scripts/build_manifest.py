@@ -94,6 +94,46 @@ def indicguard():
     return rows, dropped
 
 
+def surakshaeval():
+    rows = []
+    for name, lang in (("hindi", "hi"), ("bengali", "bn")):
+        for r in map(json.loads, open(EXT / f"surakshaeval/data/{name}/test.jsonl", encoding="utf-8")):
+            common = dict(source_dataset="surakshaeval", pair=None, script_register="native_script", english=r["question_en"], harm_category=r["type_of_harm"],
+                          label="unverified_sensitive", expected_behavior="unverified", subset=r["risk_area"], source_split="test", authorship_type="human_written")
+            rows.append(dict(common, source_id=f"{name}_{r['id']}", language=lang, prompt_text=r["question_indic"]))
+            rows.append(dict(common, source_id=f"{name}_{r['id']}_en", language="en", prompt_text=r["question_en"]))
+    return rows
+
+
+def banglashield():
+    """Bengali forms only. MultiJail rows are dropped here, because that source contains the sealed split."""
+    import pyarrow.parquet as pq
+    rows, dropped = [], Counter()
+    label = {"Safe": ("harmless", "answer"), "Harmful": ("harmful", "refuse"), "Severe": ("harmful", "refuse"), "Offensive": ("offensive", "judgement")}
+    for form, register in (("native", "native_script"), ("romanized", "romanized"), ("code_mixed", "code_mixed")):
+        for sp in ("train", "validation", "test"):
+            for r in pq.read_table(EXT / f"banglashield/data/{form}-{sp}.parquet").to_pylist():
+                if r["source"] == "multijail":
+                    dropped["multijail_source"] += 1
+                    continue
+                lab, expected = label[r["label_name"]]
+                rows.append(dict(source_dataset="banglashield", source_id=f"{form}_{r['uid']}", pair=f"bs_{r['group_id']}", language="bn", script_register=register, prompt_text=r["text"],
+                                 english=None, harm_category=r["label_name"], label=lab, expected_behavior=expected, authorship_type=f"compiled_from_{r['source']}", subset=r["source"], source_split=sp))
+    return rows, dropped
+
+
+def sealed_texts():
+    """Normalized text of the sealed split, used only to exclude matches. Nothing is printed."""
+    confirm = set(json.loads((ROOT / "data/splits/splits.json").read_text())["multijail"]["confirm"])
+    texts = set()
+    for r in csv.DictReader(open(EXT / "multijail/MultiJail.csv", encoding="utf-8-sig")):
+        if f"multijail_{int(r['id']):03d}" in confirm:
+            texts.update(norm(r[k]) for k in ("en", "bn") if norm(r[k]))
+    if not texts:
+        raise SystemExit("no sealed text available to check against")
+    return texts
+
+
 class Groups:
     def __init__(self):
         self.parent = {}
@@ -111,12 +151,15 @@ class Groups:
 
 def main():
     guard, dropped = indicguard()
-    rows = multilingual() + indicsafe() + guard
+    shield, shield_dropped = banglashield()
+    dropped.update(shield_dropped)
+    rows = multilingual() + indicsafe() + guard + surakshaeval() + shield
     groups = Groups()
     for i, r in enumerate(rows):
         r["example_id"] = f"{r['source_dataset']}__{r['source_id']}__{r['language']}"
         node = f"row{i}"
-        groups.union(node, f"en:{norm(r['english'])}")
+        if norm(r["english"]):
+            groups.union(node, f"en:{norm(r['english'])}")
         groups.union(node, f"{r['language']}:{norm(r['prompt_text'])}")
         groups.union(node, f"id:{r['source_dataset']}:{r['source_id']}")
         if r["pair"]:
@@ -133,12 +176,16 @@ def main():
                 near += 1
     for i, r in enumerate(rows):
         r["source_group_id"] = hashlib.sha256(groups.find(f"row{i}").encode()).hexdigest()[:16]
+    sealed = sealed_texts()
+    hit = {r["source_group_id"] for r in rows if norm(r["prompt_text"]) in sealed or norm(r["english"]) in sealed}
+    sealed_rows = Counter(r["source_dataset"] for r in rows if r["source_group_id"] in hit)
+    rows = [r for r in rows if r["source_group_id"] not in hit]
     members = defaultdict(list)
     for r in rows:
         members[r["source_group_id"]].append(r)
 
     def split_of(gid, items):
-        if any(x["source_dataset"] == "indicsafe" or x["source_split"] == "test" for x in items):
+        if any(x["source_dataset"] in ("indicsafe", "surakshaeval", "banglashield") or x["source_split"] == "test" for x in items):
             return "heldout"
         u = int(hashlib.sha256(f"{SEED}:{gid}".encode()).hexdigest(), 16) / 16 ** 64
         total = 0.0
@@ -175,7 +222,7 @@ def main():
     cross = Counter()
     for r in unique:
         cross[(r["source_dataset"], r["language"], r["label"], r["split"])] += 1
-    summary = dict(rows=len(unique), groups=len(members), exact_duplicates_removed=dict(exact), near_duplicate_links=near, dropped=dict(dropped),
+    summary = dict(rows=len(unique), groups=len(members), exact_duplicates_removed=dict(exact), near_duplicate_links=near, dropped=dict(dropped), removed_matching_sealed_split=dict(sealed_rows),
                    largest_group_english_prompts=int(sizes.max()), groups_with_over_10_english_prompts=int((sizes > 10).sum()),
                    groups_in_more_than_one_split=sum(len(v) > 1 for v in group_splits.values()),
                    authorship=dict(Counter(r["authorship_type"] for r in unique)),
@@ -185,6 +232,7 @@ def main():
     table = defaultdict(lambda: Counter())
     for x in summary["counts"]:
         table[(x["language"], x["label"])][x["split"]] += x["n"]
+    print(Counter((r["source_dataset"], r["language"], r["script_register"]) for r in unique).most_common(20))
     for k, v in sorted(table.items()):
         print(k, dict(v))
 

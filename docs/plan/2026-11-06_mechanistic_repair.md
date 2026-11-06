@@ -52,21 +52,33 @@ The Qwen and Gemma replication of Step 5 was stopped on 2026-11-06 before any ne
 
 ## Steps 2-5: dataset status, 2026-11-06
 
-Downloaded at pinned revisions: Multilingual Harmless-Harmful `67520a76`, IndicGuard `f6025076`, IndicSafe `9a12fe45`. SurakshaEval and BanglaShield still need their access terms accepted.
+Downloaded at pinned revisions: Multilingual Harmless-Harmful `67520a76`, IndicGuard `f6025076`, IndicSafe `9a12fe45`, SurakshaEval `e47de8b9`, BanglaShield `4f3d642e`.
 
 | Manifest | Value |
 |---|---|
-| Unique rows, English, Hindi and Bengali | 111,128 |
-| Source-prompt groups | 35,909 |
-| Exact duplicates removed | 10,543 |
+| Unique rows | 141,009 |
+| Source-prompt groups | 45,207 |
+| Exact duplicates removed | 10,925 |
 | Near-duplicate links on English source (TF-IDF cosine at least 0.92) | 799 |
 | Rows dropped for no prompt label | 2,970 |
 | Largest group, distinct English prompts | 22 |
 | Groups crossing splits | 0 |
 
-Splits are by group: discovery 50%, development 20%, held-out 30%. All IndicSafe and IndicGuard test groups go to held-out. Harmful and harmless twins in Multilingual Harmless-Harmful stay together. Counts are in `data/manifest/summary.json`. The prompt manifest is not tracked.
+Splits are by group: discovery 50%, development 20%, held-out 30%. All IndicSafe, SurakshaEval, BanglaShield and IndicGuard test groups go to held-out. Harmful and harmless twins in Multilingual Harmless-Harmful stay together. Counts are in `data/manifest/summary.json`. The prompt manifest is not tracked.
 
-**Provenance finding:** none of the three downloaded datasets is native-authored in Bengali. IndicGuard is translated with the Google Translate API, except that its culture-adaptive subset starts from Hindi. Multilingual Harmless-Harmful is translated from English with partial checks by its author, and IndicSafe is translated. Native-authored evaluation depends on the gated datasets, which are not yet inspected. Duplicate thresholds have not been reviewed by a person.
+**Sealed split:** BanglaShield includes every MultiJail request, so its 945 MultiJail rows across three written forms are excluded. Groups with an exact text match to the sealed split are also removed, which drops 57 IndicGuard rows. The manifest then has 0 exact matches. Paraphrases cannot be excluded this way. It still has 51 rows that exactly match the unsealed MultiJail requests, which are recorded and not removed.
+
+**Provenance:**
+
+| Dataset | Authorship | Note |
+|---|---|---|
+| SurakshaEval | Human-written, per its documentation | 149 Bengali, 116 Hindi and 265 English prompts. No expected behaviour is included, so these need grading criteria |
+| BanglaShield | Compiled from public sources | Native, romanized and code-mixed forms. Benign rows are largely converted product reviews |
+| IndicGuard | Google Translate API | Culture-adaptive subset starts from Hindi |
+| Multilingual Harmless-Harmful | Machine translated, partly checked | English source |
+| IndicSafe | Translated | English source |
+
+Only SurakshaEval is documented as human-written, so it is the small native-language test, reported separately. LinguaSafe, likely the proposal's LingualSafety, is available only through BanglaShield here, and only in Bengali. Duplicate thresholds and these provenance statements have not been reviewed by a person.
 
 ## Grading plan
 

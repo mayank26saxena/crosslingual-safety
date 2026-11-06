@@ -1,14 +1,19 @@
 {
- "rows": 111128,
- "groups": 35909,
+ "rows": 141009,
+ "groups": 45207,
  "exact_duplicates_removed": {
   "multilingual_harmless_harmful": 3,
   "indicsafe": 6,
-  "indicguard": 10534
+  "indicguard": 10531,
+  "banglashield": 385
  },
  "near_duplicate_links": 799,
  "dropped": {
-  "no_prompt_label": 2970
+  "no_prompt_label": 2970,
+  "multijail_source": 945
+ },
+ "removed_matching_sealed_split": {
+  "indicguard": 57
  },
  "largest_group_english_prompts": 22,
  "groups_with_over_10_english_prompts": 6,
@@ -17,31 +22,58 @@
   "original_en": 832,
   "machine_translated_partly_checked": 1661,
   "translated": 994,
-  "source_en": 28875,
-  "google_translated": 71431,
-  "source_hi": 7335
+  "source_en": 28858,
+  "google_translated": 71395,
+  "source_hi": 7334,
+  "human_written": 530,
+  "compiled_from_linguasafe": 10223,
+  "compiled_from_indicsafe": 1187,
+  "compiled_from_banglasafe": 1561,
+  "compiled_from_xsafety": 7795,
+  "compiled_from_banglaecomreviewcorpus": 8639
  },
  "counts": [
+  {
+   "dataset": "banglashield",
+   "language": "bn",
+   "label": "harmful",
+   "split": "heldout",
+   "n": 14612
+  },
+  {
+   "dataset": "banglashield",
+   "language": "bn",
+   "label": "harmless",
+   "split": "heldout",
+   "n": 10341
+  },
+  {
+   "dataset": "banglashield",
+   "language": "bn",
+   "label": "offensive",
+   "split": "heldout",
+   "n": 4452
+  },
   {
    "dataset": "indicguard",
    "language": "bn",
    "label": "harmful",
    "split": "development",
-   "n": 3591
+   "n": 3589
   },
   {
    "dataset": "indicguard",
    "language": "bn",
    "label": "harmful",
    "split": "discovery",
-   "n": 8803
+   "n": 8800
   },
   {
    "dataset": "indicguard",
    "language": "bn",
    "label": "harmful",
    "split": "heldout",
-   "n": 6878
+   "n": 6868
   },
   {
    "dataset": "indicguard",
@@ -55,35 +87,35 @@
    "language": "bn",
    "label": "harmless",
    "split": "discovery",
-   "n": 7654
+   "n": 7653
   },
   {
    "dataset": "indicguard",
    "language": "bn",
    "label": "harmless",
    "split": "heldout",
-   "n": 5758
+   "n": 5756
   },
   {
    "dataset": "indicguard",
    "language": "en",
    "label": "harmful",
    "split": "development",
-   "n": 3592
+   "n": 3590
   },
   {
    "dataset": "indicguard",
    "language": "en",
    "label": "harmful",
    "split": "discovery",
-   "n": 8791
+   "n": 8788
   },
   {
    "dataset": "indicguard",
    "language": "en",
    "label": "harmful",
    "split": "heldout",
-   "n": 6851
+   "n": 6841
   },
   {
    "dataset": "indicguard",
@@ -97,35 +129,35 @@
    "language": "en",
    "label": "harmless",
    "split": "discovery",
-   "n": 7665
+   "n": 7664
   },
   {
    "dataset": "indicguard",
    "language": "en",
    "label": "harmless",
    "split": "heldout",
-   "n": 5756
+   "n": 5754
   },
   {
    "dataset": "indicguard",
    "language": "hi",
    "label": "harmful",
    "split": "development",
-   "n": 3588
+   "n": 3586
   },
   {
    "dataset": "indicguard",
    "language": "hi",
    "label": "harmful",
    "split": "discovery",
-   "n": 8787
+   "n": 8784
   },
   {
    "dataset": "indicguard",
    "language": "hi",
    "label": "harmful",
    "split": "heldout",
-   "n": 6858
+   "n": 6848
   },
   {
    "dataset": "indicguard",
@@ -139,14 +171,14 @@
    "language": "hi",
    "label": "harmless",
    "split": "discovery",
-   "n": 7654
+   "n": 7653
   },
   {
    "dataset": "indicguard",
    "language": "hi",
    "label": "harmless",
    "split": "heldout",
-   "n": 5739
+   "n": 5737
   },
   {
    "dataset": "indicsafe",
@@ -336,6 +368,27 @@
    "label": "harmless",
    "split": "heldout",
    "n": 110
+  },
+  {
+   "dataset": "surakshaeval",
+   "language": "bn",
+   "label": "unverified_sensitive",
+   "split": "heldout",
+   "n": 149
+  },
+  {
+   "dataset": "surakshaeval",
+   "language": "en",
+   "label": "unverified_sensitive",
+   "split": "heldout",
+   "n": 265
+  },
+  {
+   "dataset": "surakshaeval",
+   "language": "hi",
+   "label": "unverified_sensitive",
+   "split": "heldout",
+   "n": 116
   }
  ]
 }
