@@ -32,3 +32,4 @@ data/external/banglashield/
 data/manifest/manifest.jsonl
 data/rendered/baseline_items.jsonl
 data/rendered/gated_items.jsonl
+data/rendered/gated2_items.jsonl
