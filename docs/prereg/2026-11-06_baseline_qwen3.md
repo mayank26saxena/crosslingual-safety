@@ -53,3 +53,13 @@ Refusal rates on harmless prompts are reported beside it, because lower refusal 
 | Gate fails | Fix measurement before continuing |
 
 Refusal is not safety. A confirmed refusal gap does not show that replies are more harmful, and that claim waits for the calibration.
+
+## Addenda
+
+### 2026-11-07: outcome of the registered gate, and a translated measure
+
+Written after the registered report and before any translated grade.
+
+**Registered outcome:** the gate fails. Refusal kappa is 0.873 on English and 0.464 on pooled non-English, against 0.6. No language-level verdict is declared, even though direct grades show English-minus-target gaps of about 21 points. On harmful prompts in the second-judge sample, Qwen2.5-14B-Instruct finds about 55-57% refusal in Hindi and Bengali, and Llama-3.1-8B-Instruct finds about 22-26%. The two reply-type and refusal rubrics also disagree. These results stand.
+
+**Added measure, as the plan's "fix measurement" step:** Hindi and Bengali replies are translated into English by Qwen2.5-14B-Instruct, and graded for explicit refusal by the same two judges, with the English request shown. English keeps its direct grades. The same gate and go rule apply. Because this was added after the failure, a pass is reported as confirmed under the translated measure, never as a pass of the registered gate. Translation and one judge share a model family, and neither has a human reference yet. The planned Google Translate and human Hindi calibration remain the stronger check.
