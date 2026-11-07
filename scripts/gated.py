@@ -133,7 +133,9 @@ def cache():
     order = sorted(range(len(rows)), key=lambda i: -len(ids[i]))
 
     def run(idx):
+        import gc
         m = max(len(ids[i]) for i in idx)
+        hs = None
         try:
             batch = torch.full((len(idx), m), tok.pad_token_id)
             mask = torch.zeros_like(batch)
@@ -143,9 +145,11 @@ def cache():
             with torch.no_grad():
                 hs = model(batch.to(model.device), attention_mask=mask.to(model.device), output_hidden_states=True).hidden_states
         except torch.OutOfMemoryError:
-            torch.cuda.empty_cache()
             if len(idx) == 1:
                 raise
+        if hs is None:  # outside the except block, so the failed attempt's tensors can be freed
+            gc.collect()
+            torch.cuda.empty_cache()
             run(idx[: len(idx) // 2])
             run(idx[len(idx) // 2:])
             return
