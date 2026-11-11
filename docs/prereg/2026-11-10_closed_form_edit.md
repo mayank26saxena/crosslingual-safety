@@ -127,3 +127,8 @@ here stays as written above.
   part of the pass rule.
 - **Departure, restated:** no activation intervention has passed on this model. Phase 2 patching that meets its rule is the causal evidence the plan asks
   for, and the Phase 3 report states which applied.
+
+### 2026-11-11: Hindi target, Bengali transfer
+
+The edit is fitted and selected on Hindi only, and the pass rule is applied to Hindi. The same edit, unchanged, is then tested on the Bengali v2 test set
+with the same conditions and metrics. That transfer result is reported beside the Hindi result and is not part of the pass rule.

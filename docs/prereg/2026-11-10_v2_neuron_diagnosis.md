@@ -67,3 +67,10 @@ These readings are descriptive. Only the selected-set rule and the gate decide w
 - **Edit layer:** among late-layer neurons in the selected set (layers 24 to 35), the layer with the largest summed attribution. If the selected set has no
   late neurons, the layer with the largest summed attribution overall.
 - **Columns:** the selected-set neurons in that layer, minus multi-role neurons, topped up to k by attribution rank within that layer.
+
+## Addenda
+
+### 2026-11-11: Hindi only
+
+All attribution, patching and selection use Hindi. Bengali is not analysed in this phase, so Holm correction across languages no longer applies. The
+selected-set rule and the gate are applied to Hindi alone.

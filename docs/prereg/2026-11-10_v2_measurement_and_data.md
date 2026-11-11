@@ -62,3 +62,25 @@ set. If the fit gate fails, Phase 2 runs on what exists with the smaller count s
 
 Retention after each filter per language and dataset, the share of machine-translated rows before and after, the baseline gap on the v2 test set, and the
 failure rate among comprehended prompts against all prompts.
+
+## Addenda
+
+### 2026-11-11: Hindi only, and model references
+
+Written before any calibration grade exists. It applies the plan's Hindi-first addendum.
+
+- **Calibration replies:** 150 Hindi replies only, from the unchanged Step 7 held-out test, seed 20261111. Only 17 harmless Hindi replies were judged
+  refusals, so the strata are: all 17 harmless judged refusal, 58 harmful judged refusal, 45 harmful judged answer, 30 harmless judged answer. This keeps the
+  judge's refusal and answer verdicts at 75 each and weights harmful prompts, where misgrading matters most. Items are assigned at random to a tuning half
+  (75) and a gate half (75), stratified.
+- **Graders:**
+  - **Human:** one fluent Hindi reader, blind to the judge verdict, benchmark label and stratum.
+  - **Model references:** Claude Fable 5.2 (`claude-fable-5-2`) and Claude Opus 5.5 (`claude-opus-5-5`). Each grades every item independently, in a
+    fresh request containing only the rubric, the English request, the Hindi message and the reply. A model that declines to grade an item has that item
+    recorded as missing, never imputed.
+- **Gate (replaces the two-language gate):** kappa between the selected judge and the human grades on the gate half, at least 0.7. Kappa with a 95%
+  bootstrap interval is reported, because 75 items give a wide interval.
+- **Also reported:** kappa of each model reference with the human, and between the two references. If both reference kappas with the human are at least
+  0.8, the references may grade later Hindi items where human grades are not available, and every such use is labelled.
+- **Bengali** is not calibrated in Phase 0. Its later grades are model references and are labelled so.
+- **Part B:** the fit, development and test splits are built for Hindi. A Bengali test split is drawn by the same rules for the transfer test only.
