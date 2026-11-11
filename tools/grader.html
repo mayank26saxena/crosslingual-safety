@@ -59,6 +59,11 @@ details summary { cursor: pointer; color: var(--muted); font-size: 13px; }
 <header>
   <h1>Refusal grader</h1>
   <div class="progress"><span id="count">No file loaded</span><div class="bar"><i id="barfill"></i></div></div>
+  <button id="speak" disabled title="Read the reply aloud (L)">🔊 Read reply <kbd>L</kbd></button>
+  <label class="help" title="Read each new reply automatically"><input type="checkbox" id="autoSpeak"> Auto-read</label>
+  <select id="rate" title="Reading speed" aria-label="Reading speed">
+    <option value="0.85">0.85×</option><option value="1" selected>1×</option><option value="1.2">1.2×</option><option value="1.4">1.4×</option><option value="1.7">1.7×</option>
+  </select>
   <button id="nextUngraded" disabled title="Jump to the next item without a verdict">Next ungraded</button>
   <button id="export" disabled>Export CSV</button>
 </header>
@@ -90,6 +95,7 @@ details summary { cursor: pointer; color: var(--muted); font-size: 13px; }
       <p class="label">Assistant's reply</p>
       <p class="text reply" id="reply"></p>
       <p class="cut">Replies are cut at 400 tokens and may end mid-sentence. Grade what is shown.</p>
+      <p class="cut" id="voiceNote"></p>
     </div>
 
     <div class="card">
@@ -234,6 +240,40 @@ document.addEventListener("keydown", e => {
   else if (k === "u") set("c", "unsure", false);
   else if (e.key === "ArrowRight") go(1);
   else if (e.key === "ArrowLeft") go(-1);
+});
+// Read-aloud. Uses a voice installed on this computer when one exists, so the text is not sent anywhere.
+let hindiVoice = null;
+function pickVoice() {
+  const vs = (window.speechSynthesis && speechSynthesis.getVoices()) || [];
+  const hi = vs.filter(v => /^hi/i.test(v.lang));
+  hindiVoice = hi.find(v => v.localService) || null;
+  const note = document.getElementById("voiceNote");
+  if (hindiVoice) note.textContent = `Read-aloud voice: ${hindiVoice.name} (on this computer).`;
+  else if (hi.length) note.textContent = "Only an online Hindi voice is available, which would send the text to the browser's speech service, so read-aloud is off. Install a Hindi voice: System Settings › Accessibility › Spoken Content › System voice › Manage Voices › Hindi, then reload.";
+  else note.textContent = "No Hindi voice found. Install one: System Settings › Accessibility › Spoken Content › System voice › Manage Voices › Hindi (for example Lekha), then reload this page.";
+}
+if (window.speechSynthesis) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+const clean = t => t.replace(/�/g, "").replace(/[#*|>`_~]+/g, " ").replace(/-{3,}/g, " ").replace(/\s+/g, " ").trim();
+function stopSpeaking() { if (window.speechSynthesis) speechSynthesis.cancel(); }
+function speakReply() {
+  if (!window.speechSynthesis || !hindiVoice || !rows.length) return;
+  if (speechSynthesis.speaking) { stopSpeaking(); return; }
+  const u = new SpeechSynthesisUtterance(clean(rows[idx].reply_hindi));
+  u.voice = hindiVoice; u.lang = hindiVoice.lang; u.rate = parseFloat(document.getElementById("rate").value);
+  speechSynthesis.speak(u);
+}
+document.getElementById("speak").onclick = speakReply;
+try { document.getElementById("autoSpeak").checked = localStorage.getItem(KEY_PREFIX + "auto") === "1"; } catch {}
+document.getElementById("autoSpeak").onchange = e => { try { localStorage.setItem(KEY_PREFIX + "auto", e.target.checked ? "1" : "0"); } catch {} };
+const _render = render;
+render = function () {
+  stopSpeaking(); _render();
+  document.getElementById("speak").disabled = !hindiVoice;
+  if (document.getElementById("autoSpeak").checked) setTimeout(speakReply, 150);
+};
+document.addEventListener("keydown", e => {
+  if (!rows.length || e.target.tagName === "TEXTAREA" || e.metaKey || e.ctrlKey) return;
+  if (e.key.toLowerCase() === "l") speakReply();
 });
 window.addEventListener("beforeunload", e => { if (rows.length && Object.keys(grades).length) save(); });
 </script>
