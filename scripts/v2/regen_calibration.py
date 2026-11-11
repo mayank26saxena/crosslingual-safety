@@ -7,7 +7,7 @@ Stages:
   python scripts/v2/regen_calibration.py prompts            local: writes notes/hindi_calibration/regen_prompts.jsonl
   python regen_calibration.py generate IN OUT [--limit N]    pod: greedy replies, resumable, one JSON line per item
   python scripts/v2/regen_calibration.py sheet REPLIES      local: writes notes/hindi_calibration/hindi_calibration_sheet_1024.csv
-  python scripts/v2/regen_calibration.py model_sheet HI EN  local: one shuffled 300-row sheet (Hindi and English) for model graders
+  python scripts/v2/regen_calibration.py model_sheet HI EN [EXT_HI EXT_EN]  local: one shuffled sheet (Hindi and English) for model graders
 
 English counterparts (exploratory, for the paired English-Hindi comparison): the prompts stage also writes regen_prompts_en.jsonl, the
 English version of each item (same task), and `generate ... --max-new 512` produces greedy English replies at the specification's English limit.
@@ -115,26 +115,40 @@ def sheet(replies):
     print(f"{n} items; hit the 1,024-token limit: {hit} ({100 * hit / n:.1f}%); median new tokens {toks[n // 2]}")
 
 
-def model_sheet(hi_replies, en_replies):
-    """One blind sheet for model graders: 150 Hindi and 150 English replies, shuffled, with ids that hide language pairing."""
+def model_sheet(hi_replies, en_replies, ext_hi=None, ext_en=None):
+    """One blind sheet for model graders: 150 Hindi and 150 English replies, shuffled, with ids that hide language pairing.
+
+    With ext_hi and ext_en (the truncation check), the extended full-length versions of replies that hit the limit are added as extra rows.
+    """
     import random
     hi = {json.loads(l)["item"]: json.loads(l) for l in open(hi_replies, encoding="utf-8")}
     en = {json.loads(l)["item"]: json.loads(l) for l in open(en_replies, encoding="utf-8")}
+    ext = {}
+    for lang, path in (("hi", ext_hi), ("en", ext_en)):
+        if path:
+            for l in open(path, encoding="utf-8"):
+                d = json.loads(l)
+                base = (hi if lang == "hi" else en)[d["item"]]
+                if not base["hit_limit"]:
+                    raise SystemExit(f"{d['item']} {lang}: extended but the base reply did not hit the limit")
+                ext[(d["item"], lang)] = d
     ph = {json.loads(l)["item"]: json.loads(l) for l in open(CAL / "regen_prompts.jsonl", encoding="utf-8")}
     pe = {json.loads(l)["item"]: json.loads(l) for l in open(CAL / "regen_prompts_en.jsonl", encoding="utf-8")}
     if not (set(hi) == set(en) == set(ph) == set(pe)) or len(hi) != 150:
         raise SystemExit("replies or prompts incomplete")
-    rows = [(k, "hi", ph[k], hi[k]) for k in hi] + [(k, "en", pe[k], en[k]) for k in en]
+    rows = [(k, "hi", ph[k], hi[k], "base") for k in hi] + [(k, "en", pe[k], en[k], "base") for k in en]
+    rows += [(k, lang, ph[k] if lang == "hi" else pe[k], d, "extended") for (k, lang), d in sorted(ext.items())]
     random.Random(20261112).shuffle(rows)
     key = {}
     with open(CAL / "model_grading_sheet_1024.csv", "w", encoding="utf-8-sig", newline="") as f:
         w = csv.writer(f)
         w.writerow(["item", "request_english", "message", "reply"])
-        for i, (k, lang, p, r) in enumerate(rows, 1):
+        for i, (k, lang, p, r, version) in enumerate(rows, 1):
             rid = f"R{i:03d}"
             user = next(m["content"] for m in p["messages"] if m["role"] == "user")
             w.writerow([rid, p["hidden_fact"], user, r["reply"]])
-            key[rid] = dict(pair=k, lang=lang, hit_limit=r["hit_limit"], n_new_tokens=r["n_new_tokens"])
+            key[rid] = dict(pair=k, lang=lang, version=version, max_new_tokens=r["max_new_tokens"], hit_limit=r["hit_limit"],
+                            n_new_tokens=r["n_new_tokens"])
     (CAL / "model_grading_key_1024.json").write_text(json.dumps(key, indent=1), encoding="utf-8")
     print(f"{len(rows)} rows in the model grading sheet")
 
@@ -151,4 +165,4 @@ if __name__ == "__main__":
     elif cmd == "sheet":
         sheet(sys.argv[2])
     elif cmd == "model_sheet":
-        model_sheet(sys.argv[2], sys.argv[3])
+        model_sheet(*sys.argv[2:6])
