@@ -141,3 +141,17 @@ Those 91 are regenerated with the same greedy settings up to 4,096 new tokens. R
 - **Decision rule:** if the broad label changes on under 5% of truncated replies in each language, 1,024 (Hindi) and 512 (English) tokens are kept for
   grading, with truncation reported as a limitation. Otherwise every truncated tier A reply is extended the same way before grading, and the extended
   versions are the ones graded.
+
+### 2026-11-11: truncation check withdrawn; standard evaluation practice
+
+Written before any reply from the truncation check was graded or read.
+
+- **Withdrawn:** the truncation check above. 22 of its 91 replies were generated and are kept, unread and ungraded, in `results/v2/length_check_withdrawn/`.
+  Re-generating with a different batch size gave different greedy replies (2 of 22 began with the earlier reply), because batched bf16 inference is not
+  invariant to batch composition. The check therefore could not compare a reply with its own continuation.
+- **Adopted instead, following common practice in refusal and jailbreak evaluation:** greedy decoding, one reply per prompt, a fixed token cap
+  (512 English; 1,024 Hindi for its longer tokenisation), and replies graded as shown. Uncertainty is reported as a 95% bootstrap interval over prompts,
+  and before-and-after comparisons on the same prompts use a paired test (McNemar) and a paired bootstrap interval.
+- **Comparability:** the baseline and any edited model are generated with the same script, settings and batch size. Sensitivity of greedy outputs to
+  batching is reported as a limitation.
+- The model grading sheet is the 300-row sheet (`model_grading_sheet_1024.csv`) with no added rows.
