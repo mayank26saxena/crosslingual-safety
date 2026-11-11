@@ -61,6 +61,7 @@ details summary { cursor: pointer; color: var(--muted); font-size: 13px; }
   <div class="progress"><span id="count">No file loaded</span><div class="bar"><i id="barfill"></i></div></div>
   <button id="speak" disabled title="Read the reply aloud (L)">🔊 Read reply <kbd>L</kbd></button>
   <label class="help" title="Read each new reply automatically"><input type="checkbox" id="autoSpeak"> Auto-read</label>
+  <select id="voicePick" title="Hindi voice" aria-label="Hindi voice"></select>
   <select id="rate" title="Reading speed" aria-label="Reading speed">
     <option value="0.85">0.85×</option><option value="1" selected>1×</option><option value="1.2">1.2×</option><option value="1.4">1.4×</option><option value="1.7">1.7×</option>
   </select>
@@ -242,24 +243,36 @@ document.addEventListener("keydown", e => {
   else if (e.key === "ArrowLeft") go(-1);
 });
 // Read-aloud. Uses a voice installed on this computer when one exists, so the text is not sent anywhere.
+// Only on-device Hindi voices are offered. The voice is looked up again on every use, because the browser's voice
+// objects go stale when the system's voice list changes, and a stale voice silently falls back to the default (English) one.
 let hindiVoice = null;
+const localHindi = () => ((window.speechSynthesis && speechSynthesis.getVoices()) || [])
+  .filter(v => /^hi([-_]|$)/i.test(v.lang) && v.localService);
+const voiceKey = v => v.voiceURI || v.name;
 function pickVoice() {
-  const vs = (window.speechSynthesis && speechSynthesis.getVoices()) || [];
-  const hi = vs.filter(v => /^hi/i.test(v.lang));
-  hindiVoice = hi.find(v => v.localService) || null;
-  const note = document.getElementById("voiceNote");
-  if (hindiVoice) note.textContent = `Read-aloud voice: ${hindiVoice.name} (on this computer).`;
-  else if (hi.length) note.textContent = "Only an online Hindi voice is available, which would send the text to the browser's speech service, so read-aloud is off. Install a Hindi voice: System Settings › Accessibility › Spoken Content › System voice › Manage Voices › Hindi, then reload.";
-  else note.textContent = "No Hindi voice found. Install one: System Settings › Accessibility › Spoken Content › System voice › Manage Voices › Hindi (for example Lekha), then reload this page.";
+  const hi = localHindi(), sel = document.getElementById("voicePick"), note = document.getElementById("voiceNote");
+  let saved = null; try { saved = localStorage.getItem(KEY_PREFIX + "voice"); } catch {}
+  const current = sel.value || saved;
+  sel.innerHTML = "";
+  hi.forEach(v => { const o = document.createElement("option"); o.value = voiceKey(v); o.textContent = v.name; sel.appendChild(o); });
+  hindiVoice = hi.find(v => voiceKey(v) === current) || hi[0] || null;
+  if (hindiVoice) sel.value = voiceKey(hindiVoice);
+  sel.hidden = hi.length < 2;
+  note.textContent = hindiVoice ? `Read-aloud voice: ${hindiVoice.name} (${hindiVoice.lang}, on this computer).`
+    : "No on-device Hindi voice found, so read-aloud is off. Install one: System Settings › Accessibility › Spoken Content › System voice › Manage Voices › Hindi, then reload this page.";
+  const btn = document.getElementById("speak"); if (btn) btn.disabled = !hindiVoice || !rows.length;
 }
 if (window.speechSynthesis) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+document.getElementById("voicePick").onchange = e => { try { localStorage.setItem(KEY_PREFIX + "voice", e.target.value); } catch {} pickVoice(); };
 const clean = t => t.replace(/�/g, "").replace(/[#*|>`_~]+/g, " ").replace(/-{3,}/g, " ").replace(/\s+/g, " ").trim();
 function stopSpeaking() { if (window.speechSynthesis) speechSynthesis.cancel(); }
 function speakReply() {
-  if (!window.speechSynthesis || !hindiVoice || !rows.length) return;
-  if (speechSynthesis.speaking) { stopSpeaking(); return; }
+  if (!window.speechSynthesis || !rows.length) return;
+  if (speechSynthesis.speaking || speechSynthesis.pending) { stopSpeaking(); return; }
+  pickVoice();  // fresh voice object every time
+  if (!hindiVoice) return;
   const u = new SpeechSynthesisUtterance(clean(rows[idx].reply_hindi));
-  u.voice = hindiVoice; u.lang = hindiVoice.lang; u.rate = parseFloat(document.getElementById("rate").value);
+  u.voice = hindiVoice; u.lang = "hi-IN"; u.rate = parseFloat(document.getElementById("rate").value);
   speechSynthesis.speak(u);
 }
 document.getElementById("speak").onclick = speakReply;
@@ -268,7 +281,7 @@ document.getElementById("autoSpeak").onchange = e => { try { localStorage.setIte
 const _render = render;
 render = function () {
   stopSpeaking(); _render();
-  document.getElementById("speak").disabled = !hindiVoice;
+  pickVoice();
   if (document.getElementById("autoSpeak").checked) setTimeout(speakReply, 150);
 };
 document.addEventListener("keydown", e => {
