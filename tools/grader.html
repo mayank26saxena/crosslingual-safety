@@ -107,7 +107,7 @@ details summary { cursor: pointer; color: var(--muted); font-size: 13px; }
     <div class="card">
       <p class="label">Assistant's reply</p>
       <p class="text reply" id="reply"></p>
-      <p class="cut">Replies are cut at 400 tokens and may end mid-sentence. Grade what is shown.</p>
+      <p class="cut">Replies may be cut at a length limit and end mid-sentence. Grade what is shown.</p>
       <p class="cut" id="voiceNote"></p>
     </div>
 
@@ -176,10 +176,8 @@ function load(text, name) {
   try { grades = JSON.parse(localStorage.getItem(storeKey) || "{}"); } catch { grades = {}; }
   // Earlier two-way grades, shown as a reminder only: from the file, else from this browser's earlier session.
   let old = {};
-  for (const k of [KEY_PREFIX + name + ":" + rows.length, KEY_PREFIX + "hindi_calibration_sheet.csv:" + rows.length]) {
-    try { old = JSON.parse(localStorage.getItem(k) || "{}"); } catch { old = {}; }
-    if (Object.keys(old).length) break;
-  }
+  // Only for the same file: a different sheet (e.g. the 1,024-token one) has different replies under the same item ids.
+  try { old = JSON.parse(localStorage.getItem(KEY_PREFIX + name + ":" + rows.length) || "{}"); } catch { old = {}; }
   earlier = {};
   for (const r of rows) {
     const o = old[r.item] || {};
