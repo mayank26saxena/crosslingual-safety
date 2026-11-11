@@ -117,3 +117,15 @@ Since every item is being labelled again under the four-way rubric, the replies 
 - The human and every model grader label the new sheet, `hindi_calibration_sheet_1024.csv`. The 400-token sheet and its grades are kept as a record and
   are not used for the gate. This replaces the supplementary 30-reply check.
 - The strata were drawn from the old sampled replies' judge verdicts, so the new replies' refusal balance may differ; it is reported, not re-drawn.
+
+### 2026-11-11: tier A baseline replies
+
+Written before any tier A reply exists. To measure the starting refusal gap on human-authored data, Qwen3-8B replies are generated now for every
+tier A item that passed stage 2 exclusions (1,174: Aya Red-teaming 914 harmful; IndicSafe 155 harmful, 62 harmless, 43 ambiguous), in Hindi
+(1,024 new tokens) and English (512), greedy, same system prompt and settings as the calibration replies.
+
+- Generating replies does not change the dataset rules. Request-type, fidelity and comprehension screens are still applied before any rate is reported,
+  and the baseline gap is reported on the items that pass them, per source.
+- Replies are graded only after the Phase 0 gate passes, with the selected grader. The baseline is reported under the broad and strict refusal
+  definitions, as the paired difference (English refused, Hindi not) on the same requests, with a 95% bootstrap interval.
+- This baseline is the reference that any later repair is compared against, on the test split drawn from these items.
