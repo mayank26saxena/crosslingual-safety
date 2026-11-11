@@ -108,3 +108,22 @@ Paired bootstrap over triples (1,000 resamples), Holm across Hindi and Bengali. 
 ## Compute
 
 Fitting and selection need forward passes only. They may run on a GPU pod or locally, and the report states where. Test generation and grading need a GPU.
+
+## Addenda
+
+### 2026-11-10: v2 data, layer and columns
+
+Written the same day, before any Step 9 code, activation or reply. It applies the restart plan (`docs/plan/2026-11-10_restart.md`). Everything not named
+here stays as written above.
+
+- **Data:** fit, development and test sets are the v2 Phase 1 splits, replacing the Step 7 discovery and development triples and the Step 8 test draw.
+  The BanglaShield Bengali-only set is a secondary test. The Step 8 test draw is no longer used.
+- **Teacher:** unchanged, the unedited first-token distribution on the matched English prompt.
+- **Layer and columns:** from Phase 2 (`2026-11-10_v2_neuron_diagnosis.md`, "What passes to Phase 3"), with k in {256, 1024}. The layer grid {30, 33, 35}
+  and the activation-based column choice are used only if the Phase 2 gate fails, and the report says so.
+- **Measure:** the judge selected in Phase 0. If the Phase 0 gate fails, the test does not run.
+- **Added secondary arm:** a gradient fine-tune of the same columns of the same matrix only, on the same fit rows, target and protected text (KL to the teacher plus
+  KL on protected positions, Adam, learning rate 1e-4, 200 steps, batch 16). It is reported beside the closed-form edit, with the same controls, and is not
+  part of the pass rule.
+- **Departure, restated:** no activation intervention has passed on this model. Phase 2 patching that meets its rule is the causal evidence the plan asks
+  for, and the Phase 3 report states which applied.
