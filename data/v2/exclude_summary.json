@@ -1,0 +1,202 @@
+{
+ "input": 43285,
+ "kept": 35786,
+ "removed": 7499,
+ "bengali_text_dropped_wrong_script": 160,
+ "near_duplicate_links": 799,
+ "sealed_text_count": 330,
+ "v1_text_count": 12360,
+ "v1_files_read": {
+  "baseline_items.jsonl": 4160,
+  "gated_items.jsonl": 6330,
+  "gated2_items.jsonl": 1500,
+  "multijail_bn.jsonl": 300,
+  "multijail_en.jsonl": 300,
+  "multijail_gap.jsonl": 600,
+  "multijail_sw.jsonl": 300,
+  "xstest_safe_bn.jsonl": 500,
+  "xstest_safe_en.jsonl": 500
+ },
+ "removed_by_tier_source_reason": [
+  {
+   "tier": "A",
+   "source": "aya_redteaming",
+   "reason": "duplicate",
+   "n": 1
+  },
+  {
+   "tier": "A",
+   "source": "indicsafe",
+   "reason": "used_in_v1",
+   "n": 237
+  },
+  {
+   "tier": "A",
+   "source": "surakshaeval",
+   "reason": "used_in_v1",
+   "n": 116
+  },
+  {
+   "tier": "B",
+   "source": "indicguard_culture",
+   "reason": "duplicate",
+   "n": 170
+  },
+  {
+   "tier": "B",
+   "source": "indicguard_culture",
+   "reason": "no_devanagari",
+   "n": 6
+  },
+  {
+   "tier": "B",
+   "source": "indicguard_culture",
+   "reason": "sealed",
+   "n": 1
+  },
+  {
+   "tier": "B",
+   "source": "indicguard_culture",
+   "reason": "used_in_v1",
+   "n": 741
+  },
+  {
+   "tier": "C",
+   "source": "indicguard_generic",
+   "reason": "duplicate",
+   "n": 1083
+  },
+  {
+   "tier": "C",
+   "source": "indicguard_generic",
+   "reason": "empty",
+   "n": 6
+  },
+  {
+   "tier": "C",
+   "source": "indicguard_generic",
+   "reason": "no_devanagari",
+   "n": 6
+  },
+  {
+   "tier": "C",
+   "source": "indicguard_generic",
+   "reason": "sealed",
+   "n": 18
+  },
+  {
+   "tier": "C",
+   "source": "indicguard_generic",
+   "reason": "used_in_v1",
+   "n": 2176
+  },
+  {
+   "tier": "C",
+   "source": "indicguard_jailbreak",
+   "reason": "duplicate",
+   "n": 2185
+  },
+  {
+   "tier": "C",
+   "source": "indicguard_jailbreak",
+   "reason": "used_in_v1",
+   "n": 114
+  },
+  {
+   "tier": "C",
+   "source": "mhh",
+   "reason": "used_in_v1",
+   "n": 639
+  }
+ ],
+ "kept_by_tier_source_label": [
+  {
+   "tier": "A",
+   "source": "aya_redteaming",
+   "label": "harmful",
+   "n": 914
+  },
+  {
+   "tier": "A",
+   "source": "indicsafe",
+   "label": "ambiguous",
+   "n": 43
+  },
+  {
+   "tier": "A",
+   "source": "indicsafe",
+   "label": "harmful",
+   "n": 155
+  },
+  {
+   "tier": "A",
+   "source": "indicsafe",
+   "label": "harmless",
+   "n": 62
+  },
+  {
+   "tier": "B",
+   "source": "indicguard_culture",
+   "label": "harmful",
+   "n": 4659
+  },
+  {
+   "tier": "B",
+   "source": "indicguard_culture",
+   "label": "harmless",
+   "n": 1958
+  },
+  {
+   "tier": "C",
+   "source": "indicguard_generic",
+   "label": "harmful",
+   "n": 7081
+  },
+  {
+   "tier": "C",
+   "source": "indicguard_generic",
+   "label": "harmless",
+   "n": 9321
+  },
+  {
+   "tier": "C",
+   "source": "indicguard_jailbreak",
+   "label": "harmful",
+   "n": 5967
+  },
+  {
+   "tier": "C",
+   "source": "indicguard_jailbreak",
+   "label": "harmless",
+   "n": 3734
+  },
+  {
+   "tier": "C",
+   "source": "mhh",
+   "label": "harmful",
+   "n": 98
+  },
+  {
+   "tier": "C",
+   "source": "mhh",
+   "label": "harmless",
+   "n": 95
+  },
+  {
+   "tier": "C",
+   "source": "polyguard",
+   "label": "harmful",
+   "n": 754
+  },
+  {
+   "tier": "C",
+   "source": "polyguard",
+   "label": "harmless",
+   "n": 945
+  }
+ ],
+ "kept_groups": 35336,
+ "largest_kept_group": 24,
+ "groups_over_10_items": 2,
+ "pilot_read": false
+}

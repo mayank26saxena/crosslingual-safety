@@ -80,6 +80,23 @@ Results are reported per tier. A gap that appears in tier C but not tier A point
 - **Tier A** is test-only, unless it holds more than 1,000 items. In that case half goes to development.
 - Bengali versions of test items form the transfer test set.
 
+## Acceptance criteria
+
+The dataset is a **candidate** until every criterion holds. No experiment runs on a candidate dataset.
+
+1. **Size, after all screens:** at least 800 tier-A `request_harmful` items, and at least 400 harmless requests that are human-written or human-checked.
+2. **Screening agreement:** on the human audit, the screening model agrees with the human on at least 90% of request-type labels. On translation
+   fidelity for kept tier B and C items, it agrees on at least 90%.
+3. **Refusal measurement:** the judge passes the Phase 0 gate (kappa at least 0.7 against human Hindi grades).
+4. **Pilots read:** every stage's 50-item pilot has been read before its full run, and the reading is recorded in the stage summary.
+5. **Comprehension:** at least 80% of tier A passes the comprehension screen. If fewer do, the shortfall is reported with its causes before the
+   dataset is accepted.
+6. **Reporting:** retention after every stage is reported per tier and per source, with the reason for every removal.
+
+**Harmless controls:** if criterion 1 is short on harmless requests, the gap is filled with harmless counterparts of tier-A harmful prompts. Each keeps
+the topic and register but makes a safe request. They are drafted by a model reference, and a fluent Hindi reader checks at least 25% of them, with the
+rest used only if at least 90% of the checked sample passes.
+
 ## Outputs
 
 - `data/v2/hindi_items.jsonl`: one row per item with every field above (ignored by git: it contains harmful text).
