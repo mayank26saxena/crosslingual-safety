@@ -1,0 +1,186 @@
+{
+ "total": 43285,
+ "dropped": {
+  "no_prompt_label": 990,
+  "polyguard_no_label": 26
+ },
+ "checks": {
+  "length_ratio_outside_0.4_to_3": 63,
+  "hindi_without_devanagari": 20,
+  "bengali_without_bengali_script": 160,
+  "empty_text": 6,
+  "duplicate_item_ids": 0
+ },
+ "by_tier_source_label_has_bengali": [
+  {
+   "tier": "A",
+   "source": "aya_redteaming",
+   "label": "harmful",
+   "has_bengali": false,
+   "n": 915
+  },
+  {
+   "tier": "A",
+   "source": "indicsafe",
+   "label": "ambiguous",
+   "has_bengali": true,
+   "n": 45
+  },
+  {
+   "tier": "A",
+   "source": "indicsafe",
+   "label": "harmful",
+   "has_bengali": true,
+   "n": 330
+  },
+  {
+   "tier": "A",
+   "source": "indicsafe",
+   "label": "harmless",
+   "has_bengali": true,
+   "n": 122
+  },
+  {
+   "tier": "A",
+   "source": "surakshaeval",
+   "label": "unlabelled_sensitive",
+   "has_bengali": false,
+   "n": 116
+  },
+  {
+   "tier": "B",
+   "source": "indicguard_culture",
+   "label": "harmful",
+   "has_bengali": true,
+   "n": 5289
+  },
+  {
+   "tier": "B",
+   "source": "indicguard_culture",
+   "label": "harmless",
+   "has_bengali": true,
+   "n": 2246
+  },
+  {
+   "tier": "C",
+   "source": "indicguard_generic",
+   "label": "harmful",
+   "has_bengali": true,
+   "n": 8604
+  },
+  {
+   "tier": "C",
+   "source": "indicguard_generic",
+   "label": "harmless",
+   "has_bengali": false,
+   "n": 2
+  },
+  {
+   "tier": "C",
+   "source": "indicguard_generic",
+   "label": "harmless",
+   "has_bengali": true,
+   "n": 11085
+  },
+  {
+   "tier": "C",
+   "source": "indicguard_jailbreak",
+   "label": "harmful",
+   "has_bengali": true,
+   "n": 7238
+  },
+  {
+   "tier": "C",
+   "source": "indicguard_jailbreak",
+   "label": "harmless",
+   "has_bengali": true,
+   "n": 4762
+  },
+  {
+   "tier": "C",
+   "source": "mhh",
+   "label": "harmful",
+   "has_bengali": true,
+   "n": 416
+  },
+  {
+   "tier": "C",
+   "source": "mhh",
+   "label": "harmless",
+   "has_bengali": true,
+   "n": 416
+  },
+  {
+   "tier": "C",
+   "source": "polyguard",
+   "label": "harmful",
+   "has_bengali": false,
+   "n": 754
+  },
+  {
+   "tier": "C",
+   "source": "polyguard",
+   "label": "harmless",
+   "has_bengali": false,
+   "n": 945
+  }
+ ],
+ "provenance": {
+  "aya_redteaming": {
+   "tier": "A",
+   "hi_authorship": "written by paid native annotators",
+   "en_authorship": "human translation by the annotators (semantic if given, else literal)",
+   "label_source": "human",
+   "doc": "data/external/aya_redteaming/README.md; arXiv 2406.18682"
+  },
+  "indicsafe": {
+   "tier": "A",
+   "hi_authorship": "human translation of English prompts",
+   "en_authorship": "original",
+   "label_source": "dataset category",
+   "doc": "IndicSafe paper, arXiv 2603.17915"
+  },
+  "surakshaeval": {
+   "tier": "A",
+   "hi_authorship": "human-written",
+   "en_authorship": "provided English version",
+   "label_source": "none: every item is a sensitive question, harm not labelled per item",
+   "doc": "SurakshaEval, AIES"
+  },
+  "indicguard_culture": {
+   "tier": "B",
+   "hi_authorship": "Hindi-origin, adapted with an LLM-based cultural adaptation method (CultureGuard)",
+   "en_authorship": "Google translation from Hindi",
+   "label_source": "human (prompt_label_source field)",
+   "doc": "data/external/indicguard/README.md; arXiv 2508.01710"
+  },
+  "indicguard_generic": {
+   "tier": "C",
+   "hi_authorship": "Google translation from English",
+   "en_authorship": "original",
+   "label_source": "human (prompt_label_source field)",
+   "doc": "data/external/indicguard/README.md"
+  },
+  "indicguard_jailbreak": {
+   "tier": "C",
+   "hi_authorship": "Google translation from English",
+   "en_authorship": "original",
+   "label_source": "LLM jury (prompt_label_source field)",
+   "doc": "data/external/indicguard/README.md"
+  },
+  "mhh": {
+   "tier": "C",
+   "hi_authorship": "machine translation, partly checked",
+   "en_authorship": "original",
+   "label_source": "dataset type column",
+   "doc": "Multilingual Harmless-Harmful dataset card"
+  },
+  "polyguard": {
+   "tier": "C",
+   "hi_authorship": "machine translation verified by humans",
+   "en_authorship": "original (WildGuardTest)",
+   "label_source": "human annotation on the English version, 2 or 3 of 3 annotators agreeing",
+   "doc": "data/external/polyguard/README.md; arXiv 2504.04377"
+  }
+ }
+}
