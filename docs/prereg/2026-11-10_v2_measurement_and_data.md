@@ -91,5 +91,6 @@ Part B is replaced by `docs/plan/2026-11-11_hindi_dataset_spec.md`, written befo
 tiers, a human audit of the screening model, and per-tier reporting.
 
 Behaviour labels and all v2 test generations use 1,024 new tokens for Hindi, Bengali and romanised Hindi, and 512 for English. The share of
-replies that hit the limit is reported. The Phase 0 calibration sheet keeps its 400-token replies, because the judge is calibrated on replies of the same
-kind it later grades, and Phase 0 also reports judge agreement separately on replies that hit the limit.
+replies that hit the limit is reported. The Phase 0 calibration sheet keeps its existing 400-token replies, so it needs no new generation. Because v2
+replies are longer, a supplementary check is added once a GPU is available: 30 calibration prompts are regenerated at 1,024 tokens and graded by the same
+human and judge, and the judge's agreement on them is reported beside the gate. Phase 0 also reports agreement separately on replies that hit the limit.
