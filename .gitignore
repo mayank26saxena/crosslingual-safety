@@ -33,3 +33,7 @@ data/manifest/manifest.jsonl
 data/rendered/baseline_items.jsonl
 data/rendered/gated_items.jsonl
 data/rendered/gated2_items.jsonl
+# v2 dataset items contain harmful text; only summaries are tracked
+data/v2/*.jsonl
+data/external/aya_redteaming/
+data/external/polyguard/

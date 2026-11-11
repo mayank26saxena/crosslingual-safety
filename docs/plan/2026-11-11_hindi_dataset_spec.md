@@ -14,7 +14,7 @@ Inventory of the manifest's 37,108 Hindi rows:
 | Source | Hindi rows | Authorship | Concern |
 |---|---:|---|---|
 | IndicGuard | 28,329 | Google-translated from English | Translation quality unknown |
-| IndicGuard, culture-adaptive subset | 7,334 | Recorded as Hindi-source by our manifest builder | Assumed, not verified against the dataset's documentation |
+| IndicGuard, culture-adaptive subset | 7,334 | Hindi-origin per the dataset README, then machine-translated to other languages; built with the CultureGuard method, which adapts English safety data with LLMs | Hindi-origin but most likely LLM-adapted, not human-written. The English side is a translation |
 | Multilingual Harmless-Harmful | 832 | Machine-translated, partly checked | Small |
 | IndicSafe | 497 | Human-translated | Only verified human-translated source |
 | SurakshaEval | 116 | Human-written | Labels unverified |
@@ -42,8 +42,8 @@ One item is a request with an English version and a Hindi version, plus Bengali 
 
 | Tier | Contents | Role |
 |---|---|---|
-| A, native or human-translated | IndicSafe; SurakshaEval, after label review; a published native-written Hindi red-teaming set, if approved for download | Primary test set: no machine-translation artefacts |
-| B, verified Hindi-source | IndicGuard culture-adaptive rows, only if the source documentation confirms Hindi authorship | Test and fit |
+| A, human-authored | Aya Red-teaming Hindi (prompts written by paid native annotators, with human literal and semantic English translations); IndicSafe (human-translated); SurakshaEval (human-written), after label review | Primary test set: no machine-translation artefacts |
+| B, Hindi-origin, LLM-adapted | IndicGuard culture-adaptive rows (human prompt labels) | Test and fit, reported separately from A |
 | C, machine-translated, screened | IndicGuard and Multilingual Harmless-Harmful translations that pass every screen | Fit and development; a secondary test set |
 
 Results are reported per tier. A gap that appears in tier C but not tier A points to translation, not safety.
@@ -88,7 +88,7 @@ Results are reported per tier. A gap that appears in tier C but not tier A point
 
 ## Open items before construction
 
-1. Confirm from the IndicGuard paper or card whether the culture-adaptive subset was written in Hindi.
+1. Done, 2026-11-11: IndicGuard's README states culture-adaptive content was sourced in Hindi; its cited method (CultureGuard) adapts data with LLMs, so it is tier B, not A. Prompt labels are human for the generic and culture-adaptive subsets and LLM-jury for the jailbreaking subset, which is excluded from tier C labels unless re-screened.
 2. Approval to download a native-written Hindi red-teaming set and the PolyGuard Hindi evaluation data. Sizes and licences are checked first.
 3. API access and a cost estimate for model-reference screening, measured on a 100-item sample before any bulk run.
 4. A 100-item human audit sheet for request type and translation fidelity, built the same way as the calibration sheet.
