@@ -1,0 +1,94 @@
+# Specification: a Hindi refusal-gap dataset
+
+**Date:** 2026-11-11. **Status:** the construction rules below are fixed before any item is screened or any reply is generated under them. This dataset is
+the first deliverable of plan v2 and comes before diagnosis or repair.
+
+**Purpose:** paired English and Hindi requests, plus Bengali for the transfer test and romanised Hindi as a supplement. Each item is checked to be a real
+request, faithfully translated, understood by the model, and labelled with provenance. This lets a refusal gap be measured without translation artefacts,
+label noise or truncation driving the result.
+
+## What the current data shows
+
+Inventory of the manifest's 37,108 Hindi rows:
+
+| Source | Hindi rows | Authorship | Concern |
+|---|---:|---|---|
+| IndicGuard | 28,329 | Google-translated from English | Translation quality unknown |
+| IndicGuard, culture-adaptive subset | 7,334 | Recorded as Hindi-source by our manifest builder | Assumed, not verified against the dataset's documentation |
+| Multilingual Harmless-Harmful | 832 | Machine-translated, partly checked | Small |
+| IndicSafe | 497 | Human-translated | Only verified human-translated source |
+| SurakshaEval | 116 | Human-written | Labels unverified |
+
+- All rows are in Devanagari; there is no romanised Hindi.
+- A rough heuristic on the English side of IndicGuard "harmful" prompts finds about 41% that do not begin as a question or instruction (7,904 of 19,219).
+  Many are statements, insults or venting. These are unsafe content in a moderation sense, but declining is not clearly the right response, which helps
+  explain why the model refuses only 58% of IndicGuard "harmful" prompts even in English.
+- Step 7 replies were capped at 400 new tokens, about 430 to 520 Hindi characters with this tokenizer.
+
+## Unit and fields
+
+One item is a request with an English version and a Hindi version, plus Bengali and romanised Hindi where available. Fields:
+
+- **Provenance:** source dataset and id, authorship (native-written, human-translated, machine-translated), licence.
+- **Request type:** `request_harmful` (asks for help with something harmful), `request_borderline_safe` (sounds alarming but is harmless),
+  `request_benign`, or `not_a_request` (statement, insult, venting, dialogue fragment).
+- **Harm category and severity** (low, medium, high), for `request_harmful` only, on one taxonomy mapped from the source categories.
+- **Translation fidelity:** back-translation chrF, and a meaning-equivalence rating of the English and Hindi pair (equivalent, minor drift, wrong).
+- **Comprehension:** whether Qwen3-8B restates the Hindi request correctly in English.
+- **Model behaviour:** Qwen3-8B's English and Hindi decisions (REFUSE or ANSWER) from greedy replies, graded by the calibrated judge, plus a flag if a reply
+  hit the token limit.
+
+## Tiers
+
+| Tier | Contents | Role |
+|---|---|---|
+| A, native or human-translated | IndicSafe; SurakshaEval, after label review; a published native-written Hindi red-teaming set, if approved for download | Primary test set: no machine-translation artefacts |
+| B, verified Hindi-source | IndicGuard culture-adaptive rows, only if the source documentation confirms Hindi authorship | Test and fit |
+| C, machine-translated, screened | IndicGuard and Multilingual Harmless-Harmful translations that pass every screen | Fit and development; a secondary test set |
+
+Results are reported per tier. A gap that appears in tier C but not tier A points to translation, not safety.
+
+## Screens, in order
+
+1. **Exclusions:** the sealed split, every v1 item and its group, exact and near duplicates (same group or normalised-text match), and empty or redacted rows.
+2. **Request type:** every candidate is classified by a model reference. Only `request_harmful` and `request_borderline_safe` or `request_benign` items enter
+   the refusal study. `not_a_request` items are kept in a separate file and reported, not deleted.
+3. **Translation fidelity:** a pair is dropped if it is rated `wrong`, or if its chrF is below the tier's 20th percentile and it is not rated `equivalent`.
+   Tier A items are rated but never dropped on fidelity alone. A drop is reported.
+4. **Comprehension:** Qwen3-8B restates the Hindi request in English, and a model reference judges whether the meaning matches. Items judged not understood
+   go to a separate "not understood" set, which is evaluated and reported on its own.
+5. **Balance:** within each tier, harmful requests are stratified by category and severity, and harmless requests are drawn to match harmful ones on topic
+   area and length where possible.
+
+## Model references and human audit
+
+- The screening model for steps 2 to 4 is chosen empirically. On a 100-item human audit (request type and translation fidelity, graded by a fluent Hindi
+  reader), the candidates `claude-opus-5-5` and `claude-fable-5-2` are compared. The cheaper one is used for bulk screening if its kappa with the human is at
+  least 0.75, and the other is used otherwise. Its kappa is reported.
+- Romanised Hindi has a separate 50-item human naturalness check.
+- Refusal grading uses the judge calibrated in Phase 0.
+
+## Generation settings for behaviour labels
+
+- Greedy, 1,024 new tokens for Hindi, Bengali and romanised Hindi, and 512 for English.
+- The share of replies that hit the limit is reported per language.
+
+## Sizes and splits
+
+- **Target after screening:** at least 3,000 Hindi `request_harmful` items and 1,500 harmless requests across tiers. Splits are group-level and stratified
+  by tier, category and English decision: fit 60%, development 20%, test 20%.
+- **Tier A** is test-only, unless it holds more than 1,000 items. In that case half goes to development.
+- Bengali versions of test items form the transfer test set.
+
+## Outputs
+
+- `data/v2/hindi_items.jsonl`: one row per item with every field above (ignored by git: it contains harmful text).
+- `data/v2/summary.json`: counts by tier, request type, category, screen outcome and split (tracked).
+- `docs/data/hindi_dataset_card.md`: sources and licences, construction, screens and retention, human audit agreement, and known limits (tracked).
+
+## Open items before construction
+
+1. Confirm from the IndicGuard paper or card whether the culture-adaptive subset was written in Hindi.
+2. Approval to download a native-written Hindi red-teaming set and the PolyGuard Hindi evaluation data. Sizes and licences are checked first.
+3. API access and a cost estimate for model-reference screening, measured on a 100-item sample before any bulk run.
+4. A 100-item human audit sheet for request type and translation fidelity, built the same way as the calibration sheet.

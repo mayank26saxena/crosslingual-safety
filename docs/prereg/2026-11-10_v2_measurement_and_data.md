@@ -84,3 +84,12 @@ Written before any calibration grade exists. It applies the plan's Hindi-first a
   0.8, the references may grade later Hindi items where human grades are not available, and every such use is labelled.
 - **Bengali** is not calibrated in Phase 0. Its later grades are model references and are labelled so.
 - **Part B:** the fit, development and test splits are built for Hindi. A Bengali test split is drawn by the same rules for the transfer test only.
+
+### 2026-11-11: dataset specification and reply length
+
+Part B is replaced by `docs/plan/2026-11-11_hindi_dataset_spec.md`, written before any item is screened. It adds a request-type screen, construction
+tiers, a human audit of the screening model, and per-tier reporting.
+
+Behaviour labels and all v2 test generations use 1,024 new tokens for Hindi, Bengali and romanised Hindi, and 512 for English. The share of
+replies that hit the limit is reported. The Phase 0 calibration sheet keeps its 400-token replies, because the judge is calibrated on replies of the same
+kind it later grades, and Phase 0 also reports judge agreement separately on replies that hit the limit.
