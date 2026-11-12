@@ -1,0 +1,21 @@
+{
+ "es": {
+  "n": 300,
+  "max_new_tokens": 512,
+  "median_new_tokens": 512.0,
+  "hit_limit": 244
+ },
+ "en": {
+  "n": 300,
+  "max_new_tokens": 512,
+  "median_new_tokens": 512.0,
+  "hit_limit": 220
+ },
+ "hi": {
+  "n": 300,
+  "max_new_tokens": 1024,
+  "median_new_tokens": 1024.0,
+  "hit_limit": 258
+ },
+ "note": "300 PolyGuard harmless prompts, same ids in all three languages; Qwen3-8B greedy, thinking off. Replies gitignored; sha256 es ccb837fe, en 5c7d03f9, hi aeb265b4."
+}
