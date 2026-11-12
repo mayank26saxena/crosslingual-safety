@@ -168,3 +168,15 @@ Written before any Spanish reply exists. Spanish is a high-resource comparison f
   model-graded.
 - **Reported:** explicit refusal, any refusal and non-refusal in Spanish and English on the same requests, with paired McNemar tests and bootstrap
   intervals, beside the Hindi tier A figures. Nothing from Spanish is used to design or select a repair.
+
+### 2026-11-11: harmless controls from PolyGuard
+
+Written before any of these replies exists. Aya has no harmless prompts and Hindi tier A has only 62, so over-refusal and the harmless side of the
+refusal-style shift cannot be measured well. Added, for Spanish and Hindi:
+
+- **Items:** 300 harmless PolyGuard test prompts, seeded random sample (20261112) of the 490 that are labelled unharmful in English, Spanish and
+  Hindi, are not adversarial, and passed the stage 2 exclusions. The same 300 requests in all three languages. PolyGuard's non-English text is
+  machine-translated and checked by people (tier C), and its labels come from human annotation of the English version.
+- **Generation:** as for the other v2 replies: greedy; Hindi 1,024 new tokens, Spanish and English 512.
+- **Reported:** explicit refusal, any refusal and non-refusal per language on the same requests, with paired tests. Harmful and harmless results come
+  from different sources (Aya or IndicSafe against PolyGuard), so contrasts between harmful and harmless are reported with that caveat. Measurement only.
