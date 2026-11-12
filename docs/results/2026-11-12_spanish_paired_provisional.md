@@ -19,7 +19,7 @@ grader is validated. Spanish is the high-resource control (prereg addenda 6 and 
 | claude-sonnet-5.5 | 47.3% | 31.7% | 149 / 27 | 1e-21 | 78.3% | 68.9% | 103 / 30 | 2e-10 |
 | gpt-5.6-luna | 48.0% | 31.7% | 152 / 25 | 2e-23 | 75.1% | 64.1% | 109 / 23 | 1e-14 |
 
-Compliance rises from 20 to 24% in English to 26 to 30% in Spanish. BROKEN replies: 10 to 11 in English, 39 to 45 in Spanish.
+Compliance rises from 20 to 24% in English to 26 to 30% in Spanish. BROKEN replies: 10 to 11 in English, 42 to 45 in Spanish.
 
 ## Harmless requests (300 pairs)
 
