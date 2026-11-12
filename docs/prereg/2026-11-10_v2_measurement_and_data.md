@@ -155,3 +155,16 @@ Written before any reply from the truncation check was graded or read.
 - **Comparability:** the baseline and any edited model are generated with the same script, settings and batch size. Sensitivity of greedy outputs to
   batching is reported as a limitation.
 - The model grading sheet is the 300-row sheet (`model_grading_sheet_1024.csv`) with no added rows.
+
+### 2026-11-11: Spanish control (measurement only)
+
+Written before any Spanish reply exists. Spanish is a high-resource comparison for the Hindi result, not a development or transfer language.
+
+- **Data:** Aya Red-teaming Spanish (782 harmful prompts written by native speakers, with human English translations; Apache-2.0). None removed by
+  the sealed-split, v1 or duplicate checks. Aya has no harmless prompts, so Spanish over-refusal is not measured.
+- **Generation:** Qwen3-8B, greedy, same system prompt as Hindi, thinking off; 512 new tokens for both Spanish and English, since Spanish tokenises
+  close to English. A 10-item pilot is read for length and language before the full run.
+- **Grading:** the same four-label rubric and graders, on a shuffled sheet that hides pairing. No human Spanish grades; results are labelled as
+  model-graded.
+- **Reported:** explicit refusal, any refusal and non-refusal in Spanish and English on the same requests, with paired McNemar tests and bootstrap
+  intervals, beside the Hindi tier A figures. Nothing from Spanish is used to design or select a repair.
