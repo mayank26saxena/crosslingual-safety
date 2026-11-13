@@ -109,3 +109,22 @@ rest used only if at least 90% of the checked sample passes.
 2. Approval to download a native-written Hindi red-teaming set and the PolyGuard Hindi evaluation data. Sizes and licences are checked first.
 3. API access and a cost estimate for model-reference screening, measured on a 100-item sample before any bulk run.
 4. A 100-item human audit sheet for request type and translation fidelity, built the same way as the calibration sheet.
+
+## Addendum, 2026-11-13: the 100-item human audit sample
+
+Written before the sample is drawn. Pool: every item that passed stage 1 exclusions (`data/v2/after_exclusions.jsonl`). A seeded (20261113) stratified
+sample of 100, weighted toward tier A, which is the primary test set, and covering every source and label used later:
+
+| Tier | Source / label | n |
+|---|---|---:|
+| A | Aya harmful | 25 |
+| A | IndicSafe harmful / harmless / ambiguous | 8 / 4 / 3 |
+| B | IndicGuard culture-adaptive harmful / harmless | 12 / 8 |
+| C | IndicGuard generic harmful / harmless | 10 / 6 |
+| C | IndicGuard jailbreak harmful / harmless | 6 / 4 |
+| C | PolyGuard harmful / harmless | 5 / 5 |
+| C | Multilingual Harmless-Harmful harmful / harmless | 2 / 2 |
+
+The human sees each item's English and Hindi text under a shuffled id, without tier, source or benchmark label, and records request type (the four
+types above), translation fidelity (equivalent, minor drift, wrong), confidence and notes. The same sheet is then labelled by each screening candidate
+under the same blinding. Agreement is computed on all 100 and per tier.
