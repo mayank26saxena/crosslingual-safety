@@ -180,3 +180,15 @@ refusal-style shift cannot be measured well. Added, for Spanish and Hindi:
 - **Generation:** as for the other v2 replies: greedy; Hindi 1,024 new tokens, Spanish and English 512.
 - **Reported:** explicit refusal, any refusal and non-refusal per language on the same requests, with paired tests. Harmful and harmless results come
   from different sources (Aya or IndicSafe against PolyGuard), so contrasts between harmful and harmless are reported with that caveat. Measurement only.
+
+### 2026-11-13: grading route for the selected grader
+
+Written after the Phase 0 gate (`docs/results/2026-11-13_phase0_grader_gate.md`) and before any grade from this route exists. The selected grader,
+claude-sonnet-5.5, was validated as run in Kiro. Tier A and the harmless controls may instead be graded by the same model run as Claude Code subagents.
+
+- **Setup:** one fresh subagent per input part, pinned to Sonnet, given the same `prompt.md` rubric word for word except the file and row count lines
+  (one part per subagent instead of six). Same blind folder layout and item ids. No code or keyword lists for labels; rows it will not grade are
+  DECLINED. Each subagent reports the model it runs as; a part served by another model is excluded and rerun.
+- **Bridge check, before any tier A grade:** the route grades the 300-row calibration folder. It is used for tier A only if (1) broad kappa with the
+  human on the gate half is at least 0.7, and (2) broad kappa with the Kiro claude-sonnet-5.5 run on all 300 rows is at least 0.8. Both are reported
+  with the tuning half and four-label kappa. If either fails, tier A is graded in Kiro as planned.
