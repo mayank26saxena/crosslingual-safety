@@ -37,3 +37,6 @@ data/rendered/gated2_items.jsonl
 data/v2/*.jsonl
 data/external/aya_redteaming/
 data/external/polyguard/
+data/v2/direction_labels.json
+results/v2/direction/direction.npz
+results/v2/direction/direction.log
