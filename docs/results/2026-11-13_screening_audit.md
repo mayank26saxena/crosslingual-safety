@@ -1,0 +1,43 @@
+# Screening audit: human against claude-opus-5-5 and claude-fable-5-2
+
+**Date:** 2026-11-13. **Rules:** `docs/plan/2026-11-11_hindi_dataset_spec.md` (human audit; addenda 2026-11-13). **Prompt:**
+`docs/protocols/2026-11-13_screening_prompt.md`. **Code:** `scripts/v2/screen_agreement.py`. **Output:** `results/v2/screening/audit_agreement.json`.
+
+## Inputs
+
+- Human: one fluent Hindi reader, 100 blind items, all marked sure. Request type: harmful 55, benign 25, borderline safe 12, not a request 8.
+  Fidelity: equivalent 87, minor drift 8, wrong 5.
+- Models: two 50-row Claude Code subagents per model, self-reported `claude-opus-5-5` and `claude-fable-5-2`. All 100 labelled by both; none DECLINED.
+  Subagent tokens for the 100 items: Opus about 163k, Fable about 165k.
+
+## Agreement with the human (all 100)
+
+| | Request type: agreement, kappa (95% CI) | Harmful vs rest: agreement, kappa | Fidelity: agreement, kappa | Wrong vs rest: agreement, kappa |
+|---|---|---|---|---|
+| claude-opus-5-5 | 68%, 0.51 (0.38–0.64) | 76%, 0.53 | 81%, 0.38 | 95%, 0.59 |
+| claude-fable-5-2 | 67%, 0.49 (0.36–0.62) | 78%, 0.56 | 83%, 0.44 | 96%, 0.65 |
+
+Per tier, request-type kappa: tier A 0.42 for both; tier B 0.78 for both; tier C 0.43 (Opus) and 0.39 (Fable).
+
+## Gate
+
+**Fails for both candidates.** The selection rule needs request-type kappa of at least 0.75, and the acceptance criterion needs at least 90% request-type
+agreement. Neither model is selected, and the dataset stays a candidate.
+
+## What drives the gap
+
+- **The two models agree with each other on 94 of 100 items** (98 of 100 on harmful against the rest), but with the human on about 67. Where they
+  agree, the human differs on 29 items. That pattern points to a difference in where the categories are drawn, not to noise in either model.
+- The main differences are: human harmful, models borderline safe (7); human borderline safe, models benign (5); human harmful, models not a request (5);
+  human not a request, models harmful (3); human harmful, models benign (3).
+- This mirrors Phase 0, where the first refusal rubric disagreed with the human mainly on one boundary (warn or redirect without saying no) and was
+  resolved by making that boundary explicit.
+
+## Options (not pre-registered; for decision)
+
+1. **Adjudication.** The human reviews the 29 items where both models agree against the human label, with the model label shown, and keeps or changes
+   each. Agreement is then reported before and after adjudication, labelled as such.
+2. **Rubric revision.** Write sharper boundaries (harmful against borderline safe; request against statement), have the models relabel, and test on a
+   fresh human sample, since the current 100 have been seen.
+3. **Restrict the study to tier A** without automated screening, with request type for the 1,069 harmful items labelled by the human or by both models
+   in agreement, and report the baseline with and without that filter.
