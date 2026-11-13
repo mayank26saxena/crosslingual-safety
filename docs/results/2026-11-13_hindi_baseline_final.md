@@ -53,11 +53,11 @@ kept items.
 - On the test split, explicit refusal falls by about two thirds in Hindi (51% to 18%) and any refusal by 12 points. Most of the change is a move from
   explicit to soft refusal, with smaller rises in compliance and broken replies.
 - No over-refusal of harmless Hindi requests. The rise in BROKEN replies on harmless Hindi requests (0 to 20 of 175) is reported as a quality cost.
-- This test split (448 harmful, 175 harmless) is the reference for Phase 3.
+- Superseded by the update below: the reference for Phase 3 is the final split's understood test items (404 harmful, 169 harmless).
 
 ## Limits
 
-- Comprehension screen pending.
+- Comprehension judged by one model against the English version, without a separate human check of the judge.
 - Screening by one model, validated against the human audit after adjudication (92% request-type agreement, an upper estimate).
 - Behaviour labels from one model grader (claude-sonnet-5.5; kappa 0.82 with the human through Kiro, 0.74 through the subagent route).
 - 571 of 1,174 tier A Hindi replies reach the 1,024-token limit.
