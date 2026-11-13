@@ -40,3 +40,4 @@ data/external/polyguard/
 data/v2/direction_labels.json
 results/v2/direction/direction.npz
 results/v2/direction/direction.log
+results/v2/es_dir/run.log
