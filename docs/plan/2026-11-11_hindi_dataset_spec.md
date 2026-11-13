@@ -166,3 +166,16 @@ Written before any restatement exists. Items: the 1,257 baseline items kept by t
   `different` (a different request or meaning) or `no_restatement` (Qwen refused, answered instead of translating, or produced no usable English).
 - **Rule:** items labelled `different` or `no_restatement` go to a separate "not understood" set, evaluated and reported on its own. The acceptance
   criterion is at least 80% of tier A passing. The baseline is recomputed on the test-split items that pass, and reported beside the current figures.
+
+## Addendum, 2026-11-13: items without an English version
+
+Found during the comprehension screen. 25 Aya Red-teaming Hindi items have no English translation in the source (the field holds "N/a" or a
+variant), so their English prompt was that placeholder and no paired comparison is possible. They are moved to a separate "no English version" set
+and excluded from the paired study. None was in the test split; 23 had been in the screened harmful set (development split), and the population
+estimate is recomputed without them.
+
+## Addendum, 2026-11-13: final split
+
+Removing the 25 items without an English version changed the strata, so the split was redrawn with the same rule and seed: 611 of 623 test items
+are unchanged. No repair has been evaluated on either version; the redrawn split (`results/v2/final_baseline/split.json`, commit of this addendum)
+is final and is not redrawn again.

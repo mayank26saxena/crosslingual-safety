@@ -1,19 +1,21 @@
 {
  "n_items": 1474,
  "by_set": {
-  "study_harmful": 909,
+  "study_harmful": 886,
   "study_harmless": 348,
-  "relabelled_harmless": 122,
+  "relabelled_harmless": 120,
   "not_a_request": 46,
   "ambiguous_request_benign": 43,
+  "no_english_version": 25,
   "harmless_screened_harmful": 3,
   "dropped_fidelity": 3
  },
  "by_source": {
   "aya_redteaming/harmful": {
-   "study_harmful": 769,
-   "relabelled_harmless": 107,
-   "not_a_request": 38
+   "study_harmful": 746,
+   "relabelled_harmless": 105,
+   "not_a_request": 38,
+   "no_english_version": 25
   },
   "indicsafe/harmful": {
    "study_harmful": 140,
@@ -46,13 +48,26 @@
  },
  "split": {
   "study_harmful": {
-   "dev": 461,
-   "test": 448
+   "dev": 439,
+   "test": 447
   },
   "study_harmless": {
    "test": 175,
    "dev": 173
   }
  },
- "steering_items_in_test": 0
+ "steering_items_in_test": 0,
+ "comprehension": {
+  "judged": 1257,
+  "counts": {
+   "different": 96,
+   "partial": 231,
+   "same": 914,
+   "no_restatement": 11,
+   "DECLINED": 5
+  },
+  "tierA_harmful_pass_rate": 0.9086,
+  "test_harmful_understood": 404,
+  "test_harmless_understood": 169
+ }
 }

@@ -73,7 +73,9 @@ def main(out_dir):
     for i in items:
         m, (rt, fd) = meta[i], scr[i]
         harmful = m["benchmark_label"] == "harmful"
-        if rt == "DECLINED":
+        if len(m["en"].strip()) < 6:  # source has no English version ("N/a" and variants): no paired comparison is possible
+            sets["no_english_version"].append(i)
+        elif rt == "DECLINED":
             sets["declined"].append(i)
         elif m["tier"] == "C" and fd == "wrong":
             sets["dropped_fidelity"].append(i)
@@ -145,6 +147,23 @@ def main(out_dir):
         ids = [i for i in sets[k] if meta[i]["benchmark_label"] == "harmful"]
         if ids:
             res[f"screened_out_{k}"] = gap([beh[i] for i in ids], rng)
+    # comprehension screen (when judged): items judged different, no_restatement or DECLINED are "not understood"
+    cdir = ROOT / "notes/screening/comprehension/runs/opus"
+    if cdir.exists() and len(list(cdir.glob("part_*.csv"))) == 26:
+        ck = json.load(open(ROOT / "notes/screening/comprehension/key.json"))
+        judged = {ck[r["item"].strip()]: r["judgement"].strip() for f in sorted(cdir.glob("part_*.csv"))
+                  for r in csv.DictReader(open(f, encoding="utf-8-sig"))}
+        ok = {i for i, j in judged.items() if j in ("same", "partial")}
+        summary["comprehension"] = {"judged": len(judged), "counts": dict(Counter(judged.values())),
+                                    "tierA_harmful_pass_rate": round(sum(i in ok for i in sets["study_harmful"]) / len(sets["study_harmful"]), 4),
+                                    "test_harmful_understood": sum(i in ok for i in test_h),
+                                    "test_harmless_understood": sum(i in ok for i in test_l)}
+        rng = random.Random(SEED)
+        res["harmful_test_understood"] = gap([beh[i] for i in test_h if i in ok], rng)
+        res["harmless_test_understood"] = gap([beh[i] for i in test_l if i in ok], rng)
+        nu = [i for i in test_h if i not in ok]
+        if nu:
+            res["harmful_test_not_understood"] = gap([beh[i] for i in nu], rng)
     json.dump(summary, open(out / "screen_summary.json", "w"), indent=1)
     json.dump(res, open(out / "baseline_test.json", "w"), indent=1)
 
