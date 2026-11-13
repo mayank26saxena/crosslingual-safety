@@ -128,3 +128,12 @@ sample of 100, weighted toward tier A, which is the primary test set, and coveri
 The human sees each item's English and Hindi text under a shuffled id, without tier, source or benchmark label, and records request type (the four
 types above), translation fidelity (equivalent, minor drift, wrong), confidence and notes. The same sheet is then labelled by each screening candidate
 under the same blinding. Agreement is computed on all 100 and per tier.
+
+## Addendum, 2026-11-13: screening-model comparison
+
+Written after the human audit was exported and before any model labels exist. Candidates: `claude-opus-5-5` and `claude-fable-5-2`, each run as
+Claude Code subagents on the 100 blind items with `docs/protocols/2026-11-13_screening_prompt.md`. Reported per candidate, on all 100 and per
+tier: agreement and Cohen's kappa with the human on request type (four values) and on the binary used for screening (`request_harmful` against
+the rest), and on fidelity (three values and `wrong` against the rest), with 95% bootstrap intervals. Selection follows the rule above: the cheaper
+candidate is used if its request-type kappa is at least 0.75, the other otherwise. Cost on this route is measured as subagent tokens per item,
+reported for both. The acceptance criterion (at least 90% request-type agreement) is applied to the selected model.
