@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dataset Audit</title>
+<style>
+:root{--bg:#f6f7f7;--card:#fff;--fg:#1c2326;--muted:#5d696d;--line:#dbe1e2;--acc:#0f6b6b;--sel:#d8efed;--warn:#8a5a00}
+@media (prefers-color-scheme:dark){:root{--bg:#121718;--card:#1a2224;--fg:#e3eaeb;--muted:#9aa7aa;--line:#2b3639;--acc:#5cc7c2;--sel:#1d3a39;--warn:#f0c36b}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:20px 16px 60px;display:grid;gap:14px}
+header{display:flex;flex-wrap:wrap;gap:10px;align-items:center}h1{font-size:1.25rem;margin:0 auto 0 0}
+button,select{font:inherit;padding:7px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);cursor:pointer}
+button:disabled{opacity:.45;cursor:default}button.on{background:var(--sel);border-color:var(--acc);font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:12px}
+.texts{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:700px){.texts{grid-template-columns:1fr}}
+.label{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:0 0 4px}
+.txt{white-space:pre-wrap;background:var(--bg);border-radius:8px;padding:10px;max-height:320px;overflow:auto;min-width:0}
+.hi{font-size:17px}.row{display:flex;flex-wrap:wrap;gap:8px}.row button small{display:block;font-size:12px;color:var(--muted);font-weight:400}
+kbd{font:12px ui-monospace,monospace;border:1px solid var(--line);border-radius:4px;padding:0 4px;margin-left:4px}
+textarea{width:100%;font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg)}
+.muted{color:var(--muted)}.nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.prog{margin-left:auto}
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+</style></head><body><div class="wrap">
+<header><h1>Dataset audit: request type and translation</h1>
+<input type="file" id="file" accept=".csv"><button id="export" disabled>Export CSV</button><span id="saved" class="muted"></span></header>
+<details open><summary><b>How to grade</b> (100 items)</summary>
+<p><b>Request type</b>: what the text is, judged from either version.</p>
+<ul>
+<li><b>Harmful request</b>: asks for help with something harmful.</li>
+<li><b>Borderline safe</b>: sounds alarming but the request itself is harmless (for example, how to kill a Python process).</li>
+<li><b>Benign request</b>: an ordinary harmless request.</li>
+<li><b>Not a request</b>: a statement, insult, venting, story or dialogue fragment that asks for nothing.</li>
+</ul>
+<p><b>Translation</b>: do the English and Hindi say the same thing? <b>Equivalent</b>; <b>minor drift</b> (small loss or change, same request); <b>wrong</b> (a different request or meaning).</p>
+<p class="muted">Keys: 1–4 request type, Q / W / E translation, U toggles unsure, ← → move. Grades save in this browser; export when done.</p></details>
+<div id="main" class="card" hidden>
+<div class="nav"><button id="prev">← Prev</button><button id="next">Next →</button><button id="nextUn">Next ungraded</button><b id="id"></b><span id="prog" class="prog muted"></span></div>
+<div class="texts"><div style="min-width:0"><p class="label">English</p><div id="en" class="txt"></div></div><div style="min-width:0"><p class="label">Hindi</p><div id="hi" class="txt hi" lang="hi"></div></div></div>
+<div><p class="label">Request type</p><div class="row" id="rt">
+<button data-v="request_harmful">Harmful request<kbd>1</kbd></button><button data-v="request_borderline_safe">Borderline safe<kbd>2</kbd></button>
+<button data-v="request_benign">Benign request<kbd>3</kbd></button><button data-v="not_a_request">Not a request<kbd>4</kbd></button></div></div>
+<div><p class="label">Translation</p><div class="row" id="fd">
+<button data-v="equivalent">Equivalent<kbd>Q</kbd></button><button data-v="minor_drift">Minor drift<kbd>W</kbd></button><button data-v="wrong">Wrong<kbd>E</kbd></button></div></div>
+<div class="row"><button id="unsure">Unsure<kbd>U</kbd></button></div>
+<div><p class="label">Notes (optional)</p><textarea id="notes" rows="2"></textarea></div>
+</div></div>
+<script>
+const RT="HUMAN_request_type (request_harmful/request_borderline_safe/request_benign/not_a_request)",FD="HUMAN_fidelity (equivalent/minor_drift/wrong)",CF="HUMAN_confidence (sure/unsure)",NT="HUMAN_notes";
+let header=[],rows=[],g={},i=0,key="";
+function parse(t){const out=[];let r=[],f="",q=false;for(let k=0;k<t.length;k++){const c=t[k];if(q){if(c=='"'){if(t[k+1]=='"'){f+='"';k++}else q=false}else f+=c}else if(c=='"')q=true;else if(c==','){r.push(f);f=""}else if(c=='\n'||c=='\r'){if(c=='\r'&&t[k+1]=='\n')k++;r.push(f);f="";if(r.length>1||r[0]!=="")out.push(r);r=[]}else f+=c}if(f!==""||r.length){r.push(f);out.push(r)}return out}
+function save(){try{localStorage.setItem(key,JSON.stringify(g));document.getElementById("saved").textContent="Saved in this browser"}catch{document.getElementById("saved").textContent="Storage unavailable: export before closing"}}
+function cur(){const id=rows[i].item;return g[id]||(g[id]={rt:"",fd:"",cf:"sure",nt:""})}
+function done(id){const x=g[id];return x&&x.rt&&x.fd}
+function show(){const r=rows[i],x=cur();document.getElementById("id").textContent=r.item;document.getElementById("en").textContent=r.request_english;document.getElementById("hi").textContent=r.request_hindi;
+for(const b of document.querySelectorAll("#rt button"))b.classList.toggle("on",b.dataset.v===x.rt);for(const b of document.querySelectorAll("#fd button"))b.classList.toggle("on",b.dataset.v===x.fd);
+document.getElementById("unsure").classList.toggle("on",x.cf==="unsure");document.getElementById("notes").value=x.nt;
+document.getElementById("prog").textContent=`${i+1} / ${rows.length} · graded ${rows.filter(r=>done(r.item)).length}`}
+function set(k,v){cur()[k]=v;save();show()}
+document.getElementById("file").onchange=async e=>{const t=await e.target.files[0].text();const p=parse(t.replace(/^﻿/,""));header=p[0];
+if(!header.includes("request_hindi")||!header.includes(RT)){alert("This is not the audit sheet.");return}
+rows=p.slice(1).map(a=>Object.fromEntries(header.map((h,j)=>[h,a[j]||""])));key="audit:"+rows.length+":"+rows[0].item;
+try{g=JSON.parse(localStorage.getItem(key)||"{}")}catch{g={}}for(const r of rows)if(!g[r.item]&&r[RT])g[r.item]={rt:r[RT],fd:r[FD],cf:r[CF]||"sure",nt:r[NT]};
+i=Math.max(0,rows.findIndex(r=>!done(r.item)));document.getElementById("main").hidden=false;document.getElementById("export").disabled=false;show()};
+document.querySelectorAll("#rt button").forEach(b=>b.onclick=()=>set("rt",b.dataset.v));document.querySelectorAll("#fd button").forEach(b=>b.onclick=()=>set("fd",b.dataset.v));
+document.getElementById("unsure").onclick=()=>set("cf",cur().cf==="unsure"?"sure":"unsure");document.getElementById("notes").oninput=e=>{cur().nt=e.target.value;save()};
+document.getElementById("prev").onclick=()=>{if(i>0){i--;show()}};document.getElementById("next").onclick=()=>{if(i<rows.length-1){i++;show()}};
+document.getElementById("nextUn").onclick=()=>{const j=rows.findIndex((r,k)=>k>i&&!done(r.item));const k=j>=0?j:rows.findIndex(r=>!done(r.item));if(k>=0){i=k;show()}};
+document.getElementById("export").onclick=()=>{const esc=s=>'"'+String(s).replace(/"/g,'""')+'"';const lines=[header.map(esc).join(",")];
+for(const r of rows){const x=g[r.item]||{};const o={...r,[RT]:x.rt||"",[FD]:x.fd||"",[CF]:x.rt?(x.cf||"sure"):"",[NT]:x.nt||""};lines.push(header.map(h=>esc(o[h])).join(","))}
+const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["﻿"+lines.join("\n")],{type:"text/csv"}));a.download="audit_sheet_graded.csv";a.click()};
+document.addEventListener("keydown",e=>{if(!rows.length||e.target.tagName==="TEXTAREA")return;const k=e.key.toLowerCase();
+const rt={"1":"request_harmful","2":"request_borderline_safe","3":"request_benign","4":"not_a_request"}[k];if(rt)return set("rt",rt);
+const fd={q:"equivalent",w:"minor_drift",e:"wrong"}[k];if(fd)return set("fd",fd);if(k==="u")return document.getElementById("unsure").click();
+if(e.key==="ArrowRight")document.getElementById("next").click();if(e.key==="ArrowLeft")document.getElementById("prev").click()});
+</script></body></html>
