@@ -17,7 +17,7 @@ import random
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-JUDGED = ROOT / "results_pod/gated_qwen3/test_judged.jsonl"
+JUDGED = ROOT / "results/v1_pod/gated_qwen3/test_judged.jsonl"
 ITEMS = ROOT / "data/rendered/gated_items.jsonl"
 OUT = ROOT / "notes/hindi_calibration"
 SEED = 20261111

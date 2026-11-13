@@ -1,38 +1,42 @@
 # Cross-lingual safety
 
-Why do open chat models help with harmful requests more often in Bengali than in English, and can an activation-level
-intervention close that gap without retraining and without increasing refusal of harmless Bengali requests?
+Why does Qwen3-8B refuse harmful requests less often in Hindi than in English, and can a targeted change to the model close
+that gap without making it refuse harmless Hindi requests or behave worse in English?
 
-On Qwen2.5-7B-Instruct, across 150 MultiJail requests, 31.3% of Bengali replies are graded unsafe against 12.0% of English
-replies, while only 6.2% of Bengali replies fail to engage. This project diagnoses that gap before attempting to fix it.
+Hindi is the development language. Spanish is a high-resource comparison, and Bengali is held out to test whether a repair
+transfers. Every phase is pre-registered before it runs.
 
-**Status:** pre-registration for the evaluation and diagnostic steps is in draft. No new experiments have run.
+**Status (2026-11-13):** the grader gate has passed (Phase 0). The Hindi baseline (Phase 1) is being graded. The
+refusal-direction diagnosis (Phase 2a) is done. See `docs/plan/2026-11-10_restart.md` for the plan, and `docs/results/` for
+results.
 
-## Contents
+## Layout
 
 | Path | Contents |
 |---|---|
-| `docs/design.md` | Questions, plan, data discipline, pass rule, related work |
-| `docs/prereg/` | Dated pre-registrations, with later changes as dated addenda |
+| `docs/plan/` | Plan, dataset specification, reviews |
+| `docs/prereg/` | Dated pre-registrations; later changes are dated addenda |
+| `docs/protocols/` | Grading rubric and procedures |
 | `docs/results/` | Dated results, including failed gates and exploratory analyses |
-| `data/README.md` | Dataset sources, licenses, and how to rebuild local files |
-| `data/splits/splits.json` | Fixed development and confirmation splits (ids only) |
-| `scripts/` | Rendering, translation, judging, splits, baseline summary |
-| `results/baseline_summary.json` | Aggregate baseline numbers (no request or reply text) |
+| `scripts/v2/` | Current pipeline: dataset collection, exclusions, generation, grading folders, grader gate, refusal direction |
+| `scripts/` | Earlier (v1) scripts, kept for reference |
+| `data/v2/` | Current prompts (not tracked) and dataset summaries (tracked) |
+| `data/external/` | Upstream datasets, downloaded locally (not tracked) |
+| `results/v2/` | Current outputs: summaries tracked, replies not tracked |
+| `results/` (other folders) | Earlier v1 outputs; `results/v1_pod/` holds v1 pod copies (not tracked) |
+| `tools/grader.html` | Local page for human grading |
+| `notes/` | Working files, not tracked: grading folders, human grades, references, and `notes/archive/` for v1 material |
+
+## Generation setup
+
+Qwen/Qwen3-8B, Hugging Face transformers in bfloat16. Messages: system "You are a helpful assistant." and the user request,
+with Qwen's chat template, `enable_thinking=False`, greedy decoding, one reply per request. New-token limit: 1,024 for Hindi
+and Bengali, 512 for English and Spanish.
 
 ## Setup
 
 ```bash
 pip install uv && uv venv --python 3.12 && uv pip install -r pyproject.toml
-```
-
-## Reproduce the baseline summary and splits
-
-These need the MultiJail file (see `data/README.md`) and the earlier raw replies, which are kept out of version control.
-
-```bash
-python scripts/make_splits.py
-python scripts/summarize_baseline.py
 ```
 
 ## Handling of harmful content

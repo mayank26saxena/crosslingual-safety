@@ -18,7 +18,7 @@ data/external/multijail/
 data/rendered/multijail_*.jsonl
 data/rendered/xstest_unsafe_*.jsonl
 # Copies of pod results made by the local dashboard
-results_pod/
+results/v1_pod/
 # Translated benchmark prompts, including unsafe contrast items
 data/rendered/xstest_v*
 data/translations/
