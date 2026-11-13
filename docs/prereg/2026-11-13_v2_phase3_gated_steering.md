@@ -1,6 +1,6 @@
-# DRAFT pre-registration: gated explicit-refusal steering on Qwen3-8B (Phase 3)
+# Pre-registration: gated explicit-refusal steering on Qwen3-8B (Phase 3)
 
-**Status: draft for review. Not frozen.** It is frozen by the commit that renames it without the DRAFT prefix, before any Phase 3 reply is generated.
+**Status: frozen 2026-11-13**, approved by the author, before any Phase 3 reply was generated. Changes after this point are dated addenda.
 
 **Builds on:** Phase 2a (`docs/results/2026-11-13_refusal_direction.md`: harm is represented in Hindi at English strength at layer 14), Phase 2b
 (`docs/results/2026-11-13_explicit_soft_direction.md`: adding the English explicit-minus-soft difference at layer 24 raised explicit refusal on
@@ -27,7 +27,7 @@ requests, without over-refusal, damage to English behaviour, or loss of general 
 - **General ability:** Global-MMLU (`CohereLabs/Global-MMLU`, revision `0e619dbeb34206cd48705a1a0ea7fb21cae09993`, Apache-2.0), test split,
   Hindi and English files (6.1 MB and 3.9 MB). A sample of 300 question ids drawn once with seed 20261116, the same ids in both languages
   (paired). Prompt: the question and options A to D, then "Answer with the letter of the correct option only."; the first A to D letter in
-  the reply is the answer; no letter counts as wrong. *Download pending approval.*
+  the reply is the answer; no letter counts as wrong. Sample built by `scripts/v2/mmlu_sample.py` (ids in `results/v2/phase3/mmlu_ids.json`).
 - Bengali and the sealed MultiJail split are not used (Phase 4).
 
 ## Procedure

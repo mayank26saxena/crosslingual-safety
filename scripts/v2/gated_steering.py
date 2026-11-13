@@ -1,4 +1,4 @@
-"""Phase 3: gated explicit-refusal steering (docs/prereg/*_v2_phase3_gated_steering.md).
+"""Phase 3: gated explicit-refusal steering (docs/prereg/2026-11-13_v2_phase3_gated_steering.md).
 
 Stages:
   prep  (local, standard library only): writes data/v2/phase3_prompts.jsonl (not tracked) and results/v2/phase3/sets.json (ids only).
