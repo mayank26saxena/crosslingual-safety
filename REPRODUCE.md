@@ -46,7 +46,8 @@ python3 scripts/v2/exclude.py          # sealed split, v1 items, duplicates
 | Screened baseline and split (`2026-11-13_hindi_baseline_final.md`) | `build_screen_folder.py`; `final_baseline.py results/v2/final_baseline` |
 | Comprehension screen | `comprehension.py prep` / `run` / `judge-folder` |
 | Provisional paired results (2026-11-11, 2026-11-12) | `paired_provisional.py calibration|spanish <out>` (from the label tables) |
-| Replication check of baseline replies | `regen_calibration.py generate` under the pinned environment, then `replication_check.py` |
+| Replication check of baseline replies (`2026-11-13_replication_check.md`) | `regen_calibration.py generate` under the pinned environment, then `replication_check.py` |
+| Phase 3 gated steering (draft pre-registration) | `gated_steering.py prep` / `tune` / `test` |
 | Label tables, manifest | `export_labels.py`; `manifest.py` |
 
 Grading and screening runs are Claude Code subagents (or Kiro sessions for the earliest runs), one per 50-row blind part, with the prompts in
@@ -55,7 +56,9 @@ Grading and screening runs are Claude Code subagents (or Kiro sessions for the e
 ## Known gaps (to close before submission)
 
 - The tier A, PolyGuard and Spanish replies (2026-11-11 and 12) were generated before the model revision and library versions were pinned; the
-  generation script and settings are recorded. A replication check under the pinned environment measures how closely they regenerate.
+  generation script and settings are recorded. Regenerated under the pinned environment (`docs/results/2026-11-13_replication_check.md`),
+  5.6% of Hindi and 28.2% of English replies are identical text and most share their first 64 tokens; label-level agreement of the
+  regenerated replies has not been graded. Reported numbers come from the archived replies and labels.
 - The untracked files (prompts, replies, grading folders, keys) are packed in `v2_untracked_<date>.tar.gz` with its sha256, kept outside the
   repository (`~/Desktop/projects/crosslingual-safety-archive/` on the author's machine) and to be deposited privately for reviewers. Public source
   datasets in `data/external/` are not packed; their checksums are in the manifest.

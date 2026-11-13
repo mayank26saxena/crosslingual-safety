@@ -1,0 +1,10 @@
+{
+ "n": 1474,
+ "identical": 416,
+ "identical_share": 0.2822,
+ "first_64_tokens_identical": 847,
+ "first_64_share": 0.5746,
+ "median_first_difference_token": 49.5,
+ "hit_limit_archived": 417,
+ "hit_limit_regenerated": 412
+}
