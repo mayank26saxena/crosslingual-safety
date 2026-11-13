@@ -83,3 +83,19 @@ refusals in Hindi (36 soft in Hindi against 22 in English). BROKEN rises from 2 
 - The Spanish result (`2026-11-12_spanish_paired_provisional.md`) already used claude-sonnet-5.5. Its grader is now validated on Hindi only; Spanish has no
   human gate, so it stays labelled "grader validated on Hindi".
 - The Phase 2a behaviour link for Hindi used a four-grader majority. It can be recomputed with the selected grader once tier A is graded.
+
+## Bridge check: claude-sonnet-5.5 as Claude Code subagents
+
+Pre-registered in the 2026-11-13 addendum ("grading route for the selected grader"). Six fresh subagents pinned to Sonnet, one per 50-row part of the
+300-row calibration folder, with the same rubric. All six self-reported `claude-sonnet-5-5`; 300 rows in input order, none DECLINED. Run:
+`notes/hindi_calibration/kiro_grading/runs/claude-sonnet-5.5-cc/r1.csv`.
+
+| Comparison | Broad kappa (95% CI) | Strict | Four labels | Rule | Result |
+|---|---|---|---|---|---|
+| Human, gate half (76) | 0.74 (0.58–0.87) | 0.87 | 0.55 | ≥ 0.7 | Pass |
+| Human, tuning half (74) | 0.75 (0.59–0.89) | 0.85 | 0.60 | reported | |
+| Kiro claude-sonnet-5.5 run, all 300 rows | 0.92 (0.87–0.96) | 0.96 | 0.89 | ≥ 0.8 | Pass |
+
+Both conditions pass, so tier A and the harmless controls may be graded by this route. Its agreement with the human (0.74 on the gate half) is lower
+than the Kiro run's (0.82); the two runs agree on 277 of 300 four-way labels (Hindi rows broad kappa 0.88, English 0.96). Results graded by this route
+are labelled with it.
