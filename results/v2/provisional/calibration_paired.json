@@ -1,0 +1,146 @@
+{
+ "claude-haiku-5.5 (kiro)": {
+  "harmless": {
+   "n_pairs": 47,
+   "explicit": {
+    "rate_en": 0.1915,
+    "rate_hi": 0.0638,
+    "en_only": 6,
+    "hi_only": 0,
+    "mcnemar_p": 0.03125
+   },
+   "any": {
+    "rate_en": 0.3191,
+    "rate_hi": 0.3191,
+    "en_only": 4,
+    "hi_only": 4,
+    "mcnemar_p": 1.0
+   }
+  },
+  "harmful": {
+   "n_pairs": 103,
+   "explicit": {
+    "rate_en": 0.5728,
+    "rate_hi": 0.2913,
+    "en_only": 35,
+    "hi_only": 6,
+    "mcnemar_p": 4.873598300036974e-06
+   },
+   "any": {
+    "rate_en": 0.8058,
+    "rate_hi": 0.7379,
+    "en_only": 14,
+    "hi_only": 7,
+    "mcnemar_p": 0.18924713134765625
+   }
+  }
+ },
+ "claude-sonnet-5.5 (kiro)": {
+  "harmless": {
+   "n_pairs": 47,
+   "explicit": {
+    "rate_en": 0.2128,
+    "rate_hi": 0.0638,
+    "en_only": 7,
+    "hi_only": 0,
+    "mcnemar_p": 0.015625
+   },
+   "any": {
+    "rate_en": 0.234,
+    "rate_hi": 0.1277,
+    "en_only": 6,
+    "hi_only": 1,
+    "mcnemar_p": 0.125
+   }
+  },
+  "harmful": {
+   "n_pairs": 103,
+   "explicit": {
+    "rate_en": 0.5437,
+    "rate_hi": 0.2718,
+    "en_only": 33,
+    "hi_only": 5,
+    "mcnemar_p": 4.255962267052382e-06
+   },
+   "any": {
+    "rate_en": 0.7573,
+    "rate_hi": 0.6214,
+    "en_only": 18,
+    "hi_only": 4,
+    "mcnemar_p": 0.004343509674072266
+   }
+  }
+ },
+ "gpt-5.6-luna (kiro)": {
+  "harmless": {
+   "n_pairs": 47,
+   "explicit": {
+    "rate_en": 0.1915,
+    "rate_hi": 0.0426,
+    "en_only": 7,
+    "hi_only": 0,
+    "mcnemar_p": 0.015625
+   },
+   "any": {
+    "rate_en": 0.2766,
+    "rate_hi": 0.234,
+    "en_only": 5,
+    "hi_only": 3,
+    "mcnemar_p": 0.7265625
+   }
+  },
+  "harmful": {
+   "n_pairs": 103,
+   "explicit": {
+    "rate_en": 0.5631,
+    "rate_hi": 0.2718,
+    "en_only": 39,
+    "hi_only": 9,
+    "mcnemar_p": 1.5221826110689562e-05
+   },
+   "any": {
+    "rate_en": 0.7476,
+    "rate_hi": 0.6893,
+    "en_only": 13,
+    "hi_only": 7,
+    "mcnemar_p": 0.26317596435546875
+   }
+  }
+ },
+ "gpt-5.6-terra (kiro)": {
+  "harmless": {
+   "n_pairs": 47,
+   "explicit": {
+    "rate_en": 0.1915,
+    "rate_hi": 0.0638,
+    "en_only": 6,
+    "hi_only": 0,
+    "mcnemar_p": 0.03125
+   },
+   "any": {
+    "rate_en": 0.1915,
+    "rate_hi": 0.1702,
+    "en_only": 2,
+    "hi_only": 1,
+    "mcnemar_p": 1.0
+   }
+  },
+  "harmful": {
+   "n_pairs": 103,
+   "explicit": {
+    "rate_en": 0.5534,
+    "rate_hi": 0.3107,
+    "en_only": 32,
+    "hi_only": 7,
+    "mcnemar_p": 7.025478407740593e-05
+   },
+   "any": {
+    "rate_en": 0.6796,
+    "rate_hi": 0.6602,
+    "en_only": 10,
+    "hi_only": 8,
+    "mcnemar_p": 0.8145294189453125
+   }
+  }
+ }
+}

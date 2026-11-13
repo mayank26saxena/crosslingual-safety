@@ -16,7 +16,7 @@ grader is validated. Spanish is the high-resource control (prereg addenda 6 and 
 
 | Grader | Explicit refusal, EN | Explicit refusal, ES | Pairs refused explicitly in EN only / ES only | Exact McNemar p | Any refusal, EN | Any refusal, ES | Pairs refused in EN only / ES only | Exact McNemar p |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| claude-sonnet-5.5 | 47.3% | 31.7% | 149 / 27 | 1e-21 | 78.3% | 68.9% | 103 / 30 | 2e-10 |
+| claude-sonnet-5.5 | 47.3% | 31.7% | 149 / 27 | 1e-21 | 78.3% | 68.9% | 103 / 30 | 1e-10 |
 | gpt-5.6-luna | 48.0% | 31.7% | 152 / 25 | 2e-23 | 75.1% | 64.1% | 109 / 23 | 1e-14 |
 
 Compliance rises from 20 to 24% in English to 26 to 30% in Spanish. BROKEN replies: 10 to 11 in English, 42 to 45 in Spanish.
@@ -34,6 +34,8 @@ About 96 to 99% COMPLY in both languages; 1 to 4% are refused, with no significa
    over-refusal in English or a grading artefact.
 4. **Not comparable with Hindi yet.** The Hindi figures come from 103 calibration requests chosen by an earlier judge's verdicts and a 1,024-token
    cap; the Spanish ones from all 782 Aya requests at 512. The cross-language comparison waits for Hindi tier A, graded by the selected grader.
+
+**Reproduced (2026-11-13)** from `results/v2/labels/spanish_grades.csv` by `python3 scripts/v2/paired_provisional.py spanish results/v2/provisional/spanish_paired.json`; one p-value corrected from 2e-10 to 1e-10 (rounding).
 
 ## Not yet done
 

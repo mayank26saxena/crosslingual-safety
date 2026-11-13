@@ -36,6 +36,8 @@ were stratified by an earlier judge's verdicts, so rates here are not estimates 
 If this holds on tier A with a validated grader, the Hindi failure on this model is mainly a change in how it refuses rather than a large rise in
 compliance, and the metric chosen (explicit or any refusal) decides how big the gap looks. Both are reported.
 
+**Reproduced (2026-11-13)** from `results/v2/labels/calibration_*.csv` by `python3 scripts/v2/paired_provisional.py calibration results/v2/provisional/calibration_paired.json`; all figures match.
+
 ## Not yet done
 
 - Human Hindi grades, the agreement gate, and the choice of grader.

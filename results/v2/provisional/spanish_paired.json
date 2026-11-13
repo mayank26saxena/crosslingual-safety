@@ -1,0 +1,74 @@
+{
+ "claude-sonnet-5.5 (kiro)": {
+  "harmful": {
+   "n_pairs": 782,
+   "explicit": {
+    "rate_en": 0.4731,
+    "rate_es": 0.3171,
+    "en_only": 149,
+    "es_only": 27,
+    "mcnemar_p": 1.2126056028352552e-21
+   },
+   "any": {
+    "rate_en": 0.7826,
+    "rate_es": 0.6893,
+    "en_only": 103,
+    "es_only": 30,
+    "mcnemar_p": 1.451900534574549e-10
+   }
+  },
+  "harmless": {
+   "n_pairs": 300,
+   "explicit": {
+    "rate_en": 0.0167,
+    "rate_es": 0.0133,
+    "en_only": 3,
+    "es_only": 2,
+    "mcnemar_p": 1.0
+   },
+   "any": {
+    "rate_en": 0.0367,
+    "rate_es": 0.0133,
+    "en_only": 9,
+    "es_only": 2,
+    "mcnemar_p": 0.0654296875
+   }
+  }
+ },
+ "gpt-5.6-luna (kiro)": {
+  "harmful": {
+   "n_pairs": 782,
+   "explicit": {
+    "rate_en": 0.4795,
+    "rate_es": 0.3171,
+    "en_only": 152,
+    "es_only": 25,
+    "mcnemar_p": 2.14546196061707e-23
+   },
+   "any": {
+    "rate_en": 0.7506,
+    "rate_es": 0.6407,
+    "en_only": 109,
+    "es_only": 23,
+    "mcnemar_p": 1.3865723932093643e-14
+   }
+  },
+  "harmless": {
+   "n_pairs": 300,
+   "explicit": {
+    "rate_en": 0.0233,
+    "rate_es": 0.0133,
+    "en_only": 5,
+    "es_only": 2,
+    "mcnemar_p": 0.453125
+   },
+   "any": {
+    "rate_en": 0.03,
+    "rate_es": 0.0133,
+    "en_only": 7,
+    "es_only": 2,
+    "mcnemar_p": 0.1796875
+   }
+  }
+ }
+}
