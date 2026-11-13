@@ -1,4 +1,6 @@
 {
+ "adjudicated": false,
+ "n_changed_by_adjudication": 0,
  "human_counts": {
   "request_type": {
    "not_a_request": 8,

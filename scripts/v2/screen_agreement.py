@@ -41,14 +41,22 @@ def stats(h, m, rng):
     return out
 
 
-def main(out_json):
+def main(out_json, adjudicated=False):
     key = json.load(open(A / "audit_key.json"))
     hum = {}
     for r in csv.DictReader(open(A / "human/audit_human.csv", encoding="utf-8-sig")):
         rt = next(v for k, v in r.items() if k.startswith("HUMAN_request_type"))
         fd = next(v for k, v in r.items() if k.startswith("HUMAN_fidelity"))
         hum[r["item"]] = (rt, fd)
-    res = {"human_counts": {"request_type": dict(Counter(v[0] for v in hum.values())), "fidelity": dict(Counter(v[1] for v in hum.values()))},
+    adj = A / "human/adjudication_reviewed.csv"
+    changed = 0
+    if adjudicated:
+        for r in csv.DictReader(open(adj, encoding="utf-8-sig")):
+            v = r["FINAL_request_type"].strip()
+            assert v in RT_V, r["item"]
+            changed += v != hum[r["item"]][0]
+            hum[r["item"]] = (v, hum[r["item"]][1])
+    res = {"adjudicated": adjudicated, "n_changed_by_adjudication": changed,"human_counts": {"request_type": dict(Counter(v[0] for v in hum.values())), "fidelity": dict(Counter(v[1] for v in hum.values()))},
            "models": {}}
     for model in ("opus", "fable"):
         lab = {}
@@ -78,4 +86,4 @@ def main(out_json):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(sys.argv[1], "--adjudicated" in sys.argv)

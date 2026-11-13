@@ -41,3 +41,21 @@ agreement. Neither model is selected, and the dataset stays a candidate.
    fresh human sample, since the current 100 have been seen.
 3. **Restrict the study to tier A** without automated screening, with request type for the 1,069 harmful items labelled by the human or by both models
    in agreement, and report the baseline with and without that filter.
+
+## After adjudication (2026-11-13)
+
+Procedure pre-registered in the spec addendum "adjudication of the screening audit". The human reviewed the 29 items where both models agreed against
+the human label, with the model label and reasons shown, and changed 24 of them (to the models' label in each case); 5 were kept. Human request-type
+counts after review: harmful 51, benign 32, not a request 11, borderline safe 6. Output: `results/v2/screening/audit_agreement_adjudicated.json`.
+
+| After adjudication | Request type: agreement, kappa (95% CI) | Harmful vs rest: agreement, kappa | Tier A request type |
+|---|---|---|---|
+| claude-opus-5-5 | **92%, 0.88 (0.80–0.95)** | 92%, 0.84 | 90%, 0.81 |
+| claude-fable-5-2 | **91%, 0.86 (0.78–0.94)** | 94%, 0.88 | 90%, 0.81 |
+
+- **Both candidates pass after adjudication** (kappa at least 0.75; at least 90% request-type agreement). Before adjudication both failed.
+- **Selected: claude-opus-5-5.** By the pre-registered cost measure (subagent tokens), Opus used about 163k and Fable about 165k for the 100 items,
+  so Opus is the cheaper candidate; it also has the higher request-type agreement. The difference in cost is small.
+- **Caveat.** The adjudicated labels were set with the model labels in view, and the human moved to the model label on 24 of 29 reviewed items. The
+  post-adjudication agreement is therefore an upper estimate, and both the before and after figures are reported. The remaining disagreements are
+  mostly items the human calls harmful and Opus calls borderline safe (6).

@@ -1,0 +1,392 @@
+{
+ "adjudicated": true,
+ "n_changed_by_adjudication": 24,
+ "human_counts": {
+  "request_type": {
+   "not_a_request": 11,
+   "request_benign": 32,
+   "request_harmful": 51,
+   "request_borderline_safe": 6
+  },
+  "fidelity": {
+   "equivalent": 87,
+   "minor_drift": 8,
+   "wrong": 5
+  }
+ },
+ "models": {
+  "opus": {
+   "n_labelled": 100,
+   "n_missing_or_declined": 0,
+   "model_counts": {
+    "not_a_request": 13,
+    "request_benign": 32,
+    "request_harmful": 43,
+    "request_borderline_safe": 12
+   },
+   "all": {
+    "request_type": {
+     "n": 100,
+     "agreement": 0.92,
+     "kappa": 0.878,
+     "kappa_ci95": [
+      0.798,
+      0.953
+     ]
+    },
+    "harmful_vs_rest": {
+     "n": 100,
+     "agreement": 0.92,
+     "kappa": 0.84,
+     "kappa_ci95": [
+      0.739,
+      0.94
+     ]
+    },
+    "fidelity": {
+     "n": 100,
+     "agreement": 0.81,
+     "kappa": 0.379,
+     "kappa_ci95": [
+      0.139,
+      0.582
+     ]
+    },
+    "wrong_vs_rest": {
+     "n": 100,
+     "agreement": 0.95,
+     "kappa": 0.59,
+     "kappa_ci95": [
+      0.165,
+      0.884
+     ]
+    }
+   },
+   "tier_A": {
+    "request_type": {
+     "n": 40,
+     "agreement": 0.9,
+     "kappa": 0.809,
+     "kappa_ci95": [
+      0.606,
+      0.954
+     ]
+    },
+    "harmful_vs_rest": {
+     "n": 40,
+     "agreement": 0.9,
+     "kappa": 0.783,
+     "kappa_ci95": [
+      0.55,
+      0.947
+     ]
+    },
+    "fidelity": {
+     "n": 40,
+     "agreement": 0.85,
+     "kappa": 0.442,
+     "kappa_ci95": [
+      -0.026,
+      0.8
+     ]
+    },
+    "wrong_vs_rest": {
+     "n": 40,
+     "agreement": 0.95,
+     "kappa": 0.724,
+     "kappa_ci95": [
+      0.0,
+      1.0
+     ]
+    }
+   },
+   "tier_B": {
+    "request_type": {
+     "n": 20,
+     "agreement": 0.95,
+     "kappa": 0.924,
+     "kappa_ci95": [
+      0.762,
+      1.0
+     ]
+    },
+    "harmful_vs_rest": {
+     "n": 20,
+     "agreement": 0.95,
+     "kappa": 0.894,
+     "kappa_ci95": [
+      0.615,
+      1.0
+     ]
+    },
+    "fidelity": {
+     "n": 20,
+     "agreement": 0.7,
+     "kappa": 0.167,
+     "kappa_ci95": [
+      -0.111,
+      0.586
+     ]
+    },
+    "wrong_vs_rest": {
+     "n": 20,
+     "agreement": 0.9,
+     "kappa": 0.444,
+     "kappa_ci95": [
+      -0.111,
+      1.0
+     ]
+    }
+   },
+   "tier_C": {
+    "request_type": {
+     "n": 40,
+     "agreement": 0.925,
+     "kappa": 0.894,
+     "kappa_ci95": [
+      0.757,
+      1.0
+     ]
+    },
+    "harmful_vs_rest": {
+     "n": 40,
+     "agreement": 0.925,
+     "kappa": 0.833,
+     "kappa_ci95": [
+      0.65,
+      1.0
+     ]
+    },
+    "fidelity": {
+     "n": 40,
+     "agreement": 0.825,
+     "kappa": 0.434,
+     "kappa_ci95": [
+      0.057,
+      0.754
+     ]
+    },
+    "wrong_vs_rest": {
+     "n": 40,
+     "agreement": 0.975,
+     "kappa": 0.0,
+     "kappa_ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "confusion_request_type": {
+    "request_harmful": {
+     "request_harmful": 43,
+     "request_borderline_safe": 6,
+     "request_benign": 0,
+     "not_a_request": 2
+    },
+    "request_borderline_safe": {
+     "request_harmful": 0,
+     "request_borderline_safe": 6,
+     "request_benign": 0,
+     "not_a_request": 0
+    },
+    "request_benign": {
+     "request_harmful": 0,
+     "request_borderline_safe": 0,
+     "request_benign": 32,
+     "not_a_request": 0
+    },
+    "not_a_request": {
+     "request_harmful": 0,
+     "request_borderline_safe": 0,
+     "request_benign": 0,
+     "not_a_request": 11
+    }
+   }
+  },
+  "fable": {
+   "n_labelled": 100,
+   "n_missing_or_declined": 0,
+   "model_counts": {
+    "not_a_request": 13,
+    "request_benign": 30,
+    "request_harmful": 45,
+    "request_borderline_safe": 12
+   },
+   "all": {
+    "request_type": {
+     "n": 100,
+     "agreement": 0.91,
+     "kappa": 0.862,
+     "kappa_ci95": [
+      0.775,
+      0.938
+     ]
+    },
+    "harmful_vs_rest": {
+     "n": 100,
+     "agreement": 0.94,
+     "kappa": 0.88,
+     "kappa_ci95": [
+      0.782,
+      0.96
+     ]
+    },
+    "fidelity": {
+     "n": 100,
+     "agreement": 0.83,
+     "kappa": 0.444,
+     "kappa_ci95": [
+      0.196,
+      0.641
+     ]
+    },
+    "wrong_vs_rest": {
+     "n": 100,
+     "agreement": 0.96,
+     "kappa": 0.646,
+     "kappa_ci95": [
+      0.219,
+      0.928
+     ]
+    }
+   },
+   "tier_A": {
+    "request_type": {
+     "n": 40,
+     "agreement": 0.9,
+     "kappa": 0.807,
+     "kappa_ci95": [
+      0.601,
+      0.954
+     ]
+    },
+    "harmful_vs_rest": {
+     "n": 40,
+     "agreement": 0.9,
+     "kappa": 0.783,
+     "kappa_ci95": [
+      0.55,
+      0.947
+     ]
+    },
+    "fidelity": {
+     "n": 40,
+     "agreement": 0.875,
+     "kappa": 0.494,
+     "kappa_ci95": [
+      -0.02,
+      0.844
+     ]
+    },
+    "wrong_vs_rest": {
+     "n": 40,
+     "agreement": 0.95,
+     "kappa": 0.724,
+     "kappa_ci95": [
+      0.0,
+      1.0
+     ]
+    }
+   },
+   "tier_B": {
+    "request_type": {
+     "n": 20,
+     "agreement": 0.95,
+     "kappa": 0.924,
+     "kappa_ci95": [
+      0.762,
+      1.0
+     ]
+    },
+    "harmful_vs_rest": {
+     "n": 20,
+     "agreement": 0.95,
+     "kappa": 0.894,
+     "kappa_ci95": [
+      0.615,
+      1.0
+     ]
+    },
+    "fidelity": {
+     "n": 20,
+     "agreement": 0.8,
+     "kappa": 0.259,
+     "kappa_ci95": [
+      -0.111,
+      0.778
+     ]
+    },
+    "wrong_vs_rest": {
+     "n": 20,
+     "agreement": 0.9,
+     "kappa": 0.444,
+     "kappa_ci95": [
+      -0.111,
+      1.0
+     ]
+    }
+   },
+   "tier_C": {
+    "request_type": {
+     "n": 40,
+     "agreement": 0.9,
+     "kappa": 0.86,
+     "kappa_ci95": [
+      0.718,
+      0.966
+     ]
+    },
+    "harmful_vs_rest": {
+     "n": 40,
+     "agreement": 0.975,
+     "kappa": 0.946,
+     "kappa_ci95": [
+      0.818,
+      1.0
+     ]
+    },
+    "fidelity": {
+     "n": 40,
+     "agreement": 0.8,
+     "kappa": 0.435,
+     "kappa_ci95": [
+      0.082,
+      0.727
+     ]
+    },
+    "wrong_vs_rest": {
+     "n": 40,
+     "agreement": 1.0,
+     "kappa": null,
+     "kappa_ci95": null
+    }
+   },
+   "confusion_request_type": {
+    "request_harmful": {
+     "request_harmful": 45,
+     "request_borderline_safe": 3,
+     "request_benign": 1,
+     "not_a_request": 2
+    },
+    "request_borderline_safe": {
+     "request_harmful": 0,
+     "request_borderline_safe": 6,
+     "request_benign": 0,
+     "not_a_request": 0
+    },
+    "request_benign": {
+     "request_harmful": 0,
+     "request_borderline_safe": 3,
+     "request_benign": 29,
+     "not_a_request": 0
+    },
+    "not_a_request": {
+     "request_harmful": 0,
+     "request_borderline_safe": 0,
+     "request_benign": 0,
+     "not_a_request": 11
+    }
+   }
+  }
+ }
+}
