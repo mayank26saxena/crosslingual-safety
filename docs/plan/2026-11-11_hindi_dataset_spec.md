@@ -145,3 +145,12 @@ where both candidates gave the same request type and it differs from the human l
 their own label, the models' shared label and each model's one-sentence reason, and records a final request type (any of the four). Items outside
 this set keep the original human label. Agreement and kappa are reported both before (as already reported) and after adjudication, and the selection
 rule and acceptance criterion are applied to the adjudicated labels, labelled "after adjudication". Fidelity labels are not reviewed.
+
+## Addendum, 2026-11-13: split stratification
+
+Written after a first split was computed and found biased, before any repair is evaluated. The Phase 2b steering items (150 tier A pairs refused
+explicitly in English and not in Hindi) are reserved for development. With strata of source and English decision only, that reservation removed most
+of this failure pattern from the test split (test explicit-refusal gap 21.9 points against 32.3 on all screened items). The split is therefore
+stratified by source, English decision, and the English and Hindi explicit-refusal labels; in each stratum the test split takes half the groups where
+the non-reserved groups allow it, and the rest go to development. Both the population estimate (all screened items) and the test-split figures are
+reported. The first split is not used.

@@ -1,0 +1,58 @@
+{
+ "n_items": 1474,
+ "by_set": {
+  "study_harmful": 909,
+  "study_harmless": 348,
+  "relabelled_harmless": 122,
+  "not_a_request": 46,
+  "ambiguous_request_benign": 43,
+  "harmless_screened_harmful": 3,
+  "dropped_fidelity": 3
+ },
+ "by_source": {
+  "aya_redteaming/harmful": {
+   "study_harmful": 769,
+   "relabelled_harmless": 107,
+   "not_a_request": 38
+  },
+  "indicsafe/harmful": {
+   "study_harmful": 140,
+   "relabelled_harmless": 15
+  },
+  "polyguard/harmless": {
+   "study_harmless": 286,
+   "not_a_request": 8,
+   "harmless_screened_harmful": 3,
+   "dropped_fidelity": 3
+  },
+  "indicsafe/harmless": {
+   "study_harmless": 62
+  },
+  "indicsafe/ambiguous": {
+   "ambiguous_request_benign": 43
+  }
+ },
+ "fidelity_by_tier": {
+  "A": {
+   "equivalent": 964,
+   "minor_drift": 136,
+   "wrong": 74
+  },
+  "C": {
+   "equivalent": 244,
+   "minor_drift": 53,
+   "wrong": 3
+  }
+ },
+ "split": {
+  "study_harmful": {
+   "dev": 461,
+   "test": 448
+  },
+  "study_harmless": {
+   "test": 175,
+   "dev": 173
+  }
+ },
+ "steering_items_in_test": 0
+}

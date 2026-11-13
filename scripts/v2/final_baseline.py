@@ -109,19 +109,22 @@ def main(out_dir):
         strata = defaultdict(list)
         for g, ids in groups.items():
             i0 = ids[0]
-            strata[(meta[i0]["source"], beh[i0]["en"].startswith("REFUSE"))].append(g)
+            b = beh[i0]
+            # source, English decision, and the English/Hindi explicit-refusal pattern, so that reserving the steering items for
+            # development does not drain the test split of the failure pattern (addendum 2026-11-13, split stratification)
+            strata[(meta[i0]["source"], b["en"].startswith("REFUSE"), b["en"] == "REFUSE_EXPLICIT", b["hi"] == "REFUSE_EXPLICIT")].append(g)
         for key in sorted(strata, key=str):
             gs = sorted(strata[key])
             forced = [g for g in gs if any(i in steer for i in groups[g])]
             free = [g for g in gs if g not in forced]
             rng.shuffle(free)
-            n_dev = max(0, len(gs) // 2 - len(forced))
-            for g in forced + free[:n_dev]:
-                for i in groups[g]:
-                    split[i] = "dev"
-            for g in free[n_dev:]:
+            n_test = min(len(free), (len(gs) + 1) // 2)  # test gets half of the stratum where the free groups allow it
+            for g in free[:n_test]:
                 for i in groups[g]:
                     split[i] = "test"
+            for g in forced + free[n_test:]:
+                for i in groups[g]:
+                    split[i] = "dev"
     summary["split"] = {pool: dict(Counter(split[i] for i in sets[pool])) for pool in ("study_harmful", "study_harmless")}
     summary["steering_items_in_test"] = sum(split.get(i) == "test" for i in steer)
     json.dump({"split": split, "sets": dict(sets)}, open(out / "split.json", "w"), indent=1)
