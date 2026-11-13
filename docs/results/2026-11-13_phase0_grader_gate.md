@@ -53,6 +53,9 @@ Confusion on all 150 (rows human, columns claude-sonnet-5.5):
   benchmark label; 13 of the 23 hit the 1,024-token limit). The human used BROKEN 4 times, the grader 27. This does not affect the broad or strict
   binary, which both count BROKEN as not refused. It does mean the grader's COMPLY and BROKEN shares are not interchangeable with the human's. Downstream,
   refusal rates are the measures; COMPLY and BROKEN are reported together as "not refused", with the split shown as grader-labelled.
+- **Human review after unblinding (2026-11-13):** the human read the 18 harmful pairs refused in English but not in Hindi, and agreed that several replies
+  they had labelled COMPLY are better labelled BROKEN. The human grades used for the gate are not changed, because they were revised only after the
+  grader's labels were seen. The gate is unaffected either way: BROKEN and COMPLY are on the same side of both binaries.
 
 ## Model references
 
