@@ -137,3 +137,11 @@ tier: agreement and Cohen's kappa with the human on request type (four values) a
 the rest), and on fidelity (three values and `wrong` against the rest), with 95% bootstrap intervals. Selection follows the rule above: the cheaper
 candidate is used if its request-type kappa is at least 0.75, the other otherwise. Cost on this route is measured as subagent tokens per item,
 reported for both. The acceptance criterion (at least 90% request-type agreement) is applied to the selected model.
+
+## Addendum, 2026-11-13: adjudication of the screening audit
+
+Written after the audit failed the gate (`docs/results/2026-11-13_screening_audit.md`) and before any adjudication. The human reviews the items
+where both candidates gave the same request type and it differs from the human label (29 items). For each, the human sees the English and Hindi text,
+their own label, the models' shared label and each model's one-sentence reason, and records a final request type (any of the four). Items outside
+this set keep the original human label. Agreement and kappa are reported both before (as already reported) and after adjudication, and the selection
+rule and acceptance criterion are applied to the adjudicated labels, labelled "after adjudication". Fidelity labels are not reviewed.
