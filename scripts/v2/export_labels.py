@@ -1,0 +1,108 @@
+"""Export every human and model label to tracked, id-only tables (no request, reply or reason text).
+
+Usage: python3 scripts/v2/export_labels.py
+Writes results/v2/labels/*.csv. Each row is keyed by the dataset item id (and language where relevant), so the results can be recomputed from
+these tables plus the public datasets, without the untracked notes/ folder.
+"""
+import csv
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+N = ROOT / "notes"
+OUT = ROOT / "results/v2/labels"
+
+
+def rows(p):
+    return list(csv.DictReader(open(p, encoding="utf-8-sig")))
+
+
+def write(name, fields, data):
+    with open(OUT / name, "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=fields)
+        w.writeheader()
+        w.writerows(data)
+    print(f"{name}: {len(data)}")
+
+
+def blind_run(run_csv, key, grader, extra=None):
+    out = []
+    for r in rows(run_csv):
+        k = key[r["item"].strip()]
+        d = {"item_id": k.get("pair") or k.get("item_id"), "lang": k.get("lang", ""), "grader": grader, "label": r["label"].strip()}
+        if extra:
+            d.update({x: k.get(x, "") for x in extra})
+        out.append(d)
+    return out
+
+
+def main():
+    OUT.mkdir(parents=True, exist_ok=True)
+    # Phase 0: human four-way grades on the 150 Hindi calibration items
+    ck = json.load(open(N / "hindi_calibration/key.json"))
+    col = "HUMAN_label (COMPLY/REFUSE_EXPLICIT/REFUSE_SOFT/BROKEN)"
+    write("calibration_human.csv", ["calib_id", "source_id", "half", "benchmark_label", "label"],
+          [{"calib_id": r["item"], "source_id": ck[r["item"]]["source_id"], "half": ck[r["item"]]["half"],
+            "benchmark_label": ck[r["item"]]["label"], "label": r[col].strip()}
+           for r in rows(N / "hindi_calibration/human/hindi_calibration_1024_human.csv")])
+    # Phase 0: model graders on the calibration sheet (Kiro runs and the subagent bridge run)
+    rk = json.load(open(N / "hindi_calibration/model_grading_key_1024.json"))
+    cal = []
+    for g in ("claude-haiku-5.5", "claude-sonnet-5.5", "gpt-5.6-terra", "gpt-5.6-luna"):
+        cal += blind_run(N / f"hindi_calibration/model_runs/{g}/r1.csv", rk, f"{g} (kiro)")
+    cal += blind_run(N / "hindi_calibration/kiro_grading/runs/claude-sonnet-5.5-cc/r1.csv", rk, "claude-sonnet-5.5 (subagent)")
+    for d in cal:
+        d["calib_id"] = d.pop("item_id")
+    write("calibration_models.csv", ["calib_id", "lang", "grader", "label"], cal)
+    # Hindi baseline grades (tier A + PolyGuard), selected grader
+    hk = json.load(open(N / "grading/hindi_tierA_pg/key.json"))
+    write("hindi_baseline_grades.csv", ["item_id", "lang", "grader", "label"],
+          blind_run(N / "grading/hindi_tierA_pg/kiro_grading/runs/claude-sonnet-5.5-cc/r1.csv", hk, "claude-sonnet-5.5 (subagent)"))
+    # Spanish grades
+    sk = json.load(open(N / "grading/spanish_aya_pg/key.json"))
+    sp = []
+    for g in ("claude-sonnet-5.5", "gpt-5.6-luna"):
+        sp += blind_run(N / f"grading/spanish_aya_pg/kiro_grading/runs/{g}/r1.csv", sk, f"{g} (kiro)")
+    write("spanish_grades.csv", ["item_id", "lang", "grader", "label"], sp)
+    # Phase 2b steering grades
+    ek = json.load(open(N / "grading/es_dir_steer/key.json"))
+    st = []
+    for r in rows(N / "grading/es_dir_steer/runs/claude-sonnet-5.5-cc/r1.csv"):
+        k = ek[r["item"].strip()]
+        st.append({"item_id": k["pair"], "set": k["set"], "alpha": k["alpha"], "label": r["label"].strip()})
+    write("steering_grades.csv", ["item_id", "set", "alpha", "label"], st)
+    # Screening audit: human (original and adjudicated) and both candidates
+    ak = json.load(open(N / "audit/audit_key.json"))
+    adj = {r["item"]: r["FINAL_request_type"].strip() for r in rows(N / "audit/human/adjudication_reviewed.csv")}
+    hum = []
+    for r in rows(N / "audit/human/audit_human.csv"):
+        rt = next(v for k, v in r.items() if k.startswith("HUMAN_request_type")).strip()
+        fd = next(v for k, v in r.items() if k.startswith("HUMAN_fidelity")).strip()
+        hum.append({"audit_id": r["item"], "item_id": ak[r["item"]]["item_id"], "tier": ak[r["item"]]["tier"],
+                    "request_type": rt, "request_type_adjudicated": adj.get(r["item"], rt), "fidelity": fd})
+    write("audit_human.csv", ["audit_id", "item_id", "tier", "request_type", "request_type_adjudicated", "fidelity"], hum)
+    am = []
+    for m in ("opus", "fable"):
+        for p in (1, 2):
+            for r in rows(N / f"audit/screen_runs/{m}/part_{p:02d}.csv"):
+                am.append({"audit_id": r["item"].strip(), "item_id": ak[r["item"].strip()]["item_id"], "model": m,
+                           "request_type": r["request_type"].strip(), "fidelity": r["fidelity"].strip()})
+    write("audit_models.csv", ["audit_id", "item_id", "model", "request_type", "fidelity"], am)
+    # Baseline screening (claude-opus-5-5)
+    bk = json.load(open(N / "screening/baseline/key.json"))
+    sc = []
+    for f in sorted((N / "screening/baseline/runs/opus").glob("part_*.csv")):
+        for r in rows(f):
+            sc.append({"item_id": bk[r["item"].strip()]["item_id"], "request_type": r["request_type"].strip(), "fidelity": r["fidelity"].strip()})
+    write("screening_opus.csv", ["item_id", "request_type", "fidelity"], sc)
+    # Comprehension judgements, when present
+    cdir = N / "screening/comprehension/runs/opus"
+    if cdir.exists() and any(cdir.glob("part_*.csv")):
+        ckey = json.load(open(N / "screening/comprehension/key.json"))
+        cj = [{"item_id": ckey[r["item"].strip()], "judgement": r["judgement"].strip()}
+              for f in sorted(cdir.glob("part_*.csv")) for r in rows(f)]
+        write("comprehension_opus.csv", ["item_id", "judgement"], cj)
+
+
+if __name__ == "__main__":
+    main()

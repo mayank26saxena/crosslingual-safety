@@ -15,6 +15,7 @@ import sys
 from pathlib import Path
 
 MODEL = "Qwen/Qwen3-8B"
+REVISION = "b968826d9c46dd6066d109eabc6255188de91218"  # Hugging Face snapshot used for v2 runs from 2026-11-13; see REPRODUCE.md
 SEED = 20261112
 N_LAYERS = 36
 MAX_CAND = 28  # candidate layers 0..28, the first 80% of 36
@@ -133,9 +134,9 @@ def run(prompts_path, labels_path, out_dir, batch=32):
     out_dir.mkdir(parents=True, exist_ok=True)
     rows = _jl(prompts_path)
     labels = json.load(open(labels_path))
-    tok = AutoTokenizer.from_pretrained(MODEL)
+    tok = AutoTokenizer.from_pretrained(MODEL, revision=REVISION)
     tok.padding_side = "left"
-    model = AutoModelForCausalLM.from_pretrained(MODEL, dtype=torch.bfloat16).to("cuda").eval()
+    model = AutoModelForCausalLM.from_pretrained(MODEL, revision=REVISION, dtype=torch.bfloat16).to("cuda").eval()
     layers = model.model.layers
     assert len(layers) == N_LAYERS
     texts = [tok.apply_chat_template(r["messages"], tokenize=False, add_generation_prompt=True, enable_thinking=False) for r in rows]

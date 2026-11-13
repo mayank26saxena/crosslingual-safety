@@ -25,6 +25,7 @@ _HERE = Path(__file__).resolve()
 ROOT = _HERE.parents[2] if len(_HERE.parents) > 2 else _HERE.parent  # the generate stage runs from a lone copy on the pod
 CAL = ROOT / "notes/hindi_calibration"
 MODEL = "Qwen/Qwen3-8B"
+REVISION = "b968826d9c46dd6066d109eabc6255188de91218"  # Hugging Face snapshot used for v2 runs from 2026-11-13; see REPRODUCE.md
 MAX_NEW = 1024
 COLUMNS = [
     "item", "request_english", "message_hindi", "reply_hindi",
@@ -72,9 +73,9 @@ def generate(src, dst, limit=None, batch=16, max_new=MAX_NEW):
         done = {json.loads(l)["item"] for l in open(dst, encoding="utf-8")}
     todo = [r for r in items if r["item"] not in done]
     print(f"{len(done)} done, {len(todo)} to generate", flush=True)
-    tok = AutoTokenizer.from_pretrained(MODEL)
+    tok = AutoTokenizer.from_pretrained(MODEL, revision=REVISION)
     tok.padding_side = "left"
-    model = AutoModelForCausalLM.from_pretrained(MODEL, dtype=torch.bfloat16).to("cuda").eval()
+    model = AutoModelForCausalLM.from_pretrained(MODEL, revision=REVISION, dtype=torch.bfloat16).to("cuda").eval()
     texts = {r["item"]: tok.apply_chat_template(r["messages"], tokenize=False, add_generation_prompt=True, enable_thinking=False) for r in todo}
     todo.sort(key=lambda r: -len(texts[r["item"]]))
     eos = {tok.eos_token_id, tok.convert_tokens_to_ids("<|im_end|>")}

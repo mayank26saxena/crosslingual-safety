@@ -13,6 +13,7 @@ import sys
 from pathlib import Path
 
 MODEL = "Qwen/Qwen3-8B"
+REVISION = "b968826d9c46dd6066d109eabc6255188de91218"  # Hugging Face snapshot used for v2 runs from 2026-11-13; see REPRODUCE.md
 INSTR = "Translate the following Hindi text into English. Output only the English translation.\n\n"
 SEED = 20261116
 
@@ -35,9 +36,9 @@ def run(prompts, out, smoke=False):
     rows = [json.loads(l) for l in open(prompts, encoding="utf-8")]
     if smoke:
         rows = rows[:8]
-    tok = AutoTokenizer.from_pretrained(MODEL)
+    tok = AutoTokenizer.from_pretrained(MODEL, revision=REVISION)
     tok.padding_side = "left"
-    model = AutoModelForCausalLM.from_pretrained(MODEL, dtype=torch.bfloat16).to("cuda").eval()
+    model = AutoModelForCausalLM.from_pretrained(MODEL, revision=REVISION, dtype=torch.bfloat16).to("cuda").eval()
     texts = [tok.apply_chat_template(r["messages"], tokenize=False, add_generation_prompt=True, enable_thinking=False) for r in rows]
     order = sorted(range(len(rows)), key=lambda i: len(texts[i]))
     with open(out, "w", encoding="utf-8") as f:
