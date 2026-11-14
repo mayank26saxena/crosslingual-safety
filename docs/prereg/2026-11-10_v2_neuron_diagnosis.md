@@ -74,3 +74,9 @@ These readings are descriptive. Only the selected-set rule and the gate decide w
 
 All attribution, patching and selection use Hindi. Bengali is not analysed in this phase, so Holm correction across languages no longer applies. The
 selected-set rule and the gate are applied to Hindi alone.
+
+### 2026-11-15: superseded before any run
+
+This plan was never run. It is replaced by `2026-11-15_v2_phase5_hindi_neurons.md`, which uses the Phase 2b explicit-vs-soft direction
+as its metric (the gap Phases 1 to 4 located is in explicit refusal, not in refusing at all), restricts the search to layers 0 to 24, and
+adds a fixed-offset behaviour test that can be applied to English, so that Hindi-specific and shared neuron sets can be told apart.
