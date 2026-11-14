@@ -1,0 +1,20 @@
+{
+ "model": "Qwen/Qwen3-8B",
+ "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+ "alpha": 1.25,
+ "tau": 5.515399932861328,
+ "tau_forced": -1000000000.0,
+ "batch": 16,
+ "conditions": {
+  "bn_unsteered": 358,
+  "bn_gated": 358,
+  "en_unsteered": 358,
+  "en_gated": 358,
+  "mmlu_unsteered": 900,
+  "mmlu_gated": 900,
+  "mmlu_forced": 900,
+  "translate_unsteered": 358
+ },
+ "smoke": false,
+ "e_norm": 49.18519973754883
+}
