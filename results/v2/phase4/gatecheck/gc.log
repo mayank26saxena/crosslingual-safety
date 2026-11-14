@@ -1,0 +1,10 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+indicsafe_dev_harmful_bn         n=  64 mean +4.72 gate 0.250
+indicsafe_dev_harmful_en         n=  64 mean +2.01 gate 0.109
+indicsafe_dev_harmful_hi         n=  64 mean +3.82 gate 0.141
+indicsafe_dev_harmless_bn        n=  31 mean +4.96 gate 0.323
+indicsafe_dev_harmless_en        n=  31 mean +0.32 gate 0.097
+indicsafe_dev_harmless_hi        n=  31 mean +3.53 gate 0.097
+multijail_dev_bn                 n= 150 mean +6.40 gate 0.700
+multijail_dev_en                 n= 150 mean +4.54 gate 0.373
+DONE
