@@ -48,6 +48,7 @@ python3 scripts/v2/exclude.py          # sealed split, v1 items, duplicates
 | Provisional paired results (2026-11-11, 2026-11-12) | `paired_provisional.py calibration|spanish <out>` (from the label tables) |
 | Replication check of baseline replies (`2026-11-13_replication_check.md`) | `regen_calibration.py generate` under the pinned environment, then `replication_check.py` |
 | Phase 3 gated steering (`docs/prereg/2026-11-13_v2_phase3_gated_steering.md`) | `mmlu_sample.py` (with `pyarrow==18.1.0`); `gated_steering.py prep` / `tune` / `test` |
+| Phase 3 tuning and selection (`2026-11-14_phase3_tuning.md`) | `gated_steering.py tune`; `build_phase3_grading.py`; `phase3_tune_analysis.py results/v2/phase3/tune/tune_selection.json` |
 | Label tables, manifest | `export_labels.py`; `manifest.py` |
 
 Grading and screening runs are Claude Code subagents (or Kiro sessions for the earliest runs), one per 50-row blind part, with the prompts in
