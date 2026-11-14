@@ -1,4 +1,4 @@
-"""Phase 4 pre-freeze gate check (docs/prereg/2026-11-14_v2_phase4_confirmation_DRAFT.md, Shared design).
+"""Phase 4 pre-freeze gate check (docs/prereg/2026-11-14_v2_phase4_confirmation.md, Shared design).
 
 Forward pass only: no replies are generated. Reports the share of prompts whose Phase 3 gate score (layer-14 last prompt token on the unit
 Phase 2a direction) exceeds the Phase 3 tau, per set and language. The sealed MultiJail split is not read.
