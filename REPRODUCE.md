@@ -51,6 +51,7 @@ python3 scripts/v2/exclude.py          # sealed split, v1 items, duplicates
 | Phase 3 tuning and selection (`2026-11-14_phase3_tuning.md`) | `gated_steering.py tune`; `build_phase3_grading.py`; `phase3_tune_analysis.py results/v2/phase3/tune/tune_selection.json` |
 | Phase 3 test and verdict (`2026-11-14_phase3_test.md`) | `gated_steering.py test ... 1.25 5.515399932861328`; `build_phase3_grading.py`; `phase3_test_analysis.py results/v2/phase3/test/test_results.json` |
 | Phase 4 pre-freeze gate check (no replies) | `phase4_gatecheck.py prep`; `phase4_gatecheck.py run data/v2/phase4_gatecheck_prompts.jsonl DIRS OUT` |
+| Phase 4 Bengali general-ability sample | `phase4_mmlu_bn.py` (with `pyarrow==18.1.0`) |
 | Label tables, manifest | `export_labels.py`; `manifest.py` |
 
 Grading and screening runs are Claude Code subagents (or Kiro sessions for the earliest runs), one per 50-row blind part, with the prompts in
