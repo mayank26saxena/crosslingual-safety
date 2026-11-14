@@ -53,6 +53,7 @@ python3 scripts/v2/exclude.py          # sealed split, v1 items, duplicates
 | Phase 4 pre-freeze gate check (no replies) | `phase4_gatecheck.py prep`; `phase4_gatecheck.py run data/v2/phase4_gatecheck_prompts.jsonl DIRS OUT` |
 | Phase 4 Bengali general-ability sample | `phase4_mmlu_bn.py` (with `pyarrow==18.1.0`) |
 | Phase 4 confirmation run (sealed MultiJail, Bengali) | `phase4_confirm.py prep`; `phase4_confirm.py run data/v2/phase4_prompts.jsonl DIRS OUT` (`--smoke` first) |
+| Phase 4 blind folders | `phase4_folders.py screen REPLIES`; `phase4_folders.py grade REPLIES`; `phase4_folders.py opus` |
 | Phase 4 verdict | `phase4_analysis.py OUT_JSON` (after the comprehension judgements and blind labels) |
 | Label tables, manifest | `export_labels.py`; `manifest.py` |
 
