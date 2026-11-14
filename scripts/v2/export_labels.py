@@ -88,6 +88,31 @@ def main():
             p3[a] = dict(p3[b], condition=cond, inherited="yes")
         write(f"phase3_{stage}_grades.csv", ["item_id", "set", "lang", "condition", "label", "inherited"],
               sorted(p3.values(), key=lambda d: (d["set"], d["lang"], d["item_id"], d["condition"])))
+    # Phase 4: reply grades (Sonnet, with inherited rows), second-grader sample (Opus), Bengali comprehension judgements
+    g4 = N / "grading/phase4"
+    if any((g4 / "runs/claude-sonnet-5.5-cc").glob("part_*.csv")):
+        for gdir, run, name, inherit in ((g4, "claude-sonnet-5.5-cc", "phase4_grades.csv", True),
+                                         (N / "grading/phase4_opus", "claude-opus-5.5-cc", "phase4_second_grader.csv", False)):
+            if not any((gdir / "runs" / run).glob("part_*.csv")):
+                continue
+            pk = json.load(open(gdir / "key.json"))
+            p4 = {}
+            for f in sorted((gdir / "runs" / run).glob("part_*.csv")):
+                for r in rows(f):
+                    k = pk["graded"][r["item"].strip()]
+                    p4[f'{k["uid"]}|{k["condition"]}'] = dict(item_id=k["pair"], set=k["set"], lang=k["lang"], condition=k["condition"],
+                                                              label=r["label"].strip(), inherited="no")
+            if inherit:
+                for a, b in pk["same_as"].items():
+                    p4[a] = dict(p4[b], condition=a.rsplit("|", 1)[1], inherited="yes")
+            write(name, ["item_id", "set", "lang", "condition", "label", "inherited"],
+                  sorted(p4.values(), key=lambda d: (d["set"], d["lang"], d["item_id"], d["condition"])))
+        ck = json.load(open(N / "screening/comprehension_bn/key.json"))
+        cj = sorted(({"set": ck[r["item"].strip()].split("/")[0], "item_id": ck[r["item"].strip()].split("/", 1)[1],
+                      "judgement": r["judgement"].strip()}
+                     for f in sorted((N / "screening/comprehension_bn/runs/opus").glob("part_*.csv")) for r in rows(f)),
+                    key=lambda d: (d["set"], d["item_id"]))
+        write("phase4_comprehension_bn.csv", ["set", "item_id", "judgement"], cj)
     # Screening audit: human (original and adjudicated) and both candidates
     ak = json.load(open(N / "audit/audit_key.json"))
     adj = {r["item"]: r["FINAL_request_type"].strip() for r in rows(N / "audit/human/adjudication_reviewed.csv")}
