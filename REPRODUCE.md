@@ -55,6 +55,7 @@ python3 scripts/v2/exclude.py          # sealed split, v1 items, duplicates
 | Phase 4 confirmation run (sealed MultiJail, Bengali) | `phase4_confirm.py prep`; `phase4_confirm.py run data/v2/phase4_prompts.jsonl DIRS OUT` (`--smoke` first) |
 | Phase 4 blind folders | `phase4_folders.py screen REPLIES`; `phase4_folders.py grade REPLIES`; `phase4_folders.py opus` |
 | Phase 4 verdict | `phase4_analysis.py OUT_JSON` (after the comprehension judgements and blind labels) |
+| Phase 4b Bengali strength sweep (`docs/prereg/2026-11-14_v2_phase4b_bengali_strength_sweep.md`) | `phase4b_sweep.py prep` / `run data/v2/phase4b_prompts.jsonl DIRS OUT` / `folder` / `analyse` |
 | Label tables, manifest | `export_labels.py`; `manifest.py` |
 
 Grading and screening runs are Claude Code subagents (or Kiro sessions for the earliest runs), one per 50-row blind part, with the prompts in
