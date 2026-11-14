@@ -1,0 +1,6 @@
+{
+ "alpha": 1.25,
+ "tau": 5.515399932861328,
+ "model": "Qwen/Qwen3-8B",
+ "revision": "b968826d9c46dd6066d109eabc6255188de91218"
+}

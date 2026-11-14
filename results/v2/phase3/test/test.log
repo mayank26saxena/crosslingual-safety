@@ -1,0 +1,224 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 5 files:   0%|          | 0/5 [00:00<?, ?it/s]Fetching 5 files:  20%|██        | 1/5 [00:03<00:14,  3.71s/it]Fetching 5 files:  40%|████      | 2/5 [00:09<00:14,  4.87s/it]Fetching 5 files:  60%|██████    | 3/5 [00:12<00:07,  4.00s/it]Fetching 5 files:  80%|████████  | 4/5 [00:13<00:02,  2.83s/it]Fetching 5 files: 100%|██████████| 5/5 [00:15<00:00,  2.45s/it]Fetching 5 files: 100%|██████████| 5/5 [00:15<00:00,  3.03s/it]
+Loading weights:   0%|          | 0/399 [00:00<?, ?it/s]Loading weights:   1%|          | 2/399 [00:00<00:44,  8.85it/s]Loading weights:   4%|▍         | 15/399 [00:00<00:07, 52.35it/s]Loading weights:   7%|▋         | 26/399 [00:00<00:05, 71.27it/s]Loading weights:   9%|▉         | 37/399 [00:00<00:04, 78.55it/s]Loading weights:  12%|█▏        | 48/399 [00:00<00:04, 83.79it/s]Loading weights:  15%|█▍        | 59/399 [00:00<00:03, 85.34it/s]Loading weights:  18%|█▊        | 70/399 [00:00<00:03, 87.36it/s]Loading weights:  20%|██        | 81/399 [00:01<00:03, 89.37it/s]Loading weights:  23%|██▎       | 92/399 [00:01<00:03, 91.65it/s]Loading weights:  26%|██▌       | 103/399 [00:01<00:03, 91.77it/s]Loading weights:  29%|██▊       | 114/399 [00:01<00:03, 89.87it/s]Loading weights:  31%|███       | 124/399 [00:01<00:03, 91.61it/s]Loading weights:  34%|███▎      | 134/399 [00:01<00:03, 80.49it/s]Loading weights:  36%|███▌      | 143/399 [00:01<00:03, 79.36it/s]Loading weights:  38%|███▊      | 152/399 [00:01<00:03, 80.22it/s]Loading weights:  40%|████      | 161/399 [00:02<00:03, 78.39it/s]Loading weights:  43%|████▎     | 171/399 [00:02<00:02, 78.82it/s]Loading weights:  46%|████▌     | 182/399 [00:02<00:02, 83.39it/s]Loading weights:  48%|████▊     | 192/399 [00:02<00:02, 83.58it/s]Loading weights:  51%|█████     | 204/399 [00:02<00:02, 88.22it/s]Loading weights:  54%|█████▍    | 215/399 [00:02<00:02, 88.09it/s]Loading weights:  57%|█████▋    | 226/399 [00:02<00:01, 90.33it/s]Loading weights:  59%|█████▉    | 237/399 [00:02<00:01, 88.58it/s]Loading weights:  62%|██████▏   | 247/399 [00:02<00:01, 91.07it/s]Loading weights:  64%|██████▍   | 257/399 [00:03<00:01, 89.04it/s]Loading weights:  67%|██████▋   | 266/399 [00:03<00:01, 88.76it/s]Loading weights:  69%|██████▉   | 275/399 [00:03<00:01, 85.48it/s]Loading weights:  71%|███████   | 284/399 [00:03<00:01, 84.82it/s]Loading weights:  73%|███████▎  | 293/399 [00:03<00:01, 80.00it/s]Loading weights:  76%|███████▌  | 303/399 [00:03<00:01, 79.15it/s]Loading weights:  79%|███████▊  | 314/399 [00:03<00:01, 80.72it/s]Loading weights:  81%|████████▏ | 325/399 [00:03<00:00, 81.68it/s]Loading weights:  84%|████████▍ | 336/399 [00:04<00:00, 86.32it/s]Loading weights:  87%|████████▋ | 347/399 [00:04<00:00, 86.27it/s]Loading weights:  90%|████████▉ | 358/399 [00:04<00:00, 90.51it/s]Loading weights:  92%|█████████▏| 368/399 [00:04<00:00, 92.99it/s]Loading weights:  95%|█████████▍| 378/399 [00:04<00:00, 93.34it/s]Loading weights:  97%|█████████▋| 388/399 [00:04<00:00, 93.15it/s]Loading weights: 100%|█████████▉| 398/399 [00:04<00:00, 87.96it/s]Loading weights: 100%|██████████| 399/399 [00:04<00:00, 84.37it/s]
+hi_unsteered: 16/573
+hi_unsteered: 32/573
+hi_unsteered: 48/573
+hi_unsteered: 64/573
+hi_unsteered: 80/573
+hi_unsteered: 96/573
+hi_unsteered: 112/573
+hi_unsteered: 128/573
+hi_unsteered: 144/573
+hi_unsteered: 160/573
+hi_unsteered: 176/573
+hi_unsteered: 192/573
+hi_unsteered: 208/573
+hi_unsteered: 224/573
+hi_unsteered: 240/573
+hi_unsteered: 256/573
+hi_unsteered: 272/573
+hi_unsteered: 288/573
+hi_unsteered: 304/573
+hi_unsteered: 320/573
+hi_unsteered: 336/573
+hi_unsteered: 352/573
+hi_unsteered: 368/573
+hi_unsteered: 384/573
+hi_unsteered: 400/573
+hi_unsteered: 416/573
+hi_unsteered: 432/573
+hi_unsteered: 448/573
+hi_unsteered: 464/573
+hi_unsteered: 480/573
+hi_unsteered: 496/573
+hi_unsteered: 512/573
+hi_unsteered: 528/573
+hi_unsteered: 544/573
+hi_unsteered: 560/573
+hi_unsteered: 573/573
+hi_gated: 16/573
+hi_gated: 32/573
+hi_gated: 48/573
+hi_gated: 64/573
+hi_gated: 80/573
+hi_gated: 96/573
+hi_gated: 112/573
+hi_gated: 128/573
+hi_gated: 144/573
+hi_gated: 160/573
+hi_gated: 176/573
+hi_gated: 192/573
+hi_gated: 208/573
+hi_gated: 224/573
+hi_gated: 240/573
+hi_gated: 256/573
+hi_gated: 272/573
+hi_gated: 288/573
+hi_gated: 304/573
+hi_gated: 320/573
+hi_gated: 336/573
+hi_gated: 352/573
+hi_gated: 368/573
+hi_gated: 384/573
+hi_gated: 400/573
+hi_gated: 416/573
+hi_gated: 432/573
+hi_gated: 448/573
+hi_gated: 464/573
+hi_gated: 480/573
+hi_gated: 496/573
+hi_gated: 512/573
+hi_gated: 528/573
+hi_gated: 544/573
+hi_gated: 560/573
+hi_gated: 573/573
+en_unsteered: 16/573
+en_unsteered: 32/573
+en_unsteered: 48/573
+en_unsteered: 64/573
+en_unsteered: 80/573
+en_unsteered: 96/573
+en_unsteered: 112/573
+en_unsteered: 128/573
+en_unsteered: 144/573
+en_unsteered: 160/573
+en_unsteered: 176/573
+en_unsteered: 192/573
+en_unsteered: 208/573
+en_unsteered: 224/573
+en_unsteered: 240/573
+en_unsteered: 256/573
+en_unsteered: 272/573
+en_unsteered: 288/573
+en_unsteered: 304/573
+en_unsteered: 320/573
+en_unsteered: 336/573
+en_unsteered: 352/573
+en_unsteered: 368/573
+en_unsteered: 384/573
+en_unsteered: 400/573
+en_unsteered: 416/573
+en_unsteered: 432/573
+en_unsteered: 448/573
+en_unsteered: 464/573
+en_unsteered: 480/573
+en_unsteered: 496/573
+en_unsteered: 512/573
+en_unsteered: 528/573
+en_unsteered: 544/573
+en_unsteered: 560/573
+en_unsteered: 573/573
+en_gated: 16/573
+en_gated: 32/573
+en_gated: 48/573
+en_gated: 64/573
+en_gated: 80/573
+en_gated: 96/573
+en_gated: 112/573
+en_gated: 128/573
+en_gated: 144/573
+en_gated: 160/573
+en_gated: 176/573
+en_gated: 192/573
+en_gated: 208/573
+en_gated: 224/573
+en_gated: 240/573
+en_gated: 256/573
+en_gated: 272/573
+en_gated: 288/573
+en_gated: 304/573
+en_gated: 320/573
+en_gated: 336/573
+en_gated: 352/573
+en_gated: 368/573
+en_gated: 384/573
+en_gated: 400/573
+en_gated: 416/573
+en_gated: 432/573
+en_gated: 448/573
+en_gated: 464/573
+en_gated: 480/573
+en_gated: 496/573
+en_gated: 512/573
+en_gated: 528/573
+en_gated: 544/573
+en_gated: 560/573
+en_gated: 573/573
+mmlu_unsteered: 16/600
+mmlu_unsteered: 32/600
+mmlu_unsteered: 48/600
+mmlu_unsteered: 64/600
+mmlu_unsteered: 80/600
+mmlu_unsteered: 96/600
+mmlu_unsteered: 112/600
+mmlu_unsteered: 128/600
+mmlu_unsteered: 144/600
+mmlu_unsteered: 160/600
+mmlu_unsteered: 176/600
+mmlu_unsteered: 192/600
+mmlu_unsteered: 208/600
+mmlu_unsteered: 224/600
+mmlu_unsteered: 240/600
+mmlu_unsteered: 256/600
+mmlu_unsteered: 272/600
+mmlu_unsteered: 288/600
+mmlu_unsteered: 304/600
+mmlu_unsteered: 320/600
+mmlu_unsteered: 336/600
+mmlu_unsteered: 352/600
+mmlu_unsteered: 368/600
+mmlu_unsteered: 384/600
+mmlu_unsteered: 400/600
+mmlu_unsteered: 416/600
+mmlu_unsteered: 432/600
+mmlu_unsteered: 448/600
+mmlu_unsteered: 464/600
+mmlu_unsteered: 480/600
+mmlu_unsteered: 496/600
+mmlu_unsteered: 512/600
+mmlu_unsteered: 528/600
+mmlu_unsteered: 544/600
+mmlu_unsteered: 560/600
+mmlu_unsteered: 576/600
+mmlu_unsteered: 592/600
+mmlu_unsteered: 600/600
+mmlu_gated: 16/600
+mmlu_gated: 32/600
+mmlu_gated: 48/600
+mmlu_gated: 64/600
+mmlu_gated: 80/600
+mmlu_gated: 96/600
+mmlu_gated: 112/600
+mmlu_gated: 128/600
+mmlu_gated: 144/600
+mmlu_gated: 160/600
+mmlu_gated: 176/600
+mmlu_gated: 192/600
+mmlu_gated: 208/600
+mmlu_gated: 224/600
+mmlu_gated: 240/600
+mmlu_gated: 256/600
+mmlu_gated: 272/600
+mmlu_gated: 288/600
+mmlu_gated: 304/600
+mmlu_gated: 320/600
+mmlu_gated: 336/600
+mmlu_gated: 352/600
+mmlu_gated: 368/600
+mmlu_gated: 384/600
+mmlu_gated: 400/600
+mmlu_gated: 416/600
+mmlu_gated: 432/600
+mmlu_gated: 448/600
+mmlu_gated: 464/600
+mmlu_gated: 480/600
+mmlu_gated: 496/600
+mmlu_gated: 512/600
+mmlu_gated: 528/600
+mmlu_gated: 544/600
+mmlu_gated: 560/600
+mmlu_gated: 576/600
+mmlu_gated: 592/600
+mmlu_gated: 600/600
+DONE

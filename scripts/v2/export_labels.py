@@ -71,18 +71,23 @@ def main():
         k = ek[r["item"].strip()]
         st.append({"item_id": k["pair"], "set": k["set"], "alpha": k["alpha"], "label": r["label"].strip()})
     write("steering_grades.csv", ["item_id", "set", "alpha", "label"], st)
-    # Phase 3 tuning grades (graded rows plus steered rows that inherit the unsteered label)
-    pk = json.load(open(N / "grading/phase3_tune/key.json"))
-    p3 = {}
-    for f in sorted((N / "grading/phase3_tune/runs/claude-sonnet-5.5-cc").glob("part_*.csv")):
-        for r in rows(f):
-            k = pk["graded"][r["item"].strip()]
-            p3[f'{k["uid"]}|{k["condition"]}'] = dict(item_id=k["pair"], set=k["set"], lang=k["lang"], condition=k["condition"],
-                                                      label=r["label"].strip(), inherited="no")
-    for a, b in pk["same_as"].items():
-        uid, cond = a.rsplit("|", 1)
-        p3[a] = dict(p3[b], condition=cond, inherited="yes")
-    write("phase3_tune_grades.csv", ["item_id", "set", "lang", "condition", "label", "inherited"], sorted(p3.values(), key=lambda d: (d["set"], d["item_id"], d["condition"])))
+    # Phase 3 tuning and test grades (graded rows plus steered rows that inherit the unsteered label)
+    for stage in ("tune", "test"):
+        gdir = N / f"grading/phase3_{stage}"
+        if not any((gdir / "runs/claude-sonnet-5.5-cc").glob("part_*.csv")):
+            continue
+        pk = json.load(open(gdir / "key.json"))
+        p3 = {}
+        for f in sorted((gdir / "runs/claude-sonnet-5.5-cc").glob("part_*.csv")):
+            for r in rows(f):
+                k = pk["graded"][r["item"].strip()]
+                p3[f'{k["uid"]}|{k["condition"]}'] = dict(item_id=k["pair"], set=k["set"], lang=k["lang"], condition=k["condition"],
+                                                          label=r["label"].strip(), inherited="no")
+        for a, b in pk["same_as"].items():
+            uid, cond = a.rsplit("|", 1)
+            p3[a] = dict(p3[b], condition=cond, inherited="yes")
+        write(f"phase3_{stage}_grades.csv", ["item_id", "set", "lang", "condition", "label", "inherited"],
+              sorted(p3.values(), key=lambda d: (d["set"], d["lang"], d["item_id"], d["condition"])))
     # Screening audit: human (original and adjudicated) and both candidates
     ak = json.load(open(N / "audit/audit_key.json"))
     adj = {r["item"]: r["FINAL_request_type"].strip() for r in rows(N / "audit/human/adjudication_reviewed.csv")}
