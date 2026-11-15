@@ -129,7 +129,8 @@ def analyse(out_json):
             k = key["graded"][r["item"].strip()]
             lab[f'{k["uid"]}|{k["condition"]}'] = r["label"].strip()
     for a, b in key["same_as"].items():
-        lab[a] = lab[b]
+        if b in lab:            # addendum 2026-11-15: a copy needs a labelled source
+            lab[a] = lab[b]
     rows = jl(OUTD / "sweep_replies.jsonl")
     uids = sorted({r["uid"] for r in rows})
     meta = {(r["uid"], r["condition"]): r for r in rows}
@@ -152,7 +153,9 @@ def analyse(out_json):
         d["gate_rate"] = sum(meta[(u, c1)]["gate"] for u in uids) / len(uids)
         d["hit_limit"] = sum(meta[(u, c1)]["hit_limit"] for u in uids) / len(uids)
         res["per_alpha"][str(a)] = d
-    res["alpha0"] = {m: sum(int(f(lab[f"{u}|alpha_0.0"])) for u in uids) / len(uids) for m, f in IS.items()}
+    u0 = [u for u in uids if lab.get(f"{u}|alpha_0.0") not in (None, "DECLINED")]
+    res["alpha0"] = {m: sum(int(f(lab[f"{u}|alpha_0.0"])) for u in u0) / len(u0) for m, f in IS.items()}
+    res["alpha0_n"] = len(u0)
     E = {a: res["per_alpha"][str(a)]["explicit"]["diff"] for a in ALPHAS[1:]}
     Bk = {a: res["per_alpha"][str(a)]["broken"]["diff"] for a in ALPHAS[1:]}
     safe = [a for a in (0.5, 0.75, 1.0) if E[a] >= 0.15 and Bk[a] <= 0.05]

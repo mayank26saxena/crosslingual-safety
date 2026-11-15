@@ -59,3 +59,13 @@ A40 at $0.59/h, about one hour (about $0.60). About 12 Sonnet grading parts.
 
 One model, one grader route, 150 requests, model-only Bengali labels. The MultiJail development requests were used in the v1 study with
 another model. A strength chosen here would be selected on these items and is not a confirmed result.
+
+## Addendum 2026-11-15 (before any result was computed)
+
+- **Grading stopped on two parts.** Sonnet 5.5's safety filter stopped grading parts 8 and 12 (flagged as biology), and an identical retry
+  of each, chosen by the author, was stopped again. Their 74 replies are ungraded, and 36 steered replies that would have copied their
+  labels are lost with them. As the frozen rule says, pairs with a missing label are dropped: 29 to 38 of the 150 pairs per strength.
+  The dropped requests are not a random sample (the filter acts on content), so the result describes the remaining requests.
+- **Code fix.** The frozen script assumed every copied label had a graded source, and computed the α = 0 rates over all items. It now
+  copies a label only when its source is graded, and computes the α = 0 rates over labelled items. No rule, threshold or other part of the
+  computation changed.
