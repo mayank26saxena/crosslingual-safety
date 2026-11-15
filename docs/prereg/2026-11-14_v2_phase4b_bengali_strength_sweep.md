@@ -69,3 +69,8 @@ another model. A strength chosen here would be selected on these items and is no
 - **Code fix.** The frozen script assumed every copied label had a graded source, and computed the α = 0 rates over all items. It now
   copies a label only when its source is graded, and computes the α = 0 rates over labelled items. No rule, threshold or other part of the
   computation changed.
+
+### Addendum 2026-11-15, later (after the result)
+
+At the author's request, a second identical retry of parts 8 and 12 was run after the result was computed. The grader's safety filter
+stopped both again (three attempts each). The 74 replies remain ungraded and the reported result is unchanged.
