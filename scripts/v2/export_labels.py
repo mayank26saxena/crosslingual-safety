@@ -113,6 +113,20 @@ def main():
                      for f in sorted((N / "screening/comprehension_bn/runs/opus").glob("part_*.csv")) for r in rows(f)),
                     key=lambda d: (d["set"], d["item_id"]))
         write("phase4_comprehension_bn.csv", ["set", "item_id", "judgement"], cj)
+    # Phase 4b sweep grades (graded rows plus copied rows whose source is graded)
+    g4b = N / "grading/phase4b"
+    if any((g4b / "runs/claude-sonnet-5.5-cc").glob("part_*.csv")):
+        pk = json.load(open(g4b / "key.json"))
+        sw = {}
+        for f in sorted((g4b / "runs/claude-sonnet-5.5-cc").glob("part_*.csv")):
+            for r in rows(f):
+                k = pk["graded"][r["item"].strip()]
+                sw[f'{k["uid"]}|{k["condition"]}'] = dict(item_id=k["pair"], alpha=k["alpha"], label=r["label"].strip(), inherited="no")
+        for a, b in pk["same_as"].items():
+            if b in sw:
+                sw[a] = dict(sw[b], alpha=float(a.rsplit("_", 1)[1]), inherited="yes")
+        write("phase4b_sweep_grades.csv", ["item_id", "alpha", "label", "inherited"],
+              sorted(sw.values(), key=lambda d: (d["item_id"], d["alpha"])))
     # Screening audit: human (original and adjudicated) and both candidates
     ak = json.load(open(N / "audit/audit_key.json"))
     adj = {r["item"]: r["FINAL_request_type"].strip() for r in rows(N / "audit/human/adjudication_reviewed.csv")}
