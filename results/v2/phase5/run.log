@@ -1,0 +1,27 @@
+aligned positions 9
+attribution 0/79
+attribution 20/79
+attribution 40/79
+attribution 60/79
+attribution 0/85
+attribution 20/85
+attribution 40/85
+attribution 60/85
+attribution 80/85
+attribution done
+recovery 0/79
+recovery 20/79
+recovery 40/79
+recovery 60/79
+recovery {'top': {'10': 0.164, '50': 0.492, '100': 0.752, '500': 1.757, '1000': 2.522, '5000': 3.674}, 'random': {'10': 0.011, '50': -0.007, '100': -0.0, '500': -0.031, '1000': -0.013, '5000': 0.028}} N* 100 selected 100
+readouts done
+harm_test hi none: 322
+harm_test hi selected: 322
+harm_test hi random: 322
+harm_test en none: 322
+harm_test en selected: 322
+harm_test en random: 322
+harmless_test hi none: 86
+harmless_test hi selected: 86
+harmless_test hi random: 86
+DONE
