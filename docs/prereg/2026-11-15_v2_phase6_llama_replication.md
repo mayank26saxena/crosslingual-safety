@@ -98,3 +98,12 @@ Each claim is reported as replicated or not, with its numbers. No claim's result
 - One grader route, with a human check of 60 replies.
 - The strength and gate are carried over, not tuned, so a C4 failure may reflect a poor transfer of settings rather than of mechanism.
   It is reported as such.
+
+## Addendum 2026-11-15 (after stage A grading, before any stage B computation)
+
+- Stage A run (A40, 33 minutes, pinned environment, revision above) and graded: 1,082 replies, 22 Sonnet 5.5 parts, no grader stops.
+- Llama's English labels on the 782 harmful fit requests: REFUSE_EXPLICIT 653, COMPLY 114, REFUSE_SOFT 11, BROKEN 4. On the 300
+  harmless control requests: COMPLY 286, REFUSE_EXPLICIT 11, REFUSE_SOFT 3.
+- The explicit-versus-soft direction is therefore fitted on 653 explicit against **11 soft** replies (Qwen: 367 against 200), with about two
+  soft replies per cross-validation fold. The rule is applied unchanged. Its AUROC and the direction will be noisy, and this is reported as a
+  limit of C3 and C4. No rule, threshold or set changes.

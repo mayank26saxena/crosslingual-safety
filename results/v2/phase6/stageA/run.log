@@ -1,0 +1,71 @@
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights:   0%|          | 1/291 [00:00<00:39,  7.25it/s]Loading weights:   1%|          | 2/291 [00:00<00:51,  5.65it/s]Loading weights:   4%|▍         | 13/291 [00:00<00:07, 37.23it/s]Loading weights:   8%|▊         | 22/291 [00:00<00:05, 48.44it/s]Loading weights:  10%|▉         | 28/291 [00:00<00:05, 51.65it/s]Loading weights:  12%|█▏        | 36/291 [00:00<00:04, 58.70it/s]Loading weights:  15%|█▍        | 43/291 [00:00<00:04, 59.11it/s]Loading weights:  18%|█▊        | 51/291 [00:01<00:03, 60.81it/s]Loading weights:  21%|██        | 60/291 [00:01<00:03, 64.15it/s]Loading weights:  24%|██▎       | 69/291 [00:01<00:03, 65.11it/s]Loading weights:  26%|██▋       | 77/291 [00:01<00:03, 68.51it/s]Loading weights:  29%|██▉       | 85/291 [00:01<00:02, 70.67it/s]Loading weights:  32%|███▏      | 93/291 [00:01<00:02, 70.64it/s]Loading weights:  35%|███▍      | 101/291 [00:01<00:02, 64.91it/s]Loading weights:  37%|███▋      | 108/291 [00:01<00:02, 62.10it/s]Loading weights:  40%|███▉      | 115/291 [00:02<00:02, 60.48it/s]Loading weights:  42%|████▏     | 122/291 [00:02<00:02, 61.81it/s]Loading weights:  45%|████▍     | 130/291 [00:02<00:02, 65.85it/s]Loading weights:  47%|████▋     | 137/291 [00:02<00:02, 64.66it/s]Loading weights:  49%|████▉     | 144/291 [00:02<00:02, 60.70it/s]Loading weights:  52%|█████▏    | 151/291 [00:02<00:02, 58.40it/s]Loading weights:  54%|█████▍    | 158/291 [00:02<00:02, 60.92it/s]Loading weights:  57%|█████▋    | 167/291 [00:02<00:01, 65.51it/s]Loading weights:  60%|██████    | 175/291 [00:02<00:01, 68.11it/s]Loading weights:  63%|██████▎   | 182/291 [00:03<00:01, 67.37it/s]Loading weights:  65%|██████▍   | 189/291 [00:03<00:01, 61.90it/s]Loading weights:  67%|██████▋   | 196/291 [00:03<00:01, 60.53it/s]Loading weights:  70%|███████   | 204/291 [00:03<00:01, 59.79it/s]Loading weights:  73%|███████▎  | 212/291 [00:03<00:01, 64.81it/s]Loading weights:  76%|███████▌  | 221/291 [00:03<00:01, 66.01it/s]Loading weights:  79%|███████▊  | 229/291 [00:03<00:00, 69.05it/s]Loading weights:  81%|████████  | 236/291 [00:03<00:00, 68.78it/s]Loading weights:  84%|████████▎ | 243/291 [00:03<00:00, 66.79it/s]Loading weights:  86%|████████▌ | 250/291 [00:04<00:00, 65.18it/s]Loading weights:  88%|████████▊ | 257/291 [00:04<00:00, 63.46it/s]Loading weights:  91%|█████████ | 265/291 [00:04<00:00, 66.63it/s]Loading weights:  94%|█████████▍| 274/291 [00:04<00:00, 69.23it/s]Loading weights:  97%|█████████▋| 283/291 [00:04<00:00, 69.30it/s]Loading weights: 100%|██████████| 291/291 [00:04<00:00, 62.26it/s]
+[transformers] Ignoring clean_up_tokenization_spaces=True for BPE tokenizer TokenizersBackend. The clean_up_tokenization post-processing step is designed for WordPiece tokenizers and is destructive for BPE (it strips spaces before punctuation). Set clean_up_tokenization_spaces=False to suppress this warning, or set clean_up_tokenization_spaces_for_bpe_even_though_it_will_corrupt_output=True to force cleanup anyway.
+unsteered: 16/1082
+unsteered: 32/1082
+unsteered: 48/1082
+unsteered: 64/1082
+unsteered: 80/1082
+unsteered: 96/1082
+unsteered: 112/1082
+unsteered: 128/1082
+unsteered: 144/1082
+unsteered: 160/1082
+unsteered: 176/1082
+unsteered: 192/1082
+unsteered: 208/1082
+unsteered: 224/1082
+unsteered: 240/1082
+unsteered: 256/1082
+unsteered: 272/1082
+unsteered: 288/1082
+unsteered: 304/1082
+unsteered: 320/1082
+unsteered: 336/1082
+unsteered: 352/1082
+unsteered: 368/1082
+unsteered: 384/1082
+unsteered: 400/1082
+unsteered: 416/1082
+unsteered: 432/1082
+unsteered: 448/1082
+unsteered: 464/1082
+unsteered: 480/1082
+unsteered: 496/1082
+unsteered: 512/1082
+unsteered: 528/1082
+unsteered: 544/1082
+unsteered: 560/1082
+unsteered: 576/1082
+unsteered: 592/1082
+unsteered: 608/1082
+unsteered: 624/1082
+unsteered: 640/1082
+unsteered: 656/1082
+unsteered: 672/1082
+unsteered: 688/1082
+unsteered: 704/1082
+unsteered: 720/1082
+unsteered: 736/1082
+unsteered: 752/1082
+unsteered: 768/1082
+unsteered: 784/1082
+unsteered: 800/1082
+unsteered: 816/1082
+unsteered: 832/1082
+unsteered: 848/1082
+unsteered: 864/1082
+unsteered: 880/1082
+unsteered: 896/1082
+unsteered: 912/1082
+unsteered: 928/1082
+unsteered: 944/1082
+unsteered: 960/1082
+unsteered: 976/1082
+unsteered: 992/1082
+unsteered: 1008/1082
+unsteered: 1024/1082
+unsteered: 1040/1082
+unsteered: 1056/1082
+unsteered: 1072/1082
+unsteered: 1082/1082
+DONE
