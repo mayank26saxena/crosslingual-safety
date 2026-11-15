@@ -107,3 +107,10 @@ Each claim is reported as replicated or not, with its numbers. No claim's result
 - The explicit-versus-soft direction is therefore fitted on 653 explicit against **11 soft** replies (Qwen: 367 against 200), with about two
   soft replies per cross-validation fold. The rule is applied unchanged. Its AUROC and the direction will be noisy, and this is reported as a
   limit of C3 and C4. No rule, threshold or set changes.
+
+### Addendum 2026-11-15, stage B code fix (before any stage B result)
+
+The stage B smoke test stopped in the two-token refusal-score path (used when single first tokens are not pure enough; Llama needs it,
+Qwen did not). Under transformers 5.22.2, `cache.crop` no longer accepts a target length. The fix removes the one appended token after each
+second-token step (`cache.crop(-1)`, with a length check). It computes the same score; no rule changed. The smoke test then passed, and the
+full run started with that version of `scripts/v2/phase6_llama.py` (sha256 93d9bf01…778ff on the pod).
