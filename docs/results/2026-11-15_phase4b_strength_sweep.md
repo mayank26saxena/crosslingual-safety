@@ -35,6 +35,12 @@ Points against α = 0 (explicit 20.2%, BROKEN 10.9%), paired, with bootstrap 95%
 - **Grading loss (addendum):** Sonnet 5.5's safety filter stopped two of twelve grading parts twice (flagged as biology). 74 replies were
   never graded and 36 copies of their labels were lost, so 29 to 38 of 150 pairs per strength are dropped. The filter acts on content, so
   the dropped requests are not random; if broken replies cluster in that content, this result would miss them.
+- **Check with the missing parts graded by Opus 5.5 (after the result, at the author's request).** Sonnet was stopped three times on
+  each part; Opus 5.5 graded both. With its labels filling the 74 replies (and their 36 copies), all 150 pairs are kept: explicit
+  +26.7 [+19.3, +34.7] and BROKEN +2.7 [−2.0, +7.3] at α = 1.25; BROKEN at the other strengths +2.0, +3.3 and +0.7. The outcome is the
+  same ("not reproduced"), though BROKEN at 1.25 is now above 2 points. Opus noted that many replies in one stopped part loop or misread
+  the request, so the dropped requests did hold more broken replies than the rest, as feared. Output:
+  `results/v2/phase4b/sweep_results_opus_fill.json`; labels `results/v2/labels/phase4b_sweep_opus_parts.csv`.
 - One model, model-only Bengali labels (grader not calibrated on Bengali), 150 requests used once before with another model.
 - No strength chosen here is confirmed; all Bengali confirmation data is used.
 - Run: A40, 23:05 to 00:05 UTC, about $0.60, pinned environment.

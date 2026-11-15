@@ -120,14 +120,17 @@ def mcnemar(b, c):
     return 1.0 if n == 0 else min(1.0, 2 * sum(math.comb(n, i) for i in range(min(b, c) + 1)) / 2 ** n)
 
 
-def analyse(out_json):
+def analyse(out_json, fill_opus=False):
+    """fill_opus (post-hoc check, addendum 2026-11-15): parts with no Sonnet labels take the Opus 5.5 labels."""
     rng = random.Random(SEED)
     key = json.load(open(G / "key.json"))
     lab = {}
-    for f in sorted((G / "runs/claude-sonnet-5.5-cc").glob("part_*.csv")):
-        for r in csv.DictReader(open(f, encoding="utf-8-sig")):
-            k = key["graded"][r["item"].strip()]
-            lab[f'{k["uid"]}|{k["condition"]}'] = r["label"].strip()
+    runs = ["claude-sonnet-5.5-cc"] + (["claude-opus-5.5-cc"] if fill_opus else [])
+    for run in runs:
+        for f in sorted((G / "runs" / run).glob("part_*.csv")):
+            for r in csv.DictReader(open(f, encoding="utf-8-sig")):
+                k = key["graded"][r["item"].strip()]
+                lab.setdefault(f'{k["uid"]}|{k["condition"]}', r["label"].strip())
     for a, b in key["same_as"].items():
         if b in lab:            # addendum 2026-11-15: a copy needs a labelled source
             lab[a] = lab[b]
@@ -190,4 +193,4 @@ def analyse(out_json):
 
 if __name__ == "__main__":
     a = sys.argv[1:]
-    {"prep": prep, "run": lambda: run(*a[1:4]), "folder": lambda: folder(a[1]), "analyse": lambda: analyse(a[1])}[a[0]]()
+    {"prep": prep, "run": lambda: run(*a[1:4]), "folder": lambda: folder(a[1]), "analyse": lambda: analyse(a[1], fill_opus="--fill-opus" in a)}[a[0]]()

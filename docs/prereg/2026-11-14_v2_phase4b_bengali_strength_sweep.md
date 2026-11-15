@@ -74,3 +74,8 @@ another model. A strength chosen here would be selected on these items and is no
 
 At the author's request, a second identical retry of parts 8 and 12 was run after the result was computed. The grader's safety filter
 stopped both again (three attempts each). The 74 replies remain ungraded and the reported result is unchanged.
+
+### Addendum 2026-11-15, Opus check (after the result)
+
+At the author's request, Opus 5.5 graded the two stopped parts (same prompt, separate run folder). `phase4b_sweep.py analyse --fill-opus`
+reports the result with those labels filling the gaps. It is a post-hoc check reported beside the registered result, which is unchanged.

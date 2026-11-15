@@ -127,6 +127,10 @@ def main():
                 sw[a] = dict(sw[b], alpha=float(a.rsplit("_", 1)[1]), inherited="yes")
         write("phase4b_sweep_grades.csv", ["item_id", "alpha", "label", "inherited"],
               sorted(sw.values(), key=lambda d: (d["item_id"], d["alpha"])))
+        op = [dict(item_id=pk["graded"][r["item"].strip()]["pair"], alpha=pk["graded"][r["item"].strip()]["alpha"], label=r["label"].strip())
+              for f in sorted((g4b / "runs/claude-opus-5.5-cc").glob("part_*.csv")) for r in rows(f)]
+        if op:
+            write("phase4b_sweep_opus_parts.csv", ["item_id", "alpha", "label"], sorted(op, key=lambda d: (d["item_id"], d["alpha"])))
     # Screening audit: human (original and adjudicated) and both candidates
     ak = json.load(open(N / "audit/audit_key.json"))
     adj = {r["item"]: r["FINAL_request_type"].strip() for r in rows(N / "audit/human/adjudication_reviewed.csv")}
