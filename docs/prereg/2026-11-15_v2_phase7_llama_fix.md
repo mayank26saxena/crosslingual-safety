@@ -112,3 +112,22 @@ The frozen text states two Phase 6 details loosely. Phase 7 follows the Phase 6 
 
 Stage 2 regenerates the unsteered test replies in the same run as the chosen arm. Where an unsteered reply is identical to its Phase 6
 reply, it takes the Phase 6 label instead of being graded again. Rules, sets and thresholds are unchanged.
+
+## Addendum 2 (2026-11-15, after stage 1 grading, before stage 2): implementation error in the E arms
+
+**What went wrong.** The stage 1 code scaled the E push twice by the fit gap: it added α·g_e·e_dir[18], where e_dir[18] already has norm
+g_e. The specified push is α·g_e·ê (Phase 6: 1.25·e_dir[18]). E1 and E2 were therefore about 4.8 times stronger than registered. Both broke
+nearly every gated reply (English BROKEN +92 points), so their stage 1 numbers say nothing about the registered E settings. The R arms use
+a unit vector and are correct as run.
+
+**What is done.** The code is fixed (ê is normalised before scaling). E1 and E2 are regenerated on the same development sets, in the same
+batches, with the same gate, in a new run. The new run also regenerates the unsteered replies. The E arms are compared with the stage 1
+unsteered labels only if every regenerated unsteered reply is identical to its stage 1 reply; otherwise the new unsteered replies are graded
+too. The corrected E1 and E2 replace the erroneous ones, and the stage 1 selection rule is applied to all five arms. The erroneous E results
+are kept and reported as such. No rule, threshold or set changes.
+
+**Second fix (analysis only, before any stage 2 data).** The F2 check in `analyse2` had the wrong sign. The gap is Hindi minus English
+explicit refusal (negative), so the registered "shrinks by at least 10 points" means its change is +10 or more, with the interval above 0.
+
+**Stage 1 R results before the rerun** (recorded now so the rerun cannot change them): R1 Hindi explicit +7.3, R2 +15.3, R3 +18.0; R2
+and R3 pass every guard. Gate open on 45% of Hindi harmful, 92% of English harmful and 0% of harmless Hindi development prompts.

@@ -72,8 +72,9 @@ class Steer:
         d = np.load(dirs)
         r = d["r_dir"][LR] / np.linalg.norm(d["r_dir"][LR])
         self.rhat = torch.tensor(r, dtype=torch.float32, device="cuda")
-        self.e = torch.tensor(d["e_dir"][LE], dtype=torch.float32, device="cuda")
         self.g_e = float(np.linalg.norm(d["e_dir"][LE]))
+        # unit e-hat: the push is alpha * g_e * e-hat (= Phase 6's alpha * e_dir[18]); addendum 2 fixes a double scaling here
+        self.e = torch.tensor(d["e_dir"][LE] / self.g_e, dtype=torch.float32, device="cuda")
         self.st = {"score": None, "mask": None, "tau": None, "aR": 0.0, "aE": 0.0}
         L = self.G.model.model.layers
         L[LR].register_forward_hook(self._gate)
@@ -177,6 +178,19 @@ def run1(prompts, dirs, out_dir, smoke=False):
     print("DONE", flush=True)
 
 
+def run1e(prompts, dirs, out_dir, smoke=False):
+    """Addendum 2: corrected E1 and E2 on the development sets, plus unsteered for the identity check."""
+    out_dir = Path(out_dir)
+    meta = json.load(open(out_dir / "stage1_meta.json"))
+    rows = _load(prompts, smoke)
+    S = Steer(dirs)
+    arms = {"unsteered": (0.0, 0.0)}
+    arms.update({k: (0.0, m * S.g_e) for k, m in E_ARMS.items()})
+    with open(out_dir / "stage1e_replies.jsonl", "w", encoding="utf-8") as f:
+        S.run(_dev_groups(rows), arms, meta["tau_hi"], f, smoke)
+    print("DONE", flush=True)
+
+
 def run1b(prompts, dirs, out_dir, rstar, smoke=False):
     out_dir = Path(out_dir)
     meta = json.load(open(out_dir / "stage1_meta.json"))
@@ -213,7 +227,14 @@ def run2(prompts, dirs, out_dir, arm, smoke=False):
 
 def folder(stage, replies, prior=None):
     rows = [r for r in _jl(replies) if "mmlu" not in r["condition"]]
-    if stage == "1b":  # combined arms are compared with the stage 1 unsteered replies
+    if stage == "1e":  # addendum 2: the regenerated unsteered replies must equal stage 1's, and are then not graded again
+        old = {r["uid"]: r["reply"] for r in _jl(Path(replies).with_name("stage1_replies.jsonl")) if r["condition"].endswith("_unsteered")}
+        new = [r for r in rows if r["condition"].endswith("_unsteered")]
+        same = sum(old[r["uid"]] == r["reply"] for r in new)
+        print(f"unsteered identity check: {same}/{len(new)} identical")
+        assert same == len(new), "regenerated unsteered replies differ: grade them too (addendum 2)"
+        rows = [r for r in rows if not r["condition"].endswith("_unsteered")]
+    if stage in ("1b", "1e"):  # these arms are compared with the stage 1 unsteered replies
         base_rows = [r for r in _jl(Path(replies).with_name("stage1_replies.jsonl")) if r["condition"].endswith("_unsteered")]
     else:
         base_rows = [r for r in rows if r["condition"].endswith("_unsteered")]
@@ -260,13 +281,11 @@ def _labels(stage):
     """uid|condition -> label for a stage folder (graded rows, copies, and Phase 6 labels for identical replies)."""
     d = ROOT / f"notes/grading/phase7_{stage}"
     k = json.load(open(d / "key.json"))
-    lab = {}
+    lab = _labels("1") if stage in ("1b", "1e") else {}  # base first; this stage's own labels override (addendum 2)
     for f in sorted((d / "runs/claude-sonnet-5.5-cc").glob("part_*.csv")):
         for r in csv.DictReader(open(f, encoding="utf-8-sig")):
             g = k["graded"][r["item"].strip()]
             lab[f'{g["uid"]}|{g["condition"]}'] = r["label"].strip()
-    if stage == "1b":
-        lab.update(_labels("1"))
     if k.get("from_phase6"):
         k6 = json.load(open(ROOT / "notes/grading/phase6B/key.json"))
         l6 = {}
@@ -345,12 +364,20 @@ def analyse1(out_json, with_1b=False):
            "enharm": [r["uid"] for r in rows if r["set"] == "dev_harmful" and r["lang"] == "en"],
            "hiharmless": [r["uid"] for r in rows if r["set"] == "dev_harmless"]}
     pe = [(f"dev_harmful|{p}|hi", f"dev_harmful|{p}|en") for p in sorted({r["pair"] for r in rows if r["set"] == "dev_harmful"})]
-    lab = _labels("1b" if with_1b else "1")
-    rep = _jl(ROOT / "results/v2/phase7/stage1/stage1_replies.jsonl")
+    s1 = ROOT / "results/v2/phase7/stage1"
+    with_1e = (ROOT / "notes/grading/phase7_1e/key.json").exists() and (s1 / "stage1e_replies.jsonl").exists()
+    lab = _labels("1e") if with_1e else _labels("1")
+    if with_1b:
+        lab.update({k: v for k, v in _labels("1b").items() if "_RE" in k})
+    rep = _jl(s1 / "stage1_replies.jsonl")
+    if with_1e:  # addendum 2: corrected E arms replace the erroneous ones
+        rep = [r for r in rep if not r["condition"].rsplit("_", 1)[1].startswith("E")]
+        rep += [r for r in _jl(s1 / "stage1e_replies.jsonl") if not r["condition"].endswith("_unsteered")]
+    res_note = "E arms corrected (addendum 2)" if with_1e else "E arms as first run (double-scaled; see addendum 2)"
     if with_1b:
         rep += _jl(ROOT / "results/v2/phase7/stage1/stage1b_replies.jsonl")
     gate = Counter((r["condition"], r["gate"]) for r in rep)
-    res = dict(arms={})
+    res = dict(note=res_note, arms={})
     arms = list(E_ARMS) + list(R_ARMS) + (["RE1", "RE2"] if with_1b else [])
     for a in arms:
         s = _arm_stats(np, rng, lab, grp.get, a)
@@ -413,7 +440,7 @@ def analyse2(out_json, arm):
     h = s["hiharm"]
     s["F1"] = bool(h["explicit"]["diff"] >= MIN_GAIN and h["explicit"]["ci95"][0] > 0 and _passes_guards(s) and
                    s["enharmless"]["broad"]["diff"] <= 3.0 and s["mmlu_guard"])
-    s["F2"] = bool(s["gap"]["narrowing"] <= -10.0 and s["gap"]["ci95"][1] < 0)
+    s["F2"] = bool(s["gap"]["narrowing"] >= 10.0 and s["gap"]["ci95"][0] > 0)  # gap = hi - en (negative); addendum 2 sign fix
     s["F3"] = bool(h["comply"]["diff"] < 0 and h["comply"]["ci95"][1] < 0)
     json.dump(s, open(out_json, "w"), indent=1)
     print(json.dumps({k: s[k] for k in ("F1", "F2", "F3", "gap", "mmlu", "gate_rate")}))
@@ -427,6 +454,8 @@ if __name__ == "__main__":
         prep()
     elif a[0] == "run1":
         run1(a[1], a[2], a[3], sm)
+    elif a[0] == "run1e":
+        run1e(a[1], a[2], a[3], sm)
     elif a[0] == "run1b":
         run1b(a[1], a[2], a[3], a[4], sm)
     elif a[0] == "run2":
