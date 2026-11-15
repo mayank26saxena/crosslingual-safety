@@ -1,0 +1,253 @@
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights:   0%|          | 1/291 [00:00<00:38,  7.49it/s]Loading weights:   1%|          | 2/291 [00:00<00:45,  6.30it/s]Loading weights:   4%|▍         | 13/291 [00:00<00:06, 39.84it/s]Loading weights:   8%|▊         | 22/291 [00:00<00:05, 53.36it/s]Loading weights:  11%|█         | 31/291 [00:00<00:04, 58.37it/s]Loading weights:  14%|█▎        | 40/291 [00:00<00:04, 61.51it/s]Loading weights:  17%|█▋        | 49/291 [00:00<00:03, 63.47it/s]Loading weights:  20%|█▉        | 58/291 [00:01<00:03, 64.87it/s]Loading weights:  22%|██▏       | 65/291 [00:01<00:03, 65.95it/s]Loading weights:  25%|██▍       | 72/291 [00:01<00:03, 63.41it/s]Loading weights:  27%|██▋       | 79/291 [00:01<00:03, 61.57it/s]Loading weights:  30%|██▉       | 86/291 [00:01<00:03, 63.16it/s]Loading weights:  32%|███▏      | 94/291 [00:01<00:02, 66.06it/s]Loading weights:  35%|███▍      | 101/291 [00:01<00:02, 65.78it/s]Loading weights:  37%|███▋      | 108/291 [00:01<00:02, 62.09it/s]Loading weights:  40%|███▉      | 115/291 [00:02<00:02, 59.06it/s]Loading weights:  42%|████▏     | 122/291 [00:02<00:02, 61.05it/s]Loading weights:  45%|████▍     | 130/291 [00:02<00:02, 64.98it/s]Loading weights:  47%|████▋     | 137/291 [00:02<00:02, 64.28it/s]Loading weights:  49%|████▉     | 144/291 [00:02<00:02, 63.45it/s]Loading weights:  52%|█████▏    | 151/291 [00:02<00:02, 60.02it/s]Loading weights:  54%|█████▍    | 158/291 [00:02<00:02, 61.66it/s]Loading weights:  57%|█████▋    | 166/291 [00:02<00:01, 64.67it/s]Loading weights:  59%|█████▉    | 173/291 [00:02<00:01, 64.12it/s]Loading weights:  62%|██████▏   | 180/291 [00:03<00:01, 58.94it/s]Loading weights:  64%|██████▍   | 186/291 [00:03<00:01, 54.82it/s]Loading weights:  67%|██████▋   | 194/291 [00:03<00:01, 60.44it/s]Loading weights:  69%|██████▉   | 202/291 [00:03<00:01, 64.38it/s]Loading weights:  72%|███████▏  | 209/291 [00:03<00:01, 65.53it/s]Loading weights:  74%|███████▍  | 216/291 [00:03<00:01, 61.93it/s]Loading weights:  77%|███████▋  | 223/291 [00:03<00:01, 59.63it/s]Loading weights:  79%|███████▉  | 230/291 [00:03<00:00, 61.61it/s]Loading weights:  82%|████████▏ | 238/291 [00:03<00:00, 65.98it/s]Loading weights:  84%|████████▍ | 245/291 [00:04<00:00, 66.36it/s]Loading weights:  87%|████████▋ | 252/291 [00:04<00:00, 63.13it/s]Loading weights:  89%|████████▉ | 259/291 [00:04<00:00, 60.84it/s]Loading weights:  92%|█████████▏| 267/291 [00:04<00:00, 60.35it/s]Loading weights:  95%|█████████▍| 276/291 [00:04<00:00, 62.76it/s]Loading weights:  98%|█████████▊| 285/291 [00:04<00:00, 64.11it/s]Loading weights: 100%|██████████| 291/291 [00:04<00:00, 61.50it/s]
+activations (3601, 32, 4096)
+layer 0: ablated mean s 9.887
+layer 1: ablated mean s 9.771
+layer 2: ablated mean s 9.344
+layer 3: ablated mean s 9.600
+layer 4: ablated mean s 8.903
+layer 5: ablated mean s 9.382
+layer 6: ablated mean s 8.828
+layer 7: ablated mean s 6.597
+layer 8: ablated mean s -0.028
+layer 9: ablated mean s 0.956
+layer 10: ablated mean s -2.965
+layer 11: ablated mean s 0.070
+layer 12: ablated mean s 4.311
+layer 13: ablated mean s 6.489
+layer 14: ablated mean s 7.847
+layer 15: ablated mean s 7.340
+layer 16: ablated mean s 7.992
+layer 17: ablated mean s 7.653
+layer 18: ablated mean s 7.218
+layer 19: ablated mean s 8.378
+layer 20: ablated mean s 7.864
+layer 21: ablated mean s 7.807
+layer 22: ablated mean s 8.088
+layer 23: ablated mean s 7.243
+layer 24: ablated mean s 7.221
+layer 25: ablated mean s 7.069
+refusal layer 10 drop fraction 0.944
+explicit-soft layer 18 cv auroc 0.925
+[transformers] Ignoring clean_up_tokenization_spaces=True for BPE tokenizer TokenizersBackend. The clean_up_tokenization post-processing step is designed for WordPiece tokenizers and is destructive for BPE (it strips spaces before punctuation). Set clean_up_tokenization_spaces=False to suppress this warning, or set clean_up_tokenization_spaces_for_bpe_even_though_it_will_corrupt_output=True to force cleanup anyway.
+hi_unsteered: 16/573
+hi_unsteered: 32/573
+hi_unsteered: 48/573
+hi_unsteered: 64/573
+hi_unsteered: 80/573
+hi_unsteered: 96/573
+hi_unsteered: 112/573
+hi_unsteered: 128/573
+hi_unsteered: 144/573
+hi_unsteered: 160/573
+hi_unsteered: 176/573
+hi_unsteered: 192/573
+hi_unsteered: 208/573
+hi_unsteered: 224/573
+hi_unsteered: 240/573
+hi_unsteered: 256/573
+hi_unsteered: 272/573
+hi_unsteered: 288/573
+hi_unsteered: 304/573
+hi_unsteered: 320/573
+hi_unsteered: 336/573
+hi_unsteered: 352/573
+hi_unsteered: 368/573
+hi_unsteered: 384/573
+hi_unsteered: 400/573
+hi_unsteered: 416/573
+hi_unsteered: 432/573
+hi_unsteered: 448/573
+hi_unsteered: 464/573
+hi_unsteered: 480/573
+hi_unsteered: 496/573
+hi_unsteered: 512/573
+hi_unsteered: 528/573
+hi_unsteered: 544/573
+hi_unsteered: 560/573
+hi_unsteered: 573/573
+hi_gated: 16/573
+hi_gated: 32/573
+hi_gated: 48/573
+hi_gated: 64/573
+hi_gated: 80/573
+hi_gated: 96/573
+hi_gated: 112/573
+hi_gated: 128/573
+hi_gated: 144/573
+hi_gated: 160/573
+hi_gated: 176/573
+hi_gated: 192/573
+hi_gated: 208/573
+hi_gated: 224/573
+hi_gated: 240/573
+hi_gated: 256/573
+hi_gated: 272/573
+hi_gated: 288/573
+hi_gated: 304/573
+hi_gated: 320/573
+hi_gated: 336/573
+hi_gated: 352/573
+hi_gated: 368/573
+hi_gated: 384/573
+hi_gated: 400/573
+hi_gated: 416/573
+hi_gated: 432/573
+hi_gated: 448/573
+hi_gated: 464/573
+hi_gated: 480/573
+hi_gated: 496/573
+hi_gated: 512/573
+hi_gated: 528/573
+hi_gated: 544/573
+hi_gated: 560/573
+hi_gated: 573/573
+en_unsteered: 16/573
+en_unsteered: 32/573
+en_unsteered: 48/573
+en_unsteered: 64/573
+en_unsteered: 80/573
+en_unsteered: 96/573
+en_unsteered: 112/573
+en_unsteered: 128/573
+en_unsteered: 144/573
+en_unsteered: 160/573
+en_unsteered: 176/573
+en_unsteered: 192/573
+en_unsteered: 208/573
+en_unsteered: 224/573
+en_unsteered: 240/573
+en_unsteered: 256/573
+en_unsteered: 272/573
+en_unsteered: 288/573
+en_unsteered: 304/573
+en_unsteered: 320/573
+en_unsteered: 336/573
+en_unsteered: 352/573
+en_unsteered: 368/573
+en_unsteered: 384/573
+en_unsteered: 400/573
+en_unsteered: 416/573
+en_unsteered: 432/573
+en_unsteered: 448/573
+en_unsteered: 464/573
+en_unsteered: 480/573
+en_unsteered: 496/573
+en_unsteered: 512/573
+en_unsteered: 528/573
+en_unsteered: 544/573
+en_unsteered: 560/573
+en_unsteered: 573/573
+en_gated: 16/573
+en_gated: 32/573
+en_gated: 48/573
+en_gated: 64/573
+en_gated: 80/573
+en_gated: 96/573
+en_gated: 112/573
+en_gated: 128/573
+en_gated: 144/573
+en_gated: 160/573
+en_gated: 176/573
+en_gated: 192/573
+en_gated: 208/573
+en_gated: 224/573
+en_gated: 240/573
+en_gated: 256/573
+en_gated: 272/573
+en_gated: 288/573
+en_gated: 304/573
+en_gated: 320/573
+en_gated: 336/573
+en_gated: 352/573
+en_gated: 368/573
+en_gated: 384/573
+en_gated: 400/573
+en_gated: 416/573
+en_gated: 432/573
+en_gated: 448/573
+en_gated: 464/573
+en_gated: 480/573
+en_gated: 496/573
+en_gated: 512/573
+en_gated: 528/573
+en_gated: 544/573
+en_gated: 560/573
+en_gated: 573/573
+mmlu_unsteered: 16/600
+mmlu_unsteered: 32/600
+mmlu_unsteered: 48/600
+mmlu_unsteered: 64/600
+mmlu_unsteered: 80/600
+mmlu_unsteered: 96/600
+mmlu_unsteered: 112/600
+mmlu_unsteered: 128/600
+mmlu_unsteered: 144/600
+mmlu_unsteered: 160/600
+mmlu_unsteered: 176/600
+mmlu_unsteered: 192/600
+mmlu_unsteered: 208/600
+mmlu_unsteered: 224/600
+mmlu_unsteered: 240/600
+mmlu_unsteered: 256/600
+mmlu_unsteered: 272/600
+mmlu_unsteered: 288/600
+mmlu_unsteered: 304/600
+mmlu_unsteered: 320/600
+mmlu_unsteered: 336/600
+mmlu_unsteered: 352/600
+mmlu_unsteered: 368/600
+mmlu_unsteered: 384/600
+mmlu_unsteered: 400/600
+mmlu_unsteered: 416/600
+mmlu_unsteered: 432/600
+mmlu_unsteered: 448/600
+mmlu_unsteered: 464/600
+mmlu_unsteered: 480/600
+mmlu_unsteered: 496/600
+mmlu_unsteered: 512/600
+mmlu_unsteered: 528/600
+mmlu_unsteered: 544/600
+mmlu_unsteered: 560/600
+mmlu_unsteered: 576/600
+mmlu_unsteered: 592/600
+mmlu_unsteered: 600/600
+mmlu_gated: 16/600
+mmlu_gated: 32/600
+mmlu_gated: 48/600
+mmlu_gated: 64/600
+mmlu_gated: 80/600
+mmlu_gated: 96/600
+mmlu_gated: 112/600
+mmlu_gated: 128/600
+mmlu_gated: 144/600
+mmlu_gated: 160/600
+mmlu_gated: 176/600
+mmlu_gated: 192/600
+mmlu_gated: 208/600
+mmlu_gated: 224/600
+mmlu_gated: 240/600
+mmlu_gated: 256/600
+mmlu_gated: 272/600
+mmlu_gated: 288/600
+mmlu_gated: 304/600
+mmlu_gated: 320/600
+mmlu_gated: 336/600
+mmlu_gated: 352/600
+mmlu_gated: 368/600
+mmlu_gated: 384/600
+mmlu_gated: 400/600
+mmlu_gated: 416/600
+mmlu_gated: 432/600
+mmlu_gated: 448/600
+mmlu_gated: 464/600
+mmlu_gated: 480/600
+mmlu_gated: 496/600
+mmlu_gated: 512/600
+mmlu_gated: 528/600
+mmlu_gated: 544/600
+mmlu_gated: 560/600
+mmlu_gated: 576/600
+mmlu_gated: 592/600
+mmlu_gated: 600/600
+steered
+DONE

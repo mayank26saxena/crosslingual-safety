@@ -146,6 +146,32 @@ def main():
                 p5[a] = dict(p5[b], condition=a.rsplit("|", 1)[1], inherited="yes")
         write("phase5_grades.csv", ["set", "item_id", "lang", "condition", "label", "inherited"],
               sorted(p5.values(), key=lambda d: (d["set"], d["item_id"], d["lang"], d["condition"])))
+    # Phase 6 Llama-3.1-8B grades: stage A (English fit replies) and stage B (test replies, with copied gated rows)
+    for stage in ("phase6A", "phase6B"):
+        g6 = N / f"grading/{stage}"
+        if not any((g6 / "runs/claude-sonnet-5.5-cc").glob("part_*.csv")):
+            continue
+        k6 = json.load(open(g6 / "key.json"))
+        p6 = {}
+        for f in sorted((g6 / "runs/claude-sonnet-5.5-cc").glob("part_*.csv")):
+            for r in rows(f):
+                k = k6["graded"][r["item"].strip()]
+                p6[f'{k["uid"]}|{k["condition"]}'] = dict(set=k["set"], item_id=k["pair"], lang=k["lang"],
+                                                          condition=k["condition"], label=r["label"].strip(), inherited="no")
+        for a, b in k6.get("same_as", {}).items():
+            if b in p6:
+                p6[a] = dict(p6[b], condition=a.rsplit("|", 1)[1], inherited="yes")
+        write(f"{stage}_llama_grades.csv", ["set", "item_id", "lang", "condition", "label", "inherited"],
+              sorted(p6.values(), key=lambda d: (d["set"], d["item_id"], d["lang"], d["condition"])))
+    hs6 = N / "grading/phase6B_human/phase6_llama_human_graded.csv"
+    if hs6.exists():
+        hk6 = json.load(open(N / "grading/phase6B_human/key.json"))
+        h6 = []
+        for r in rows(hs6):
+            u = hk6[r["item"]]
+            u = u if isinstance(u, str) else u.get("uid", "")
+            h6.append({"human_id": r["item"], "uid": u, "label": r["HUMAN_label"].strip(), "confidence": r["HUMAN_confidence"].strip()})
+        write("phase6_llama_human.csv", ["human_id", "uid", "label", "confidence"], h6)
     # Screening audit: human (original and adjudicated) and both candidates
     ak = json.load(open(N / "audit/audit_key.json"))
     adj = {r["item"]: r["FINAL_request_type"].strip() for r in rows(N / "audit/human/adjudication_reviewed.csv")}
