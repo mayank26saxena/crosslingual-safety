@@ -101,3 +101,14 @@ format. These are reported with κ, but there is no pass bar.
 
 Stage 1b, if run, adds about 720 development generations, roughly 9 grading parts and about $0.50. Otherwise: about 2,200 development generations and 2,000 test generations on one A40 ($0.59/h), about 3 hours, so about $2. Grading is about 30 parts
 for development and about 12 for test, spread over at least two 5-hour usage windows.
+
+## Addendum 1 (2026-11-15, before any Phase 7 generation): procedure details carried over from Phase 6
+
+The frozen text states two Phase 6 details loosely. Phase 7 follows the Phase 6 code exactly:
+- New-token limits are 1,024 for Hindi replies, 512 for English replies and 16 for MMLU (Phase 6 `MAX_NEW`), not 1,024 throughout.
+- Once the gate is open for a prompt, the push is added at every position from the prompt's first forward pass on, prompt tokens
+  included, as in Phase 3 and Phase 6.
+- Gate scores for τ_hi and Δ_r are computed with the same layer-10 hook the gate uses, in the same length-sorted batches of 16.
+
+Stage 2 regenerates the unsteered test replies in the same run as the chosen arm. Where an unsteered reply is identical to its Phase 6
+reply, it takes the Phase 6 label instead of being graded again. Rules, sets and thresholds are unchanged.
