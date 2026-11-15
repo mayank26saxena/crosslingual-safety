@@ -57,6 +57,7 @@ python3 scripts/v2/exclude.py          # sealed split, v1 items, duplicates
 | Phase 4 verdict | `phase4_analysis.py OUT_JSON` (after the comprehension judgements and blind labels) |
 | Phase 4b Bengali strength sweep (`docs/prereg/2026-11-14_v2_phase4b_bengali_strength_sweep.md`) | `phase4b_sweep.py prep` / `run data/v2/phase4b_prompts.jsonl DIRS OUT` / `folder` / `analyse` |
 | Phase 5 Hindi neurons (`docs/prereg/2026-11-15_v2_phase5_hindi_neurons.md`) | `phase5_neurons.py prep` / `run data/v2/phase5_prompts.jsonl results/v2/phase5/sets.json DIRS OUT` (`--smoke` first) / `folder` / `analyse` |
+| Phase 6 Llama-3.1-8B replication (`docs/prereg/2026-11-15_v2_phase6_llama_replication.md`) | `phase6_llama.py prepA` / `genA data/v2/phase6_promptsA.jsonl OUT` (`--smoke` first) / `folderA REPLIES`; stage B to follow |
 | Label tables, manifest | `export_labels.py`; `manifest.py` |
 
 Grading and screening runs are Claude Code subagents (or Kiro sessions for the earliest runs), one per 50-row blind part, with the prompts in
