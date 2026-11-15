@@ -131,6 +131,21 @@ def main():
               for f in sorted((g4b / "runs/claude-opus-5.5-cc").glob("part_*.csv")) for r in rows(f)]
         if op:
             write("phase4b_sweep_opus_parts.csv", ["item_id", "alpha", "label"], sorted(op, key=lambda d: (d["item_id"], d["alpha"])))
+    # Phase 5 Hindi-neuron behaviour grades (graded rows plus copied rows whose source is graded)
+    g5 = N / "grading/phase5"
+    if any((g5 / "runs/claude-sonnet-5.5-cc").glob("part_*.csv")):
+        k5 = json.load(open(g5 / "key.json"))
+        p5 = {}
+        for f in sorted((g5 / "runs/claude-sonnet-5.5-cc").glob("part_*.csv")):
+            for r in rows(f):
+                k = k5["graded"][r["item"].strip()]
+                p5[f'{k["uid"]}|{k["condition"]}'] = dict(set=k["set"], item_id=k["pair"], lang=k["lang"],
+                                                          condition=k["condition"], label=r["label"].strip(), inherited="no")
+        for a, b in k5["same_as"].items():
+            if b in p5:
+                p5[a] = dict(p5[b], condition=a.rsplit("|", 1)[1], inherited="yes")
+        write("phase5_grades.csv", ["set", "item_id", "lang", "condition", "label", "inherited"],
+              sorted(p5.values(), key=lambda d: (d["set"], d["item_id"], d["lang"], d["condition"])))
     # Screening audit: human (original and adjudicated) and both candidates
     ak = json.load(open(N / "audit/audit_key.json"))
     adj = {r["item"]: r["FINAL_request_type"].strip() for r in rows(N / "audit/human/adjudication_reviewed.csv")}
