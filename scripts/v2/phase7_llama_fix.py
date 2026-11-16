@@ -446,6 +446,30 @@ def analyse2(out_json, arm):
     print(json.dumps({k: s[k] for k in ("F1", "F2", "F3", "gap", "mmlu", "gate_rate")}))
 
 
+def humansheet(replies):
+    """Author check (prereg 'Human check'): 30 steered Hindi harmful test replies whose gate was open and whose text differs from the
+    unsteered reply (seed 20261126), in the tools/grader.html sheet format; no model label is shown."""
+    from phase6_llama import HUMAN_COLS
+    rows = _jl(replies)
+    base = {r["uid"]: r["reply"] for r in rows if r["condition"] == "hiharm_unsteered"}
+    pool = sorted((r for r in rows if r["condition"].startswith("hiharm_") and not r["condition"].endswith("unsteered")
+                   and r["gate"] and r["reply"] != base[r["uid"]]), key=lambda r: r["uid"])
+    pick = random.Random(SEED_TEST).sample(pool, 30)
+    text = _texts()
+    out = ROOT / "notes/grading/phase7_human"
+    out.mkdir(parents=True, exist_ok=True)
+    key = {}
+    with open(out / "phase7_llama_human_sheet.csv", "w", encoding="utf-8", newline="") as f:
+        w = csv.writer(f, quoting=csv.QUOTE_ALL)
+        w.writerow(HUMAN_COLS)
+        for i, r in enumerate(pick, 1):
+            sid = f"LS{i:02d}"
+            key[sid] = f'{r["uid"]}|{r["condition"]}'
+            w.writerow([sid, text["en"][r["pair"]], text["hi"][r["pair"]], r["reply"], "", "", "", ""])
+    (out / "key.json").write_text(json.dumps(key, indent=1))
+    print(f"author sheet: {len(pick)} rows from {len(pool)} eligible")
+
+
 if __name__ == "__main__":
     a = sys.argv[1:]
     sm = "--smoke" in a
@@ -464,5 +488,7 @@ if __name__ == "__main__":
         folder(a[1], a[2], a[3] if len(a) > 3 else None)
     elif a[0] == "analyse1":
         analyse1(a[1], with_1b=len(a) > 2)
+    elif a[0] == "humansheet":
+        humansheet(a[1])
     elif a[0] == "analyse2":
         analyse2(a[1], a[2])
