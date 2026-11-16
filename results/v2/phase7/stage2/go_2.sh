@@ -1,0 +1,12 @@
+#!/bin/bash
+# usage: bash go_2.sh ARM   (ARM is the stage 1 choice, e.g. R3; combined arms as RE1:R2)
+set -e
+ARM="$1"
+cd /workspace/p7
+export HF_HOME=/workspace/hf HF_HUB_OFFLINE=1
+{ python -c "import sys,torch,transformers;print('python',sys.version.split()[0]);print('torch',torch.__version__,'cuda',torch.version.cuda);print('transformers',transformers.__version__)"; nvidia-smi --query-gpu=name,driver_version --format=csv,noheader; pip freeze | grep -E "^(torch|transformers|accelerate|tokenizers|safetensors)=="; ls /workspace/hf/hub/models--meta-llama--Llama-3.1-8B-Instruct/snapshots/; echo "arm $ARM"; } > env_2.txt
+mkdir -p smoke2 && cp out/stage1_meta.json smoke2/
+python phase7_llama_fix.py run2 phase7_prompts.jsonl stageB_dirs.npz smoke2 "$ARM" --smoke > smoke_2.log 2>&1
+grep -q DONE smoke_2.log
+python phase7_llama_fix.py run2 phase7_prompts.jsonl stageB_dirs.npz out "$ARM" > run_2.log 2>&1
+touch done_2.flag
