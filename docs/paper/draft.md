@@ -18,7 +18,9 @@ on held-out pairs, but it raises English by 16, so the gap barely narrows. It al
 against garbled output. A search for Hindi-specific neurons finds a small set that carries most of the internal English–Hindi difference,
 but moving them changes behaviour in English, not Hindi. In Llama-3.1-8B-Instruct the gap on the same pairs is larger (89% to 47%), and its
 cause differs: Hindi harm reaches only 28% of the English projection on the refusal direction, and the missing refusals mostly become
-compliance. **[Phase 7: one sentence on the Llama fix, held-out result.]** All studies were pre-registered, tuned on development items and
+compliance. A repair matched to that diagnosis pushes along the refusal direction, with a gate threshold set on Hindi data. On held-out
+pairs it cuts Hindi compliance by 8 points and raises explicit refusal by 15, narrowing the gap by 7 points. It narrowly misses its
+pre-registered bars for explicit refusal (+15) and gap narrowing (10 points). All studies were pre-registered, tuned on development items and
 tested once on held-out items, and the failures are reported alongside the successes.
 
 ---
@@ -63,8 +65,10 @@ protocol.
 5. **A pre-registered protocol for cross-lingual interpretability.** Rules and analyses are frozen before data, settings are tuned on
    development items, and each repair is tested once on held-out items and confirmed on a sealed held-out language, with deviations in dated
    addenda. To our knowledge, no prior steering or interpretability paper combines these.
-6. **[Phase 7]** A held-out test of a diagnosis-matched repair for Llama: pushing along the refusal direction with a gate threshold set on
-   Hindi data. This independently tests, under pre-registration, the target-language calibration that Aziz et al. (2026) found Llama needs.
+6. **A pre-registered held-out test of a diagnosis-matched repair for Llama.** We push along the refusal direction, with a gate
+   threshold set on Hindi data. Hindi compliance falls by 8.4 points and explicit refusal rises by 14.6. The gap narrows by 7.4 points,
+   against 1.2 for the Qwen-style repair. It narrowly misses its registered bars on explicit refusal and gap narrowing. This independently
+   corroborates the target-language calibration that Aziz et al. (2026) found Llama needs.
 
 ---
 
@@ -444,18 +448,41 @@ The Phase 2a and 2b procedures were rerun on Llama without changes: same fit set
 The two models share the behavioural gap but not its cause. In Qwen the harm signal is intact and the refusal is worded softly. In Llama the
 harm signal is weak and the refusal is missing.
 
-### 7.2 A diagnosis-matched repair **[Phase 7]**
+### 7.2 A diagnosis-matched repair
 
-*Pre-registered (`docs/prereg/2026-11-15_v2_phase7_llama_fix.md`, two addenda).*
+*Pre-registered (`docs/prereg/2026-11-15_v2_phase7_llama_fix.md`, two addenda). Result document `docs/results/2026-11-16_phase7_llama_fix.md`.*
 
-- **Gate:** the threshold is set on Hindi development prompts.
-- **Pushes:** five candidates.
-  - E1, E2: along the explicit–soft direction, at the Qwen strength and at twice that.
-  - R1–R3: along the refusal direction, at 0.5, 1.0 and 1.5 times the mean English-minus-Hindi projection gap.
-- **Selection:** on development items, by the Phase 3 rule.
-- **Test:** once, on the 404/169 held-out pairs.
-- **Development results so far:** R2 and R3 qualify; R3 gives Hindi explicit +18.0 and compliance −10.7, and narrows the gap by 13.3 points
-  with no guard breached. The E arms are being rerun after a scaling error (addendum 2). *Final selection and held-out results to follow.*
+**Method.** The gate threshold is set on Hindi development prompts: the median gate score of the 401 Hindi development harmful prompts.
+Five pushes were tuned on 150 Hindi development pairs:
+
+- E1 and E2 push along the explicit–soft direction, at the Qwen strength and at twice that.
+- R1–R3 push along the refusal direction, at 0.5, 1.0 and 1.5 times the mean English-minus-Hindi projection gap.
+
+The Phase 3 rule selected R3 (development: Hindi explicit +18.0, compliance −10.7, gap 13.3 points narrower). R2 and E1 also qualified. E2
+broke replies. With the Hindi-set gate, the gate opened on 45% of Hindi harmful development prompts, against 1% in Phase 6.
+
+**Held-out test** (404 harmful and 169 harmless pairs, run once):
+
+| | Unsteered | R3 | Change |
+|---|---|---|---|
+| Hindi explicit refusal | 46.5% | 61.1% | **+14.6** [+11.1, +18.3] |
+| Hindi compliance | 30.4% | 22.0% | **−8.4** [−11.1, −5.9] |
+| Hindi any refusal | 66.3% | 75.5% | +9.2 [+6.4, +12.1] |
+| Hindi BROKEN | 3.2% | 2.5% | −0.7 |
+| English explicit refusal | 88.9% | 96.0% | +7.2 [+5.0, +9.7] |
+| Harmless refusal (Hindi / English) | 1.8% / 4.1% | 1.8% / 4.7% | 0 / +0.6 |
+| Global-MMLU (Hindi / English) | 42.7% / 63.0% | 42.7% / 63.0% | 0 |
+
+**Verdict against the registered claims.**
+
+- **F1 (≥ +15 with every guard): not met.** The gain is +14.6, 0.4 short of the bar; every guard passed.
+- **F2 (gap narrows ≥ 10): not met.** The gap narrowed by 7.4 points [+3.2, +11.6].
+- **F3 (compliance falls): met.**
+
+**What the push does.** It turns Llama's Hindi compliance into refusal: of the +14.6 explicit gain, about 8.4 points come from former
+compliance. It narrows the gap, which the Qwen repair did not (7.4 against 1.2 points). It does so without any measured cost, though the
+harmless and MMLU guards are weak because the gate rarely opens on those inputs. It is still not language-selective: the gate opens on 92%
+of English harmful prompts, and English explicit refusal rises 7.2 points from a high base.
 
 ---
 
@@ -464,8 +491,9 @@ harm signal is weak and the refusal is missing.
 - **Report what replaces the refusal.** A single refusal rate hides whether the missing refusals become soft refusals, compliance or broken
   output. In our two models the answer differs, and the difference changes which repair makes sense.
 - **Diagnosis should pick the intervention.** The Qwen repair acts on how refusal is expressed, matching a diagnosis of intact harm
-  recognition. Carried to Llama, it was a poor fit: its gate reads the harm signal, which is weak in Hindi. **[Phase 7: whether the
-  diagnosis-matched push works on held-out pairs.]**
+  recognition. Carried to Llama, it was a poor fit: its gate reads the harm signal, which is weak in Hindi. The diagnosis-matched Llama repair acts on the harm signal itself and turns
+  compliance into refusal, as the diagnosis predicts. On held-out pairs it narrows the gap six times as much as the Qwen repair, though
+  short of its registered bar.
 - **"Passes its rule" is not "closes the gap."** The Qwen repair met every registered check and left the gap almost unchanged, because it
   acted on English as much as on Hindi. Gap-narrowing should be a registered outcome of any cross-lingual repair; the Phase 7 rules include
   it.

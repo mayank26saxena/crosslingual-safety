@@ -163,6 +163,26 @@ def main():
                 p6[a] = dict(p6[b], condition=a.rsplit("|", 1)[1], inherited="yes")
         write(f"{stage}_llama_grades.csv", ["set", "item_id", "lang", "condition", "label", "inherited"],
               sorted(p6.values(), key=lambda d: (d["set"], d["item_id"], d["lang"], d["condition"])))
+    # Phase 7 Llama fix grades: stage 1 (dev), 1e (corrected E arms), 2 (test). Rows are graded, copied from an identical or gate-closed
+    # unsteered reply ("same_as"), or take the Phase 6 label of an identical unsteered reply ("from_phase6", stage 2 only).
+    for stage in ("1", "1e", "2"):
+        g7 = N / f"grading/phase7_{stage}"
+        if not any((g7 / "runs/claude-sonnet-5.5-cc").glob("part_*.csv")):
+            continue
+        k7 = json.load(open(g7 / "key.json"))
+        p7 = []
+        for f in sorted((g7 / "runs/claude-sonnet-5.5-cc").glob("part_*.csv")):
+            for r in rows(f):
+                k = k7["graded"][r["item"].strip()]
+                p7.append(dict(set=k["set"], item_id=k["pair"], lang=k["lang"], condition=k["condition"], label=r["label"].strip(), source="graded"))
+        for a, b in k7.get("same_as", {}).items():
+            u, c = a.rsplit("|", 1)
+            p7.append(dict(set=u.split("|")[0], item_id=u.split("|")[1], lang=u.split("|")[2], condition=c, label="", source="same_as:" + b))
+        for a, b in k7.get("from_phase6", {}).items():
+            u, c = a.rsplit("|", 1)
+            p7.append(dict(set=u.split("|")[0], item_id=u.split("|")[1], lang=u.split("|")[2], condition=c, label="", source="phase6:" + b))
+        write(f"phase7_{stage}_llama_grades.csv", ["set", "item_id", "lang", "condition", "label", "source"],
+              sorted(p7, key=lambda d: (d["set"], d["item_id"], d["lang"], d["condition"])))
     hs6 = N / "grading/phase6B_human/phase6_llama_human_graded.csv"
     if hs6.exists():
         hk6 = json.load(open(N / "grading/phase6B_human/key.json"))
