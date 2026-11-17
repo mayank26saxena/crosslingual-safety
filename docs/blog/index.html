@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Noto+Sans+Devanagari:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/tokens.css?v=25">
+<link rel="stylesheet" href="assets/tokens.css?v=26">
 </head>
 <body>
 <header class="top"><div class="col">
@@ -91,7 +91,7 @@
   <p class="fig-sub">Mean score on each model’s English-fitted refusal direction, in English (open) and Hindi (filled). Each model has its own scale.</p>
   <div class="legend"><span><i style="background:transparent;border:2px solid var(--ink-2);border-radius:50%"></i>English (ring)</span><span><i style="background:var(--accent);border-radius:50%"></i>Hindi</span></div>
   <div class="chart"></div>
-  <figcaption><b>Figure 3:</b> Qwen’s harmful Hindi prompts score as high as English ones (5.39 vs 5.41); Llama’s reach 28% of the English score. Harmless Hindi prompts also move toward refusal in Qwen, so this score alone does not show that the model recognises harm (<a class="cite" href="#ref-zhao2025">Zhao et al. 2025</a>).</figcaption>
+  <figcaption><b>Figure 3:</b> Harmful Hindi prompts land where English ones do in Qwen but far lower in Llama, and harmless Hindi prompts also move toward refusal in Qwen, so this score alone does not show that the model recognises harm (<a class="cite" href="#ref-zhao2025">Zhao et al. 2025</a>). The table below gives the scores.</figcaption>
   <details class="setup"><summary></summary><div class="body">
     <p>The refusal direction is the difference of mean activations between English harmful and harmless prompts. Its layer is chosen
       where ablating it removes the most refusal, and it counts as valid if ablation removes at least half of the refusal-score gap.
@@ -163,7 +163,7 @@
   <div class="transcripts" id="tx-fix"></div>
 
   <h2 id="s06"><span class="no">06</span><span class="nl">Limits, and what’s next</span></h2>
-  <p><strong>What didn’t hold up.</strong> We kept a Bengali test set sealed until the end. Qwen’s repair raised Bengali explicit refusal by 23.6 points but also raised garbled replies by 8.1 points, over our 5-point limit, so the registered verdict is a failure (a follow-up did not reproduce the problem). We also searched for a “Hindi switch”: 100 of 307,200 neurons carried three quarters of the English–Hindi difference, but shifting them raised Qwen’s English refusals by 15.2 points and Hindi’s by only 1.2.</p>
+  <p><strong>What didn’t hold up.</strong> A sealed Bengali test failed its registered check on garbled output, and a search for a “Hindi switch” found neurons that moved English refusals, not Hindi (<a href="#appendix-f">Appendix F</a>).</p>
   <ul>
     <li>Two 8B models, one request set, greedy decoding. “Refusal” is a judged reply category, not harm, user outcomes or deployed safety.</li>
     <li>Steering changed replies here; we have not shown it improves multilingual safety more broadly. The Bengali test failed, and the harmless-request and ability checks are weak.</li>
@@ -203,7 +203,8 @@
     harmless development requests, five pushes; a setting needed at least +15 points, broken output within +5, harmless refusal within +3,
     and English explicit refusal not below −3 with English broken output within +3.</p></div></details>
 </figure></div></details>
-  <details class="appx" id="appendix-f"><summary>Appendix F: how we tried to keep ourselves honest</summary><div class="appx-body"><ul>
+  <details class="appx" id="appendix-f"><summary>Appendix F: the failed checks in detail</summary><div class="appx-body"><p>We kept a Bengali test set sealed until the end. Qwen’s repair raised Bengali explicit refusal by 23.6 points but also raised garbled replies by 8.1 points, over our 5-point limit, so the registered verdict is a failure (a follow-up did not reproduce the problem). We also searched for a “Hindi switch”: 100 of 307,200 neurons carried three quarters of the English–Hindi difference, but shifting them raised Qwen’s English refusals by 15.2 points and Hindi’s by only 1.2.</p></div></details>
+  <details class="appx" id="appendix-g"><summary>Appendix G: how we tried to keep ourselves honest</summary><div class="appx-body"><ul>
     <li><strong>Rules first.</strong> Before each experiment we recorded what we would measure, how we would choose a setting and what would count as success; later changes went into dated addenda. The per-layer Llama curves in Figure 2 were added afterwards. They are descriptive and test no hypothesis.</li>
     <li><strong>No harmful text.</strong> Requests are summarised, never quoted. The only reply text shown is the redacted excerpts in sections 02 and 05, with anything usable for harm blacked out.</li>
   </ul></div></details>
@@ -233,9 +234,9 @@
 
 <footer><div class="col">Requests are never quoted. The example replies are redacted excerpts, in English translation with the redacted Hindi original one click away, and their labels were checked against the registered grades.</div></footer>
 
-<script src="data/figures.js?v=25"></script>
-<script src="data/examples.js?v=25"></script>
-<script src="assets/charts.js?v=25"></script>
+<script src="data/figures.js?v=26"></script>
+<script src="data/examples.js?v=26"></script>
+<script src="assets/charts.js?v=26"></script>
 <script>
   const F = window.FIGURES;
   const slot = (id, q) => document.querySelector(`#${id} ${q}`);
@@ -315,7 +316,7 @@
         `<label class="ex-switch"><input type="checkbox"> Show original Hindi</label></div>` +
         `<div class="ex-head"><span>Request</span>${MODELS.map(([, n]) => `<span>${n}<small>${strip}</small></span>`).join("")}<span></span></div>`;
       E.items.forEach((it, i) => {
-        h += `<div class="ex-item${i === 0 ? " open" : ""}"><button type="button" class="ex-row" aria-expanded="${i === 0}"><span class="ex-cat"><b>${i + 1}</b>${esc(it.category)}</span>` +
+        h += `<div class="ex-item${i === 0 && rootId === "tx-gap" ? " open" : ""}"><button type="button" class="ex-row" aria-expanded="${i === 0 && rootId === "tx-gap"}"><span class="ex-cat"><b>${i + 1}</b>${esc(it.category)}</span>` +
           MODELS.map(([m, n]) => `<span class="ex-seq"><em class="ex-mn">${n}</em>` + cols.map(([lang, cond], k) => { const r = pick(it, m, lang, cond); return seqChip(r, k > 0 && unchanged(r)); }).join('<i class="ex-arrow">→</i>') + `</span>`).join("") +
           `<span class="ex-caret" aria-hidden="true"></span></button><div class="ex-detail">` +
           `<p class="ex-take"><b>What to notice.</b> ${esc(it[takeKey])}</p>` +
