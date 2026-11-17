@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Noto+Sans+Devanagari:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/tokens.css?v=14">
+<link rel="stylesheet" href="assets/tokens.css?v=15">
 </head>
 <body>
 <header class="top"><div class="col">
@@ -238,6 +238,7 @@
   <h3>Limits</h3>
   <ul>
     <li>Two 8B models, with greedy decoding only.</li>
+    <li>Hindi is the only language studied in depth. A Spanish control, on Qwen only, also shows a gap (<a href="#appendix-c">Appendix C</a>).</li>
     <li>One AI judge and one human grader.</li>
     <li>No comparison yet against simpler fixes, such as a safety system prompt or translating to English first, which can rival steering (<a class="cite" href="#ref-wu2025">Wu et al. 2025</a>).</li>
     <li>The projection result hasn’t been tested on harmless requests that merely <em>sound</em> harmful, where cross-lingual separation can collapse (<a class="cite" href="#ref-balani2026">Balani &amp; Panda 2026</a>).</li>
@@ -260,6 +261,20 @@
     <li><strong>Tune once, test once.</strong> Test gains came in at about 80% of the best development gains, as expected from picking the best of several settings.</li>
     <li><strong>No harmful text.</strong> Requests are summarised, never quoted. The only reply text shown is the redacted excerpts in sections 02 and 05, with anything usable for harm blacked out.</li>
   </ul>
+
+  <h2 id="appendix-c">Appendix C: is this just Hindi? A Spanish control</h2>
+  <p>The first question a reader may ask is whether the gap is specific to Hindi. We ran a smaller control in Spanish, a high-resource language, on Qwen3-8B only: <span data-k="sp_n"></span> harmful requests from Aya Red-teaming (written in Spanish, with English versions) and <span data-k="sp_hn"></span> harmless ones, each asked in both languages and labelled with the same four labels by an AI judge.</p>
+  <table class="plain">
+    <thead><tr><th></th><th>English</th><th>Spanish</th></tr></thead>
+    <tbody>
+      <tr><td>Explicit refusal</td><td><span data-k="sp_ex_en"></span></td><td><span data-k="sp_ex_es"></span></td></tr>
+      <tr><td>Any refusal, explicit or soft</td><td><span data-k="sp_any_en"></span></td><td><span data-k="sp_any_es"></span></td></tr>
+      <tr><td>Complied</td><td><span data-k="sp_cp_en"></span></td><td><span data-k="sp_cp_es"></span></td></tr>
+      <tr><td>Harmless requests answered</td><td><span data-k="sp_hl_en"></span></td><td><span data-k="sp_hl_es"></span></td></tr>
+    </tbody>
+  </table>
+  <p>Spanish shows a gap too. Explicit refusal falls by about <span data-k="sp_gap"></span> points, and <span data-k="sp_eo"></span> requests are refused explicitly only in English, against <span data-k="sp_so"></span> only in Spanish. Harmless requests are answered in both languages, so this is not general over-refusal. The gap is roughly half the size of the Hindi one (<span data-k="sp_hgap"></span> points for Qwen), which fits the idea that it grows as a language gets lower-resource, though this run cannot show that on its own.</p>
+  <p><strong>Caveats.</strong> Qwen only. The Spanish requests are a different set from the 404 Hindi pairs and used a shorter reply limit, so the two gaps are not strictly comparable. The labels come from AI judges only (two judges agreed with κ = 0.88), with no human check in Spanish, and the run was provisional, made before the Hindi judge was validated.</p>
 
   <h2 id="references">References</h2>
   <ol class="refs">
@@ -297,9 +312,9 @@
   regenerates from the id-only label tables and checks against the registered results. Requests are never quoted; the example replies are
   redacted excerpts, in English translation with the redacted Hindi original one click away, validated against the registered labels by <code>scripts/v2/export_examples.py</code>.</div></footer>
 
-<script src="data/figures.js?v=14"></script>
-<script src="data/examples.js?v=14"></script>
-<script src="assets/charts.js?v=14"></script>
+<script src="data/figures.js?v=15"></script>
+<script src="data/examples.js?v=15"></script>
+<script src="assets/charts.js?v=15"></script>
 <script>
   const F = window.FIGURES;
   const slot = (id, q) => document.querySelector(`#${id} ${q}`);
@@ -327,6 +342,10 @@
     Object.assign(vals, { qhf_en: m2(c3.qwen.cells.harmful_en.mean), qhf_hi: m2(c3.qwen.cells.harmful_hi.mean), qhl_en: m2(c3.qwen.cells.harmless_en.mean), qhl_hi: m2(c3.qwen.cells.harmless_hi.mean), lhf_en: m2(c3.llama.cells.harmful_en.mean), lhf_hi: m2(c3.llama.cells.harmful_hi.mean), lhl_en: m2(c3.llama.cells.harmless_en.mean), lhl_hi: m2(c3.llama.cells.harmless_hi.mean) });
     const sv = F.severity, w = (v) => Math.round(v) + "%";
     Object.assign(vals, { lc_en: w(sv.llama.en), lc_hi: w(sv.llama.hi), lc_fix: w(sv.llama.hi_fixed), qc_hi: w(sv.qwen.hi), qc_fix: w(sv.qwen.hi_fixed) });
+    const sh = F.spanish, hx = F.fig1.qwen.rows.find((r) => r.label === "REFUSE_EXPLICIT");
+    Object.assign(vals, { sp_n: sh.harmful.n, sp_hn: sh.harmless.n, sp_ex_en: w(sh.harmful.explicit.en), sp_ex_es: w(sh.harmful.explicit.es), sp_any_en: w(sh.harmful.any.en), sp_any_es: w(sh.harmful.any.es),
+      sp_cp_en: w(sh.harmful.comply.en), sp_cp_es: w(sh.harmful.comply.es), sp_hl_en: w(sh.harmless.comply.en), sp_hl_es: w(sh.harmless.comply.es),
+      sp_gap: Math.round(sh.harmful.explicit.en - sh.harmful.explicit.es), sp_eo: sh.harmful.explicit.en_only, sp_so: sh.harmful.explicit.es_only, sp_hgap: Math.abs(Math.round(hx.change.pts)) });
     document.querySelectorAll("[data-k]").forEach((e) => { e.textContent = vals[e.dataset.k]; }); }
   Charts.mechanism(slot("figM", ".chart"), [
     { title: "Qwen3-8B", layers: 36, gate: 14, push: 25, tau: F.gate.qwen.tau.toFixed(2), what: "1.25 × explicit–soft direction" },

@@ -245,6 +245,36 @@ def severity():
     return dict(llama=llama, qwen=qwen)
 
 
+def spanish():
+    """Appendix C: the Qwen Spanish control, computed from the id-only label table and cross-checked against the provisional result file."""
+    import csv
+    G = "claude-sonnet-5.5 (kiro)"
+    lab = {(r["item_id"], r["lang"]): r["label"] for r in csv.DictReader(open(ROOT / "results/v2/labels/spanish_grades.csv")) if r["grader"] == G}
+    ref = json.load(open(ROOT / "results/v2/provisional/spanish_paired.json"))[G]
+    out = {}
+    for name, prefix, key in (("harmful", "aya_spa__", "harmful"), ("harmless", "polyguard__", "harmless")):
+        ids = sorted({i for i, _ in lab if i.startswith(prefix)})
+        assert ids and all((i, "en") in lab and (i, "es") in lab for i in ids)
+        rate = lambda lang, pred: 100 * sum(pred(lab[(i, lang)]) for i in ids) / len(ids)
+        explicit = lambda l: l == "REFUSE_EXPLICIT"
+        anyref = lambda l: l in ("REFUSE_EXPLICIT", "REFUSE_SOFT")
+        blk = dict(n=len(ids), explicit=dict(en=rate("en", explicit), es=rate("es", explicit)), any=dict(en=rate("en", anyref), es=rate("es", anyref)),
+                   comply=dict(en=rate("en", lambda l: l == "COMPLY"), es=rate("es", lambda l: l == "COMPLY")))
+        for k, pred in (("explicit", explicit), ("any", anyref)):
+            blk[k]["en_only"] = sum(pred(lab[(i, "en")]) and not pred(lab[(i, "es")]) for i in ids)
+            blk[k]["es_only"] = sum(pred(lab[(i, "es")]) and not pred(lab[(i, "en")]) for i in ids)
+            blk[k]["p"] = ref[key][k]["mcnemar_p"]
+            for lang in ("en", "es"):
+                ok = abs(blk[k][lang] / 100 - ref[key][k][f"rate_{lang}"]) < 1e-4
+                print(f"{'OK ' if ok else 'BAD'} Spanish {name} {k} {lang}: {blk[k][lang]:.2f} vs {100 * ref[key][k]['rate_' + lang]:.2f}")
+                if not ok:
+                    raise SystemExit("Spanish numbers disagree with the provisional result file")
+            if (blk[k]["en_only"], blk[k]["es_only"]) != (ref[key][k]["en_only"], ref[key][k]["es_only"]):
+                raise SystemExit("Spanish paired counts disagree with the provisional result file")
+        out[name] = blk
+    return out
+
+
 def check_gate(data):
     """Same-item gate statistics must agree with the independent sources: Figure 3 harmful ratios, and for Llama the per-layer run."""
     g, f3, lay = data["gate"], data["fig3"], data["layers"]
@@ -279,7 +309,7 @@ def main():
     f1, f2, f3 = fig1(), fig2(), fig3()
     check(f1, f2, f3)
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    data = dict(fig1=f1, fig2=f2, fig3=f3, layers=fig_layers(), gate=fig_gate(), dose=fig_dose(), severity=severity())
+    data = dict(fig1=f1, fig2=f2, fig3=f3, layers=fig_layers(), gate=fig_gate(), dose=fig_dose(), severity=severity(), spanish=spanish())
     check_gate(data)
     json.dump(data, open(OUT, "w"), indent=1)
     # the same numbers as a script, so the page also works when opened from disk (file:// cannot fetch JSON)
