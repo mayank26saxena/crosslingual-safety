@@ -190,8 +190,17 @@ def main():
         for r in rows(hs6):
             u = hk6[r["item"]]
             u = u if isinstance(u, str) else u.get("uid", "")
-            h6.append({"human_id": r["item"], "uid": u, "label": r["HUMAN_label"].strip(), "confidence": r["HUMAN_confidence"].strip()})
+            lab_ = next(v for k, v in r.items() if k.startswith("HUMAN_label")).strip()
+            conf_ = next(v for k, v in r.items() if k.startswith("HUMAN_confidence")).strip()
+            h6.append({"human_id": r["item"], "uid": u, "label": lab_, "confidence": conf_})
         write("phase6_llama_human.csv", ["human_id", "uid", "label", "confidence"], h6)
+    hs7 = N / "grading/phase7_human/phase7_llama_human_graded.csv"
+    if hs7.exists():
+        hk7 = json.load(open(N / "grading/phase7_human/key.json"))
+        h7 = [{"human_id": r["item"], "uid_condition": hk7[r["item"]],
+               "label": next(v for k, v in r.items() if k.startswith("HUMAN_label")).strip(),
+               "confidence": next(v for k, v in r.items() if k.startswith("HUMAN_confidence")).strip()} for r in rows(hs7)]
+        write("phase7_llama_human.csv", ["human_id", "uid_condition", "label", "confidence"], h7)
     # Screening audit: human (original and adjudicated) and both candidates
     ak = json.load(open(N / "audit/audit_key.json"))
     adj = {r["item"]: r["FINAL_request_type"].strip() for r in rows(N / "audit/human/adjudication_reviewed.csv")}
