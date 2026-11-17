@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Noto+Sans+Devanagari:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/tokens.css?v=20">
+<link rel="stylesheet" href="assets/tokens.css?v=21">
 </head>
 <body>
 <header class="top"><div class="col">
@@ -307,14 +307,6 @@
     <li id="ref-yong2023">Yong, Menghini, Bach (2023). Low-Resource Languages Jailbreak GPT-4. NeurIPS 2023 SoLaR Workshop. <a href="https://arxiv.org/abs/2310.02446" target="_blank" rel="noopener noreferrer">arXiv:2310.02446</a></li>
     <li id="ref-zhao2025">Zhao, Huang, Wu, Bau, Shi (2025). LLMs Encode Harmfulness and Refusal Separately. <a href="https://arxiv.org/abs/2507.11878" target="_blank" rel="noopener noreferrer">arXiv:2507.11878</a></li>
   </ol>
-
-  <h2>Citation</h2>
-<pre class="bib">@misc{hindirefusalgap2026,
-  title  = {Why Two Open Chat Models Refuse Less in Hindi: Diagnosing and Repairing the Hindi Refusal Gap in Two Open Chat Models},
-  author = {Mayank Saxena},
-  year   = {2026},
-  howpublished = {\url{https://github.com/mayank26saxena/crosslingual-safety}}
-}</pre>
 </div>
 </main>
 
@@ -322,9 +314,9 @@
   regenerates from the id-only label tables and checks against the registered results. Requests are never quoted; the example replies are
   redacted excerpts, in English translation with the redacted Hindi original one click away, validated against the registered labels by <code>scripts/v2/export_examples.py</code>.</div></footer>
 
-<script src="data/figures.js?v=20"></script>
-<script src="data/examples.js?v=20"></script>
-<script src="assets/charts.js?v=20"></script>
+<script src="data/figures.js?v=21"></script>
+<script src="data/examples.js?v=21"></script>
+<script src="assets/charts.js?v=21"></script>
 <script>
   const F = window.FIGURES;
   const slot = (id, q) => document.querySelector(`#${id} ${q}`);
@@ -450,7 +442,7 @@
     const btn = document.createElement("button"); btn.type = "button"; btn.className = "rail-toggle"; btn.textContent = "Contents";
     btn.onclick = () => nav.classList.toggle("open"); document.body.appendChild(btn);
     nav.addEventListener("click", (e) => { if (e.target.closest("a")) nav.classList.remove("open"); });
-    const update = () => { document.body.classList.toggle("scrolled", scrollY > 160); let cur = -1; hs.forEach((h, i) => { if (h.getBoundingClientRect().top < innerHeight * 0.35) cur = i; });
+    const update = () => { document.body.classList.toggle("scrolled", scrollY > 160); const ft = document.querySelector("footer"); document.body.classList.toggle("at-end", !!ft && ft.getBoundingClientRect().top < innerHeight - 40); let cur = -1; hs.forEach((h, i) => { if (h.getBoundingClientRect().top < innerHeight * 0.35) cur = i; });
       links.forEach((a, i) => a.classList.toggle("on", i === cur)); };
     addEventListener("scroll", update, { passive: true }); addEventListener("resize", update); update();
   })();

@@ -236,3 +236,4 @@ figure.fig.wide { width: calc(100% - 40px); max-width: calc(var(--measure) - 40p
 
 [hidden] { display: none !important; }
 table.plain small { color: var(--muted); font-size: 12px; }
+body.at-end nav.rail, body.at-end .rail-toggle { opacity: 0; pointer-events: none; }
