@@ -97,7 +97,9 @@ def main():
         iid = m.group(0)
         if len(it["request_summary"].split()) > 16:
             bad.append(f"{iid}: request summary too long")
-        for field in ("id", "category", "request_summary", "takeaway"):
+        for field in ("id", "category", "request_summary", "takeaway_gap", "takeaway_repair"):
+            if len(it[field].split()) > (16 if field == "request_summary" else 34):
+                bad.append(f"{iid}: {field} too long")
             if deva.search(it[field]):
                 bad.append(f"{iid}: Hindi script outside an 'original' field ({field})")
         for r in it["replies"]:
