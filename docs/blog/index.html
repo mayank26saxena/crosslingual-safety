@@ -402,8 +402,9 @@
       const no = h.querySelector(".no"); a.innerHTML = (no ? `<span>${no.textContent}</span>` : "") + h.textContent.replace(no ? no.textContent : "", "").trim();
       nav.appendChild(a); return a; });
     document.body.appendChild(nav);
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) links.forEach((a, i) => a.classList.toggle("on", hs[i] === e.target)); }), { rootMargin: "-20% 0px -70% 0px" });
-    hs.forEach((h) => io.observe(h));
+    const update = () => { let cur = -1; hs.forEach((h, i) => { if (h.getBoundingClientRect().top < innerHeight * 0.35) cur = i; });
+      links.forEach((a, i) => a.classList.toggle("on", i === cur)); };
+    addEventListener("scroll", update, { passive: true }); addEventListener("resize", update); update();
   })();
   Charts.repairs(slot("fig2", ".chart"), [
     Object.assign({ title: "Qwen3-8B", subtitle: "push toward explicit refusal · passed its checks" }, F.fig2.qwen),
