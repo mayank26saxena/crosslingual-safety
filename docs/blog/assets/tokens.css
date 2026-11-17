@@ -168,20 +168,27 @@ footer { border-top: 1px solid var(--rule); margin-top: 60px; padding: 22px 0 48
 .slider button { font: 500 12px var(--mono); border: 1px solid var(--rule); background: var(--card); border-radius: 4px; padding: 2px 8px; cursor: pointer; color: var(--ink-2); }
 
 
-/* floating contents list: fixed on the left, plain text, the current section dark */
+/* floating contents list: fixed on the left from 900px up; below that, a small "Contents" button opens it as a panel */
 nav.rail { display: none; }
-@media (min-width: 980px) {
-  body { padding-left: 250px; }
-  nav.rail { display: block; position: fixed; top: 120px; left: 28px; width: 190px; font: 14px/1.35 var(--sans); max-height: calc(100vh - 160px); overflow: auto; }
-  nav.rail p { font: 600 11px var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0 0 14px; }
-  nav.rail a { display: block; padding: 7px 0; color: #8b918d; text-decoration: none; transition: color .15s; }
-  nav.rail a span { font: 500 11px var(--mono); margin-right: 8px; opacity: .8; }
-  nav.rail a:hover { color: var(--ink); }
-  nav.rail a.on { color: var(--ink); font-weight: 500; }
+.rail-toggle { display: none; }
+nav.rail p { font: 600 11px var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0 0 14px; }
+nav.rail a { display: block; padding: 7px 0; color: #8b918d; text-decoration: none; transition: color .15s; font: 14px/1.35 var(--sans); }
+nav.rail a span { font: 500 11px var(--mono); margin-right: 8px; opacity: .8; }
+nav.rail a:hover { color: var(--ink); }
+nav.rail a.on { color: var(--ink); font-weight: 500; }
+@media (min-width: 900px) {
+  body { padding-left: 230px; }
+  nav.rail { display: block; position: fixed; top: 110px; left: 24px; width: 178px; max-height: calc(100vh - 150px); overflow: auto; }
 }
 @media (min-width: 1360px) {
   body { padding-left: 0; }
-  nav.rail { left: calc(50% - 350px - 250px); }
+  nav.rail { left: calc(50% - 350px - 250px); width: 200px; }
+}
+@media (max-width: 899px) {
+  .rail-toggle { display: inline-flex; position: fixed; top: 12px; left: 12px; z-index: 20; font: 600 12.5px var(--sans); color: var(--ink);
+    background: var(--card); border: 1px solid var(--rule); border-radius: 999px; padding: 7px 14px; box-shadow: 0 2px 8px rgba(0,0,0,.08); cursor: pointer; }
+  nav.rail.open { display: block; position: fixed; top: 54px; left: 12px; z-index: 20; width: min(300px, calc(100vw - 24px)); max-height: calc(100vh - 80px);
+    overflow: auto; background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; box-shadow: 0 8px 24px rgba(0,0,0,.14); }
 }
 
 @media (max-width: 640px) {
