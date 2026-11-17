@@ -211,5 +211,4 @@ nav.rail a.on { color: var(--ink); font-weight: 500; }
 figure.fig.wide { width: calc(100% - 40px); max-width: calc(var(--measure) - 40px); margin: 28px auto 32px; }
 
 .tx-tags { display: block; font: 500 11px var(--mono); color: var(--muted); margin-top: 6px; }
-.cold-open { margin: 0 0 40px; }
 [hidden] { display: none !important; }

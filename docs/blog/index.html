@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Noto+Sans+Devanagari:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/tokens.css?v=10">
+<link rel="stylesheet" href="assets/tokens.css?v=11">
 </head>
 <body>
 <header class="top"><div class="col">
@@ -21,9 +21,6 @@
 
 <main>
 <div class="col">
-  <p class="ledger-head">One request, three replies</p>
-  <div class="transcripts cold-open" id="tx-open"><div class="tx-tabs" hidden></div><div class="tx-body"></div></div>
-
   <p class="ledger-head">In short</p>
   <ol class="ledger">
     <li><div class="k">−32 / −42<small>points, Qwen / Llama</small></div><div>In Hindi, both models say an explicit “no” far less often. On the same 404 harmful requests, explicit refusal falls from 50% to 19% in Qwen3-8B and from 89% to 47% in Llama-3.1-8B.</div></li>
@@ -300,9 +297,9 @@
   regenerates from the id-only label tables and checks against the registered results. Requests are never quoted; the example replies are
   redacted excerpts, in English translation with the redacted Hindi original one click away, validated against the registered labels by <code>scripts/v2/export_examples.py</code>.</div></footer>
 
-<script src="data/figures.js?v=10"></script>
-<script src="data/examples.js?v=10"></script>
-<script src="assets/charts.js?v=10"></script>
+<script src="data/figures.js?v=11"></script>
+<script src="data/examples.js?v=11"></script>
+<script src="assets/charts.js?v=11"></script>
 <script>
   const F = window.FIGURES;
   const slot = (id, q) => document.querySelector(`#${id} ${q}`);
@@ -386,8 +383,6 @@
         b.textContent = `${i + 1} · ${it.category}`; b.onclick = () => show(i); tabs.appendChild(b); });
       show(0);
     }
-    build("tx-open", [["en", "unsteered", "English"], ["hi", "unsteered", "Hindi"], ["hi", "repaired", "Hindi, with the fix"]], "takeaway_repair",
-      { only: "aya_redteaming__774", models: [["llama", "Llama-3.1-8B"]], caption: "Llama-3.1-8B refuses in English, answers in Hindi, and refuses again once our fix is applied. This is one request; section 02 shows more, and how typical it is." });
     build("tx-gap", [["en", "unsteered", "English"], ["hi", "unsteered", "Hindi"]], "takeaway_gap");
     build("tx-fix", [["hi", "unsteered", "Hindi, as it was"], ["hi", "repaired", "Hindi, repaired"]], "takeaway_repair");
     const S = E.stats, tb = document.querySelector("#rates tbody");
