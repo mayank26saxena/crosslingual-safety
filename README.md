@@ -36,8 +36,8 @@ human check fell below its pre-registered bar blind (κ 0.643). After the grader
 | `docs/prereg/` | Dated pre-registrations; later changes are dated addenda |
 | `docs/results/` | One result document per study, including failed gates |
 | `docs/2026-11-15_closeout.md` | Exit criteria, study status table, future work |
-| `docs/paper/` | Paper draft (`draft.md`), workshop version (`workshop.md`), related-work review (`reports/`) |
-| `docs/blog/` | Blog draft |
+| `docs/paper/` | Paper draft (`draft.md`), workshop version (`workshop.md`), static figures (`figures/`), related-work review (`reports/`) |
+| `docs/blog/` | Blog post (`index.html`, interactive SVG figures from `data/figures.json`; serve with `python3 -m http.server -d docs/blog`) |
 | `docs/plan/`, `docs/protocols/` | Plan, dataset specification, grading rubric and procedures |
 | `scripts/v2/` | Current pipeline (data, generation, directions, steering, grading folders, analysis) |
 | `scripts/` | Earlier (v1) scripts, kept for reference |
