@@ -6,8 +6,8 @@ reply existed. **Outputs:** `results/v2/phase7/stage1/stage1_results.json`, `res
 **Labels:** `results/v2/labels/phase7_{1,1e,2}_llama_grades.csv` (ids only).
 
 Model `meta-llama/Llama-3.1-8B-Instruct` rev 0e9e39f2…, one A40 for every run, the pinned environment (driver 595.91.07 throughout).
-Labels are Sonnet 5.5 grades, blind and shuffled. The Phase 6 human check fell below its bar (blind four-label κ 0.643), so these results are
-provisional. The Phase 7 author check agrees on 29 of 30 steered replies blind, and 30 of 30 after review (`2026-11-16_llama_human_checks.md`).
+Labels are Sonnet 5.5 grades, blind and shuffled. The Phase 6 human check fell below its bar blind (four-label κ 0.643); after the author's review, adopted as the
+final human reference (Phase 6 addendum 5), agreement is 0.893. The Phase 7 author check agrees on 29 of 30 steered replies blind, and 30 of 30 after review (`2026-11-16_llama_human_checks.md`).
 F1 and F2 rest on explicit refusal, the best-validated label. F3 also agrees with the adjudicated human labels, but the COMPLY/SOFT split
 is the least reliable label.
 
@@ -97,7 +97,7 @@ estimate (+18.0). That is the same shrinkage as Qwen's Phase 3 (21.4 to 17.1, 80
 
 - **Reused test items:** the test items were used in Phase 6, though no Phase 7 setting was chosen on them. No fresh confirmation set or
   second language was available for Llama.
-- **Single grader:** labels are from one model judge and stay provisional until the human checks.
+- **Single grader:** labels are from one model judge, checked against one human (blind κ below bar; 0.893 after the adopted review).
 - **Weak guards:** the harmless and MMLU guards are weak because the gate rarely opens on benign inputs.
 - **Scope:** one model, greedy decoding, one layer pair, and strengths from a five-arm development sweep.
 

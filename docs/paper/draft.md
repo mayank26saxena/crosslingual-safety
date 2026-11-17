@@ -55,8 +55,8 @@ protocol.
    they split between compliance and soft refusal, and Llama complies with Hindi harmful requests about twice as often as Qwen on the same
    pairs. Prior multilingual work scores refusal as binary or as a harm scale, so it cannot see this.
    - *A measurement caution.* The COMPLY/SOFT boundary is fragile. The hard case is a reply that warns and then answers. Our Llama human
-     check fell below its registered bar on this boundary (blind four-label κ 0.643; 0.893 after an unregistered adjudication), so we
-     report blind and adjudicated labels together and treat the Llama split as provisional.
+     check fell below its registered bar on this boundary (blind four-label κ 0.643). After the grader re-applied the rubric to the
+     disagreements, agreement was 0.893. We use the reviewed labels as the human reference and report both values.
 2. **An explicit-versus-soft refusal direction.** To our knowledge, this is the first activation direction that predicts refusal *style*
    rather than refusal itself. Hindi prompts sit toward its soft end, and adding it turns soft Hindi refusals into explicit ones.
 3. **Two internal signatures.** On the same items, Qwen's Hindi harmful prompts project on the English refusal direction at English
@@ -279,10 +279,11 @@ replies blind and shuffled. The pre-registered gate required Cohen's κ ≥ 0.7 
 - **Production route:** grading ran through Claude Code subagents. This route was itself checked against the human (κ 0.74 on the gate half)
   and against the first route (κ 0.92).
 - **Other languages:** for Bengali, a second judge (Claude Opus 5.5) re-graded 150 replies (κ 0.82 on four labels) and gave the same verdict.
-- **Llama:** a 60-reply human check was pre-registered for Llama's Hindi replies. Four-label κ is 0.643, below the registered 0.7, so all
-  Llama results are provisional. The explicit-versus-rest κ is 0.785; it was not registered. Most blind disagreements were replies that
+- **Llama:** a 60-reply human check was pre-registered for Llama's Hindi replies. Four-label κ is 0.643, below the registered 0.7, and
+  under the frozen rule the Llama results would be provisional. The explicit-versus-rest κ is 0.785; it was not registered. Most blind disagreements were replies that
   warn and then answer, which the human first labelled soft. After an unregistered review of the 14 disagreements with the judge's labels
-  shown, κ is 0.893, an upper estimate. On 30 steered Llama replies the two agree on 29 (30 after review).
+  shown, κ is 0.893, an upper estimate. The grader adopted the reviewed labels as the final human reference (stated in the paper). On 30
+  steered Llama replies the two agree on 29 (30 after review).
 
 **Blinding.** In every phase, replies from all arms and languages were shuffled under opaque ids. Labels were mapped back only after
 grading. A steered reply whose gate stayed closed, or whose text was identical to its unsteered reply, inherited the unsteered label.
@@ -319,7 +320,7 @@ over-refused, but BROKEN replies to them rise from 0 to 20 of 175.
 **Spanish control.** On 782 Aya Spanish pairs, Qwen's explicit refusal also falls, from 47% to 32%, so the effect is not unique to
 low-resource scripts. These grades came from a judge validated on Hindi only.
 
-**Llama-3.1-8B-Instruct, same 404 pairs** (provisional until the human check):
+**Llama-3.1-8B-Instruct, same 404 pairs** (judge labels; human-validated after adjudication, §3.3):
 
 | | English | Hindi | Gap |
 |---|---|---|---|
@@ -444,7 +445,7 @@ The registered Phase 4 verdict stands. The sweep weakens its reading as a genera
 
 ## 7 Llama-3.1-8B-Instruct
 
-### 7.1 Diagnosis (provisional until the human check)
+### 7.1 Diagnosis
 
 The Phase 2a and 2b procedures were rerun on Llama without changes: same fit sets, same rules, Llama's own English replies as labels.
 

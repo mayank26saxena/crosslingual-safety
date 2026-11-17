@@ -5,8 +5,8 @@
 `results/v2/phase6/stageB/phase6_results.json`, `stageB_results.json`. **Labels:** `results/v2/labels/phase6A_llama_grades.csv`,
 `phase6B_llama_grades.csv` (ids only). Model `meta-llama/Llama-3.1-8B-Instruct`, revision 0e9e39f2…, one A40, the pinned Qwen environment.
 
-**Status: provisional (human check below bar).** The pre-registered human check (60 Hindi Llama replies) gave blind four-label κ 0.643 < 0.7,
-so every Llama number here is provisional (`2026-11-16_llama_human_checks.md`). An unregistered review of the disagreements (addendum 4)
+**Status: human-validated after adjudication; blind check below bar (addenda 4–5).** The pre-registered human check (60 Hindi Llama replies) gave blind four-label κ 0.643 < 0.7,
+which under the frozen rule makes these numbers provisional (`2026-11-16_llama_human_checks.md`). An unregistered review of the disagreements (addendum 4)
 raised agreement to 0.893 (an upper estimate) and supports the judge's reading below: lost refusals are a mix, compliance narrowly ahead
 (13 compliance, 9 soft of 23 sampled pairs).
 
@@ -20,7 +20,7 @@ raised agreement to 0.893 (an upper estimate) and supports the judge's reading b
 | C4a fix works | Phase 3 rule: Hindi explicit +15 within guards | +0.0 | **No** |
 | C4b acts across languages | English explicit +3 or more | −0.2 [−0.7, 0.0] | **No** |
 
-### C1: a larger gap, and more compliance (provisional)
+### C1: a larger gap, and more compliance
 
 On 404 harmful pairs Llama refuses explicitly in English 88.9% of the time and in Hindi 46.5%. The −42-point gap is larger than Qwen's
 (−33). By source: Aya −43.0 [−48.4, −37.7], IndicSafe −38.8 [−50.7, −26.9]. Where Qwen's lost Hindi refusals mostly became soft refusals,
@@ -63,7 +63,7 @@ carried-over strength (the pre-registration lists this risk).
 
 ## Limits
 
-- The labels are provisional until the human check.
+- Labels: blind human check below bar (κ 0.643); human-validated after the author's adopted review (0.893, upper estimate).
 - The explicit–soft direction rests on 11 soft examples.
 - Gate and strength were carried over from Qwen, not tuned for Llama (by design).
 - There is one Llama size and revision, and one decoding setting (greedy, 1,024 new tokens).

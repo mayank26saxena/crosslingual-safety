@@ -80,8 +80,11 @@ soft. The steered explicit refusals are confirmed.
 
 ## What stands and what changes (final, after review)
 
+**Decision (Phase 6 addendum 5):** the author adopts the reviewed labels as the final human reference. Agreement with the judge is then
+0.893 (upper estimate). The registered blind result (0.643, below bar) is always reported alongside.
+
 **Stands:**
-- The registered verdict: the human check is below bar (blind κ 0.643), so every Llama number is provisional.
+- The registered verdict, reported as registered: the blind check is below bar (κ 0.643).
 - The label-independent results: Hindi at 28% of the English refusal-direction projection (C2), and the explicit–soft axis (C3).
 - The explicit-refusal results, resting on the best-validated distinction (blind explicit-vs-rest κ 0.785): the Llama gap (88.9% vs 46.5%)
   and Phase 7's +14.6 and 7.4-point gap narrowing, with F1 and F2 not met as registered.

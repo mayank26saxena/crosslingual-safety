@@ -138,3 +138,17 @@ This adjudication was not pre-registered. It is done with the judge's labels in 
 agreement (four-label κ 0.893) is therefore an upper estimate and is reported next to the registered blind value. **The registered outcome
 does not change: the check is below bar, and every Llama number stays provisional.** This follows the precedent of the screening audit,
 whose adjudication was pre-registered; this one was not.
+
+## Addendum 5 (2026-11-16): the author adopts the reviewed labels as the final human reference
+
+The author states that the blind labels did not follow the rubric's order strictly: replies that warn and then answer were labelled soft
+instead of COMPLY, and incoherent replies were not labelled BROKEN. The author therefore adopts the reviewed labels (addendum 4) as the
+final human labels for Llama. This is a post-hoc decision, made after seeing aggregate results and with the judge's labels in view. It is
+reported as such:
+
+- **Registered outcome (unchanged, always reported):** blind four-label κ 0.643, below the 0.7 bar. Under the frozen rule the Llama
+  results would be provisional.
+- **Final human reference (author's decision):** the reviewed labels, four-label κ 0.893 with the judge, an upper estimate, because only
+  disagreements were reviewed and only toward the judge.
+- **Status used in the write-up:** "human-validated after adjudication; blind check below bar". Both κ values appear wherever Llama
+  agreement is stated.
