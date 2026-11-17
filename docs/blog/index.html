@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Noto+Sans+Devanagari:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/tokens.css?v=32">
+<link rel="stylesheet" href="assets/tokens.css?v=33">
 </head>
 <body>
 <header class="top"><div class="col">
@@ -156,18 +156,13 @@
   <div class="transcripts" id="tx-fix"></div>
 
   <h2 id="s06"><span class="no">06</span><span class="nl">Limits, and what’s next</span></h2>
-  <p><strong>What didn’t hold up</strong> (details in <a href="#appendix-e">Appendix E</a>):</p>
   <ul>
-    <li><strong>Bengali.</strong> A sealed Bengali test failed its registered check, because Qwen’s repair made too many replies garbled.</li>
-    <li><strong>“Hindi switch.”</strong> A small set of neurons behind the English–Hindi difference moved English refusals, not Hindi ones.</li>
+    <li><strong>Scope.</strong> Two 8B models, one request set and greedy decoding, with one AI judge and one human grader. “Refusal” is a judged reply category, not harm, user outcomes or deployed safety.</li>
+    <li><strong>Steering.</strong> It changed replies here; we have not shown it improves multilingual safety more broadly. The harmless-request and ability checks are weak.</li>
+    <li><strong>Languages.</strong> Hindi is the only language studied in depth (Spanish control, Qwen only: <a href="#appendix-c">Appendix C</a>). The per-layer Llama curves come from an exploratory run added after the registered studies.</li>
+    <li><strong>What didn’t hold up</strong> (<a href="#appendix-e">Appendix E</a>). A sealed Bengali test failed its registered check, and a small set of neurons behind the English–Hindi difference moved English refusals, not Hindi ones.</li>
+    <li><strong>Next.</strong> Compare with simpler fixes such as a safety prompt or translating to English, which can rival steering (<a class="cite" href="#ref-wu2025">Wu et al. 2025</a>), test on harmless requests that sound harmful (<a class="cite" href="#ref-balani2026">Balani &amp; Panda 2026</a>), build a gate selective for Hindi, and run a fresh confirmation set for Llama.</li>
   </ul>
-  <ul>
-    <li>Two 8B models, one request set, greedy decoding. “Refusal” is a judged reply category, not harm, user outcomes or deployed safety.</li>
-    <li>Steering changed replies here; we have not shown it improves multilingual safety more broadly. The Bengali test failed, and the harmless-request and ability checks are weak.</li>
-    <li>Hindi is the only language studied in depth (Spanish control, Qwen only: <a href="#appendix-c">Appendix C</a>). One AI judge and one human grader. The per-layer Llama curves come from an exploratory run added after the registered studies.</li>
-    <li>Not yet compared with simpler fixes such as a safety prompt or translating to English, which can rival steering (<a class="cite" href="#ref-wu2025">Wu et al. 2025</a>), or tested on harmless requests that sound harmful (<a class="cite" href="#ref-balani2026">Balani &amp; Panda 2026</a>).</li>
-  </ul>
-  <p><strong>Next:</strong> those baselines, a gate selective for Hindi, and a fresh confirmation set for Llama.</p>
 
   <h2 class="appx-head" id="methods">Methods and checks</h2>
   <p class="appx-intro">Supporting detail for the numbers above. Open any section.</p>
@@ -233,9 +228,9 @@
 
 <footer><div class="col">Requests are never quoted. The example replies are redacted excerpts, in English translation with the redacted Hindi original one click away, and their labels were checked against the registered grades.</div></footer>
 
-<script src="data/figures.js?v=32"></script>
-<script src="data/examples.js?v=32"></script>
-<script src="assets/charts.js?v=32"></script>
+<script src="data/figures.js?v=33"></script>
+<script src="data/examples.js?v=33"></script>
+<script src="assets/charts.js?v=33"></script>
 <script>
   const F = window.FIGURES;
   const slot = (id, q) => document.querySelector(`#${id} ${q}`);
