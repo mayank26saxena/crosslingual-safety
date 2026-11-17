@@ -5,17 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Why chat models refuse less in Hindi</title>
 <meta name="author" content="Mayank Saxena">
-<meta name="description" content="Asked the same harmful requests in English and in Hindi, two open chat models refuse far less often in Hindi. What they do instead, what changes inside them, and how far steering can bring the refusals back.">
+<meta name="description" content="Asked the same harmful requests in English and in Hindi, two open chat models (Qwen3-8B and Llama-3.1-8B-Instruct) refuse far less often in Hindi. What they do instead, what changes inside them, and how far steering can bring the refusals back.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Noto+Sans+Devanagari:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/tokens.css?v=12">
+<link rel="stylesheet" href="assets/tokens.css?v=13">
 </head>
 <body>
 <header class="top"><div class="col">
   <p class="kicker">Cross-lingual safety · research note</p>
   <h1>Why chat models refuse less in <span class="hi">Hindi</span></h1>
-  <p class="standfirst">Asked the same harmful requests in English and in Hindi, two open chat models refuse far less often in Hindi. We look at what they do instead, what changes inside them, and how far steering can bring the refusals back.</p>
+  <p class="standfirst">Asked the same harmful requests in English and in Hindi, two open chat models, Qwen3-8B and Llama-3.1-8B-Instruct, refuse far less often in Hindi. We look at what they do instead, what changes inside them, and how far steering can bring the refusals back.</p>
   <div class="meta"><span><b>Mayank Saxena</b></span><span>17 November 2026</span><span id="readtime">14 min read</span><span><a href="https://github.com/mayank26saxena/crosslingual-safety" target="_blank" rel="noopener noreferrer">Code and data</a></span></div>
 </div></header>
 
@@ -297,9 +297,9 @@
   regenerates from the id-only label tables and checks against the registered results. Requests are never quoted; the example replies are
   redacted excerpts, in English translation with the redacted Hindi original one click away, validated against the registered labels by <code>scripts/v2/export_examples.py</code>.</div></footer>
 
-<script src="data/figures.js?v=12"></script>
-<script src="data/examples.js?v=12"></script>
-<script src="assets/charts.js?v=12"></script>
+<script src="data/figures.js?v=13"></script>
+<script src="data/examples.js?v=13"></script>
+<script src="assets/charts.js?v=13"></script>
 <script>
   const F = window.FIGURES;
   const slot = (id, q) => document.querySelector(`#${id} ${q}`);
