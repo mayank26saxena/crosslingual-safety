@@ -85,5 +85,7 @@ in `results/v2/layer_proj/`). The layer-10 values reproduce the stored Phase 6 p
   0.30 of the English gap at layer 10.
 - So C2 should be read as a magnitude finding. Llama's Hindi harmful prompts sit low on the direction while remaining well ordered,
   which is consistent with Phase 7, where a Hindi-calibrated gate threshold separated Hindi harmful from harmless requests usefully.
-- Qwen's Hindi gap ratio at its layer 14 is similar (0.32), for a different reason: its Hindi harmful prompts reach English strength,
-  but its Hindi harmless prompts also sit high (the language offset in Experiment 2).
+- On the same 404 + 169 test pairs, Qwen's layer-14 gate scores give a similar Hindi gap ratio (0.33; AUROC 0.98 English, 0.92 Hindi),
+  for a different reason. All of Qwen's shrinkage comes from the harmless side: harmful Hindi sits at English strength, but harmless
+  Hindi sits far above harmless English. In Llama about three quarters comes from the harmful side. These same-item statistics are
+  exported and checked by `scripts/v2/export_figure_data.py` (`gate.*.test_stats`).

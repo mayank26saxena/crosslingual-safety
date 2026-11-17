@@ -151,6 +151,11 @@ def fig_layers():
     return res
 
 
+def auroc(pos, neg):
+    """Mann-Whitney AUROC, ties counted half."""
+    return sum((p > n) + 0.5 * (p == n) for p in pos for n in neg) / (len(pos) * len(neg))
+
+
 def fig_gate():
     """The gate: per-prompt refusal-direction scores on the test items, with each model's threshold."""
     res = {}
@@ -166,7 +171,16 @@ def fig_gate():
             for lang in ("en", "hi"):
                 v = [r["score"] for r in un if r["set"] == st and r["lang"] == lang]
                 cells[f"{st.split('_')[1]}_{lang}"] = dict(scores=[round(x, 3) for x in v], open=sum(x > tau for x in v) / len(v), n=len(v))
-        res[model] = dict(tau=tau, threshold=which, cells=cells, layer=14 if model == "qwen" else 10)
+        # same-item comparison across models: chosen-layer AUROC per language and the Hindi/English harmful-harmless gap ratio,
+        # all on the 404 harmful and 169 harmless test pairs (full-precision scores)
+        sc = {(st, lang): [r["score"] for r in un if r["set"] == st and r["lang"] == lang]
+              for st in ("test_harmful", "test_harmless") for lang in ("en", "hi")}
+        mean = lambda v: sum(v) / len(v)
+        gap = {lang: mean(sc[("test_harmful", lang)]) - mean(sc[("test_harmless", lang)]) for lang in ("en", "hi")}
+        test_stats = dict(auroc_en=auroc(sc[("test_harmful", "en")], sc[("test_harmless", "en")]),
+                          auroc_hi=auroc(sc[("test_harmful", "hi")], sc[("test_harmless", "hi")]), gap_ratio=gap["hi"] / gap["en"],
+                          harmful_ratio=mean(sc[("test_harmful", "hi")]) / mean(sc[("test_harmful", "en")]))
+        res[model] = dict(tau=tau, threshold=which, cells=cells, layer=14 if model == "qwen" else 10, test_stats=test_stats)
     return res
 
 
@@ -214,11 +228,42 @@ def check(f1, f2, f3):
         raise SystemExit("figure data disagrees with registered results")
 
 
+def check_gate(data):
+    """Same-item gate statistics must agree with the independent sources: Figure 3 harmful ratios, and for Llama the per-layer run."""
+    g, f3, lay = data["gate"], data["fig3"], data["layers"]
+    checks = [(f"{m} harmful ratio = Figure 3", g[m]["test_stats"]["harmful_ratio"], f3[m]["ratio"]) for m in ("qwen", "llama")]
+    if lay["llama"].get("auroc_hi"):
+        c = lay["llama"]["chosen"]
+        checks += [("llama AUROC EN = per-layer run", g["llama"]["test_stats"]["auroc_en"], lay["llama"]["auroc_en"][c]),
+                   ("llama AUROC HI = per-layer run", g["llama"]["test_stats"]["auroc_hi"], lay["llama"]["auroc_hi"][c]),
+                   ("llama gap ratio = per-layer run", g["llama"]["test_stats"]["gap_ratio"], lay["llama"]["rho"][c])]
+    bad = [x for x in checks if abs(x[1] - x[2]) > 0.01]
+    for n, a, b in checks:
+        print(f"{'BAD' if (n, a, b) in bad else 'OK '} {n}: {a:.3f} vs {b:.3f}")
+    # blog wording: the Hindi gap shrinks "all" from the harmless side in Qwen and "mostly" from the harmful side in Llama
+    for m in ("qwen", "llama"):
+        c = {k: v["mean"] for k, v in f3[m]["cells"].items()}
+        shrink = (c["harmful_en"] - c["harmless_en"]) - (c["harmful_hi"] - c["harmless_hi"])
+        share = (c["harmful_en"] - c["harmful_hi"]) / shrink
+        ok = share < 0.05 if m == "qwen" else share > 0.6
+        print(f"{'OK ' if ok else 'BAD'} {m} share of Hindi gap shrink from the harmful side: {share:.2f}")
+        if not ok:
+            bad.append((m, share, None))
+    lh = g["llama"]["cells"]["harmless_hi"]
+    ok = lh["open"] == 0 and lh["n"] == 169
+    print(f"{'OK ' if ok else 'BAD'} llama gate opens on none of the 169 Hindi harmless test prompts (text claim)")
+    if not ok:
+        bad.append(("llama harmless open", lh["open"], 0))
+    if bad:
+        raise SystemExit("gate statistics disagree with independent sources")
+
+
 def main():
     f1, f2, f3 = fig1(), fig2(), fig3()
     check(f1, f2, f3)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     data = dict(fig1=f1, fig2=f2, fig3=f3, layers=fig_layers(), gate=fig_gate(), dose=fig_dose())
+    check_gate(data)
     json.dump(data, open(OUT, "w"), indent=1)
     # the same numbers as a script, so the page also works when opened from disk (file:// cannot fetch JSON)
     OUT.with_suffix(".js").write_text("window.FIGURES = " + json.dumps(data) + ";\n")

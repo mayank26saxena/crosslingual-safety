@@ -35,10 +35,13 @@
       in Llama-3.1-8B</strong> when the request is in Hindi rather than English.</p>
     <p>The models fail differently. <strong>Qwen hedges</strong>: its lost refusals mostly become warnings and redirections that never say
       no. <strong>Llama hedges or complies</strong>, in similar shares.</p>
-    <p>Inside, Qwen's Hindi harmful prompts reach the English "refusal direction" <strong>at full English strength</strong>; Llama's reach
-      only <strong>28%</strong> of it.</p>
+    <p>Inside, both models still rank Hindi harmful requests above harmless ones on the English "refusal direction", but the gap between
+      the two shrinks to about a third of the English gap. The models differ in which side moves. Qwen's Hindi harmful prompts score
+      <strong>at full English strength</strong>, while its harmless Hindi prompts rise toward them. Llama's Hindi harmful prompts score at
+      only <strong>28%</strong> of the English value.</p>
     <p>Repairs that push the model's activations raise Hindi refusal by <strong>15–17 points</strong>, but also lift English, so
-      <strong>neither closes the gap</strong>. Everything was pre-registered, and we report what failed.</p>
+      <strong>neither closes the gap</strong>. Every test was pre-registered, and we report what failed; the one exploratory analysis is
+      labelled as such.</p>
   </div>
 
   <div class="cards">
@@ -114,15 +117,16 @@
   <div class="chart"></div>
   <figcaption id="figL-cap"><b>Figure 2:</b> Ablating the direction at layer 14 removes <span data-k="qa"></span> of Qwen's refusal-score
     gap on the prompts used to find it (64% on held-out English prompts, the registered check); at layer 10 it removes
-    <span data-k="la"></span> of Llama's on held-out prompts. At those layers the direction still ranks Hindi harmful requests above
-    harmless ones (AUROC <span data-k="qh"></span> for Qwen and <span data-k="lh"></span> for Llama, against <span data-k="qe"></span> and
-    <span data-k="le"></span> in English). Ranking is not the whole story: Figure 3 shows <em>where</em> Hindi prompts sit on the scale,
-    and that is where the two models differ.</figcaption>
+    <span data-k="la"></span> of Llama's on held-out prompts. At those layers, on the same held-out requests, the direction still ranks
+    Hindi harmful requests above harmless ones: AUROC <span data-k="qh"></span> in Qwen and <span data-k="lh"></span> in Llama, against
+    <span data-k="qe"></span> and <span data-k="le"></span> in English. The order survives in Hindi; Figure 3 shows what changes.</figcaption>
   <details class="setup"><summary></summary><div class="body"><p>Directions are differences of mean last-token activations between English
     harmful and harmless prompts, one per layer. "Removed" is (unablated harmful score − ablated score) / (harmful − harmless score), on the
     refusal score defined from first reply tokens; ablation was tested on the first 80% of layers, as registered. Qwen curves: tier A (1,174 pairs) with PolyGuard harmless prompts. Llama curves: the 404
     harmful and 169 harmless test pairs (separation computed by <code>scripts/v2/layer_projections.py</code>). AUROC is computed within each
-    language.</p></div></details>
+    language. The caption's AUROCs are recomputed for both models on the same 404 + 169 test pairs, so they differ slightly from Qwen's
+    tier-A curve. The Llama per-layer run is exploratory: it was added after the registered studies, to draw this figure, and tests no
+    hypothesis. Its layer-10 values reproduce the registered Llama projections in Figure 3.</p></div></details>
 </figure>
 
 <figure class="fig wide" id="fig3">
@@ -143,10 +147,17 @@
 </figure>
 
 <div class="col">
-  <p>So the two models differ inside as well as out. In Qwen the refusal signal for Hindi harmful prompts is as strong as in English, so its
-    weaker refusals must arise later, in how the refusal is worded. In Llama the signal itself is weak. This
-    matches a growing set of results showing that refusal directions are shared across languages but weaker in lower-resource ones (Wang
-    et al. 2025; Aziz et al. 2026). The difference here is that the two patterns show up in two models on <em>identical</em> requests.</p>
+  <p>Put Figures 2 and 3 together and the two models look alike on one measure and different on another. In both, the Hindi gap between
+    harmful and harmless requests is about a third of the English gap (<span data-k="qg"></span> in Qwen, <span data-k="lg"></span> in
+    Llama), and in both the order survives. What differs is which side moved. In Qwen, all of the shrinking comes from the harmless side:
+    Hindi harmful prompts sit exactly where English ones do, but harmless Hindi prompts sit far higher than harmless English ones. In Llama,
+    most of it comes from the harmful side: harmful Hindi prompts fall to 28% of the English value, while harmless Hindi prompts rise only
+    a little.</p>
+  <p>That points the two models at different problems. In Qwen the refusal signal for Hindi harm is as strong as in English, so its
+    weaker refusals probably arise later, in how the refusal is worded. In Llama the signal is still well ordered but small, so most Hindi
+    harmful prompts score well below where English harmful prompts sit. This fits results showing that refusal directions are shared
+    across languages but weaker in lower-resource ones (Wang et al. 2025; Aziz et al. 2026). What is new here is the two patterns side by
+    side, in two models, on <em>identical</em> requests.</p>
 </div>
 
 <div class="col"><p class="exp-label">Experiment 3</p><h2>Is "how" a model refuses written somewhere inside it?</h2>
@@ -235,8 +246,12 @@
 
 <div class="col">
   <p>Both repairs work in the sense that Hindi refusal goes up. Neither is language-selective. The gate asks "does this look harmful?",
-    and English harmful prompts trigger it at least as often as Hindi ones. Llama narrows the gap more partly because its English refusal
-    was already near the ceiling (89%), leaving little room to rise.</p>
+    and English harmful prompts trigger it at least as often as Hindi ones.</p>
+  <p>Figure 7 also shows why a Hindi-set threshold could work for Llama. The threshold is the median Hindi development score, so it
+    lets through about half of Hindi harmful requests by design. What is not by design is the other side: because Llama still orders Hindi
+    harmful prompts above harmless ones, only on a smaller scale, the same threshold lets through none of the 169 Hindi harmless requests.
+    The cost is that English harmful prompts sit higher still, so the gate opens on nearly all of them. Llama narrows the gap anyway, partly because its English refusal was already near the ceiling (89%), leaving
+    little room to rise.</p>
 
   <div class="neg">
     <p class="kicker">What didn't work</p>
@@ -259,7 +274,9 @@
   <h2>How we tried to keep ourselves honest</h2>
   <ul>
     <li><strong>Rules first.</strong> Before every experiment we committed what we'd measure, which settings we'd try, how we'd pick one,
-      and what would count as success. Changes went into dated addenda: one bug, one infrastructure crash, and the label review above.</li>
+      and what would count as success. Changes went into dated addenda: one bug, one infrastructure crash, and the label review above.
+      One analysis was added afterwards, for this post: the per-layer Llama curves in Figure 2. It is descriptive and tests no
+      hypothesis.</li>
     <li><strong>Tune once, test once.</strong> Test numbers came in at about 80% of the best development numbers, as you'd expect from
       picking the best of several settings.</li>
     <li><strong>No harmful text.</strong> No harmful request or reply appears in this post or the repository; everything is cited by
@@ -286,7 +303,8 @@
     <li>two 8B models with greedy decoding;</li>
     <li>one AI judge and one human grader;</li>
     <li>no comparison yet against simpler fixes, such as a safety system prompt or translating to English first;</li>
-    <li>the projection result hasn't been tested on harmless requests that merely <em>sound</em> harmful.</li>
+    <li>the projection result hasn't been tested on harmless requests that merely <em>sound</em> harmful;</li>
+    <li>the per-layer curves for Llama come from an exploratory run added after the registered studies.</li>
   </ul>
   <p><strong>Next:</strong> those baselines, a language-selective gate, and a fresh confirmation set for Llama.</p>
 
@@ -322,9 +340,11 @@
     { title: "Llama-3.1-8B", subtitle: "32 layers", layers: L.llama.layers, chosen: L.llama.chosen, ablation: L.llama.ablation_removed, auroc_en: L.llama.auroc_en, auroc_hi: L.llama.auroc_hi, ratio: L.llama.ratio_harmful },
   ]);
   { const pct = (v) => Math.round(100 * v) + "%", two = (v) => v.toFixed(2), q = L.qwen, l = L.llama;
-    const vals = { qa: pct(q.ablation_removed[q.chosen]), la: pct(l.ablation_removed[l.chosen]), qh: two(q.auroc_hi[q.chosen]),
-      lh: l.auroc_hi ? two(l.auroc_hi[l.chosen]) : "n/a", qe: two(q.auroc_en[q.chosen]), le: l.auroc_en ? two(l.auroc_en[l.chosen]) : "n/a" };
-    document.querySelectorAll("#figL-cap [data-k]").forEach((e) => { e.textContent = vals[e.dataset.k]; }); }
+    const qs = F.gate.qwen.test_stats, ls = F.gate.llama.test_stats;
+    const vals = { qa: pct(q.ablation_removed[q.chosen]), la: pct(l.ablation_removed[l.chosen]), qh: two(qs.auroc_hi), lh: two(ls.auroc_hi),
+      qe: two(qs.auroc_en), le: two(ls.auroc_en), qg: two(qs.gap_ratio), lg: two(ls.gap_ratio),
+      lgh: pct(F.gate.llama.cells.harmful_hi.open), lgs: pct(F.gate.llama.cells.harmless_hi.open) };
+    document.querySelectorAll("[data-k]").forEach((e) => { e.textContent = vals[e.dataset.k]; }); }
   Charts.mechanism(slot("figM", ".chart"), [
     { title: "Qwen3-8B", layers: 36, gate: 14, push: 25, tau: F.gate.qwen.tau.toFixed(2), what: "1.25 × explicit–soft direction" },
     { title: "Llama-3.1-8B", layers: 32, gate: 10, push: 11, tau: F.gate.llama.tau.toFixed(2), what: "1.5 × shortfall × refusal direction" },

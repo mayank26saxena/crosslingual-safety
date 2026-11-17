@@ -21,9 +21,12 @@ on held-out pairs, but it raises English by 16, so the gap barely narrows. It al
 against garbled output. A search for Hindi-specific neurons finds a small set that carries most of the internal English–Hindi difference,
 but moving them changes behaviour in English, not Hindi. In Llama-3.1-8B-Instruct the gap on the same pairs is larger (89% to 47%). Its missing refusals split between compliance and soft
 refusal, and it fails to refuse Hindi harmful requests 1.4–1.9 times as often as Qwen (depending on whether broken replies count). Its internal signature also differs:
-Hindi harmful prompts reach only 28% of the English projection on the refusal direction. A repair matched to that diagnosis pushes along the refusal direction, with a gate threshold set on Hindi data. On held-out
+Hindi harmful prompts reach only 28% of the English projection on the refusal direction. An exploratory same-item analysis
+shows that the direction still ranks Hindi harmful above harmless prompts in both models (AUROC 0.92 in Qwen, 0.97 in Llama), with
+a Hindi harmful–harmless gap about a third of the English one in each. The models differ in which side moves: in Qwen the harmless side
+rises, in Llama the harmful side falls. A repair matched to that diagnosis pushes along the refusal direction, with a gate threshold set on Hindi data. On held-out
 pairs it raises Hindi explicit refusal by 15 points and narrows the gap by 7 points. It narrowly misses its
-pre-registered bars for explicit refusal (+15) and gap narrowing (10 points). All studies were pre-registered, tuned on development items and
+pre-registered bars for explicit refusal (+15) and gap narrowing (10 points). All hypothesis tests were pre-registered, tuned on development items and
 tested once on held-out items, and the failures are reported alongside the successes.
 
 ---
@@ -43,7 +46,8 @@ We study the gap in a setting designed to make those questions answerable:
 - **A four-way outcome.** Replies are graded COMPLY, REFUSE_EXPLICIT, REFUSE_SOFT or BROKEN by an LLM judge chosen against a fluent human
   Hindi grader. The split between explicit and soft refusal turns out to carry most of the gap in both models (in Llama on a 20-pair human sample).
 - **Two models, the same items.** Qwen3-8B and Llama-3.1-8B-Instruct are evaluated on the identical 404 held-out harmful pairs.
-- **Diagnosis before repair, with pre-registration.** Every study had its rules frozen before any of its replies were generated. Settings
+- **Diagnosis before repair, with pre-registration.** Every study had its rules frozen before any of its replies were generated. One
+  descriptive analysis (per-layer and same-item projection statistics, §7.1) was added afterwards and is labelled exploratory. Settings
   were tuned on development items and tested once on held-out items; deviations were recorded in dated addenda.
 
 **Contributions.** Prior work has established that the gap exists, including in Hindi and in both models we study, and that English refusal
@@ -60,7 +64,8 @@ protocol.
 2. **An explicit-versus-soft refusal direction.** To our knowledge, this is the first activation direction that predicts refusal *style*
    rather than refusal itself. Hindi prompts sit toward its soft end, and adding it turns soft Hindi refusals into explicit ones.
 3. **Two internal signatures.** On the same items, Qwen's Hindi harmful prompts project on the English refusal direction at English
-   strength, while Llama's reach 28% of it. Behaviour differs in degree: Qwen mostly hedges, while Llama hedges or complies. The weak Llama projection replicates
+   strength, while Llama's reach 28% of it. In both, the Hindi harmful–harmless order survives and the gap shrinks to about a third of
+   English; the models differ in which side moves (exploratory, §7.1). Behaviour differs in degree: Qwen mostly hedges, while Llama hedges or complies. The weak Llama projection replicates
    prior findings (Wang et al. 2025; Aziz et al. 2026) in a paired Hindi design. The contrast between the two models on identical items is, to our
    knowledge, new.
 4. **Pre-registered negative results on repair.**
@@ -128,7 +133,8 @@ venue, author list or a key number checked against the primary source before sub
   - Ivanova (BlackboxNLP 2026, arXiv:2610.28897): transfer is graded rather than binary.
   - Oppong et al. (2026, arXiv:2608.11146): under 10% of the English refusal signal survives in African languages.
   - Ifebi et al. (2026, arXiv:2607.10112): harm routed through a misaligned subspace leaves refusal "intact but untriggered".
-- *Where we fit.* Our Llama finding replicates this pattern on paired Hindi items. Our Qwen finding differs internally, a projection at
+- *Where we fit.* Our Llama finding replicates this pattern on paired Hindi items, with one qualification from an exploratory same-item
+  analysis: the Hindi signal is weak in scale but keeps the harmful–harmless order (AUROC 0.97; §7.1). Our Qwen finding differs internally, a projection at
   English strength with a soft-refusal deficit. It is closest to Kompella & Mahajan (Actionable Interpretability @ COLM 2026,
   arXiv:2608.08032), who find language-invariant harm detection but a late, separate refusal-writing direction in an Indic mixture-of-experts
   model.
@@ -313,6 +319,11 @@ Intervals are paired bootstrap 95% intervals over items (10,000 resamples); McNe
 | Any refusal (explicit or soft) | 90.3% | 77.2% | −13.1 [−17.3, −9.2] |
 | Harmless refused (169 pairs) | 3.5% | 1.2% | |
 
+![Figure 1](figures/fig1_what_replaces_refusal.png)
+
+**Figure 1.** Replies to the same 404 held-out harmful requests in English (open) and Hindi (filled), both models, with Wilson 95%
+intervals. The bar splits the requests refused explicitly in English but not in Hindi by what the Hindi reply did.
+
 In Qwen, most of the change is a move from explicit to soft refusal. On a superset of the test split (448 pairs), labels moved from English
 to Hindi as follows: REFUSE_EXPLICIT 230 → 82, REFUSE_SOFT 170 → 265, COMPLY 47 → 63, BROKEN 1 → 38. Harmless Hindi requests are not
 over-refused, but BROKEN replies to them rise from 0 to 20 of 175.
@@ -348,15 +359,29 @@ We fit a refusal direction on English prompts only, as a difference of means of 
 - **Layer and validity:** layer 14. Ablating the direction removes 64% of the English harmful–harmless gap in the refusal score on held-out
   prompts, above the pre-registered 50% validity bar.
 - **Stability:** split-half cosine 0.975.
-- **Harmful Hindi:** projects at English strength. Mean 5.34 against 5.17, a paired shift of +0.17 [+0.02, +0.30], or −0.46 on Aya items.
+- **Harmful Hindi:** projects at English strength. On tier A, mean 5.34 against 5.17, a paired shift of +0.17 [+0.02, +0.30], or −0.46 on Aya items.
 - **Harmless Hindi:** projects far higher than harmless English (2.80 against −2.83).
 
-So the direction separates Hindi harmful from harmless less well (AUROC 0.88 against 0.96 in English). The pre-registered summary statistic,
-a harmful–harmless "recognition ratio" (0.32), therefore reads as weakened recognition, and we report it as registered. Descriptively,
+So the direction separates Hindi harmful from harmless less well (tier A, 1,174 pairs: AUROC 0.88 against 0.96 in English; 0.92 against
+0.98 on the 404 + 169 test pairs, §7.1). The pre-registered summary statistic,
+a harmful–harmless "recognition ratio" (0.32 on tier A; 0.33 on the test pairs), therefore reads as weakened recognition, and we report it as registered. Descriptively,
 though, the drop comes from the harmless side: harmful Hindi requests project on the refusal direction at English strength. This is a
 projection on a refusal direction read at the last template token, not a measure of harm recognition (Zhao et al. 2025). It has not been
 tested against hard negatives (§9). Still, it suggests that the Hindi deficit arises after this signal, in how the refusal is expressed,
 which §5.2 tests directly.
+
+![Figure 2](figures/fig4_layers.png)
+
+**Figure 2.** Per-layer English refusal direction in both models. Top: share of the harmful–harmless refusal-score gap removed by
+ablating each layer's direction (Qwen on the fit prompts, where layer 14 removes 62%; 64% on held-out prompts). Bottom: harmful-versus-
+harmless AUROC within each language (Qwen: tier A pairs; Llama: the 404 + 169 test pairs, exploratory, §7.1). Band: chosen layer.
+
+![Figure 3](figures/fig2_projection.png)
+
+**Figure 3.** Mean projection on each model's refusal direction at its chosen layer, same 404 harmful and 169 harmless test pairs, English
+(ring) and Hindi (dot), bootstrap 95% intervals. Hindi harmful prompts reach 100% of the English value in Qwen and 28% in Llama; harmless
+Hindi prompts in Qwen sit far above harmless English. These are test-pair means, so they differ slightly from the tier-A means in the
+text.
 
 ### 5.2 A separate direction predicts explicit versus soft refusal
 
@@ -407,6 +432,17 @@ the explicit-minus-soft vector is added at the input of layer 25, at every posit
 refusal within +3 points and BROKEN within +5. The chosen setting is α = 1.25, τ at the 50th percentile (+21.4 on development). Looser
 gates opened on most harmless Hindi prompts but were rejected for broken replies, not for over-refusal.
 
+![Figure 4](figures/fig5_mechanism.png)
+
+**Figure 4.** Where each repair reads and writes. Qwen (this section) gates at layer 14 with an English-set threshold and adds the
+explicit–soft vector at layer 25. Llama (§7.2) gates at layer 10 with a Hindi-set threshold and adds along the refusal direction at layer 11.
+
+![Figure 5](figures/fig6_dose.png)
+
+**Figure 5.** Development sweeps: each candidate setting's Hindi explicit-refusal gain against its change in broken replies, with the
+registered guards. Filled: the setting taken to the held-out test. Qwen: nine settings, 401 development pairs; Llama (§7.2): five pushes,
+150 development pairs.
+
 **Held-out test (run once):**
 
 | | Unsteered | Gated | Change |
@@ -452,15 +488,23 @@ The Phase 2a and 2b procedures were rerun on Llama without changes: same fit set
 
 - **Refusal direction:** valid at layer 10. Ablation removes 94% of the English harmful–harmless gap.
 - **Hindi harm signal:** Hindi harmful prompts reach only **28%** of the English mean projection (0.51 against 1.84). The replication rule
-  asked for at least 80%, so it is not met. Unlike Qwen, Llama registers Hindi harm weakly.
+  asked for at least 80%, so it is not met. The Hindi refusal-direction signal is weak in scale.
+- **Order versus scale (exploratory, added 2026-11-17, not registered).** A forward-pass run projected every layer's last-token output on
+  that layer's English refusal direction for the 404 + 169 test pairs (`results/v2/layer_proj/`); its layer-10 values reproduce the
+  registered projections (mean absolute difference 0.006). At layer 10 the direction still ranks Hindi harmful above Hindi harmless
+  prompts almost as well as in English (AUROC 0.97 against 0.99), but the Hindi harmful–harmless gap is 0.30 of the English gap. On the
+  same items, Qwen's layer-14 gate scores give a similar gap ratio (0.33; AUROC 0.92 against 0.98). So the two models do not differ in
+  how much Hindi separation they keep; they differ in which side moves. All of Qwen's shrinkage comes from harmless Hindi prompts rising,
+  while about three quarters of Llama's comes from harmful Hindi prompts falling. This qualifies the reading of the 28% result: Llama's
+  Hindi harm signal is weak in scale but well ordered, which is why a threshold set on Hindi data can separate it (§7.2).
 - **Explicit–soft direction:** valid at layer 18 (CV AUROC 0.925), and Hindi prompts sit toward its soft end (paired shift −2.40
   [−2.55, −2.26]). Llama almost never refuses softly in English (11 of 782 fit replies), so this direction rests on few examples.
 - **Carried-over fix:** the Qwen gate and strength, carried over unchanged, opened on only 1% of Hindi harmful prompts, because those prompts
   score low on the refusal direction. So the Qwen fix was effectively not tested in Hindi.
 
 The two models share the explicit-refusal gap but not its internal signature. In Qwen, Hindi harmful prompts project on the refusal
-direction at English strength and the lost refusals are mostly soft. In Llama they project weakly, and the lost refusals split between
-compliance and soft refusal.
+direction at English strength and the lost refusals are mostly soft. In Llama they project weakly but in the right order, and the lost
+refusals split between compliance and soft refusal.
 
 ### 7.2 A diagnosis-matched repair
 
@@ -498,6 +542,11 @@ broke replies. With the Hindi-set gate, the gate opened on 45% of Hindi harmful 
 harmless and MMLU guards are weak because the gate rarely opens on those inputs. It is still not language-selective: the gate opens on 92%
 of English harmful prompts, and English explicit refusal rises 7.2 points from a high base.
 
+![Figure 6](figures/fig3_repairs.png)
+
+**Figure 6.** Explicit refusal before and after each repair on held-out pairs, run once, with paired bootstrap intervals and the gap
+before and after. Qwen (§6) passes its checks without narrowing the gap; Llama narrows it by 7.4 points and narrowly misses its bars.
+
 ---
 
 ## 8 Discussion (partial)
@@ -505,12 +554,23 @@ of English harmful prompts, and English explicit refusal rises 7.2 points from a
 - **Report what replaces the refusal, and check the hard boundary.** A single refusal rate hides whether the missing refusals become soft
   refusals, compliance or broken output. The hardest boundary, a warning followed by an answer, needs a human check on each model, and
   blind and adjudicated labels should be reported together.
-- **Diagnosis should pick the intervention.** The Qwen repair acts on how refusal is expressed, matching a diagnosis of intact harm
-  recognition. Carried to Llama, its English-set gate was a poor fit: it barely opened on Hindi, because Llama's Hindi refusal-direction
-  signal is weak. Once the gate was set on Hindi, even the Qwen-style push qualified on development data (E1, +16.7). The diagnosis-matched Llama repair acts on the weak refusal-direction signal
+- **Diagnosis should pick the intervention.** The Qwen repair acts on how refusal is expressed, matching a diagnosis in which Hindi harmful
+  prompts reach English strength on the refusal direction. Carried to Llama, its English-set gate was a poor fit: it barely opened on Hindi, because Llama's Hindi refusal-direction
+  signal is weak. A threshold at the Hindi development median opens on about half of Hindi harmful prompts by construction (47% on the
+  test pairs). What shows the signal is well ordered (§7.1) is that the same threshold opens on none of the 169 Hindi harmless test
+  prompts (Figure 7). Once the gate was set on Hindi, even the Qwen-style push qualified on development data (E1, +16.7). The diagnosis-matched Llama repair acts on the weak refusal-direction signal
   itself, as the diagnosis predicts. On held-out pairs it narrows the gap by 7.4 points against Qwen's 1.2, though English headroom differs (Llama's English is near
   ceiling at 89% explicit, Qwen's at 51%), and it falls
   short of its registered bar.
+- **Gates are not language-selective (Figure 7).** Both gates read how harmful-looking a prompt is, and English harmful prompts score at
+  least as high as Hindi ones. Qwen's English-set threshold opens on 48% of English and 47% of Hindi harmful test prompts; Llama's
+  Hindi-set threshold opens on 92% and 47%. No single threshold on this score opens for Hindi harm without opening for English harm.
+
+![Figure 7](figures/fig7_gate.png)
+
+**Figure 7.** Gate scores of every held-out prompt (unsteered), at the gate layer, with each model's threshold as run and the share of
+each group above it.
+
 - **"Passes its rule" is not "closes the gap."** The Qwen repair met every registered check and left the gap almost unchanged, because it
   acted on English as much as on Hindi. Gap-narrowing should be a registered outcome of any cross-lingual repair; the Phase 7 rules include
   it.
@@ -532,6 +592,8 @@ of English harmful prompts, and English explicit refusal rises 7.2 points from a
 - **No hard negatives:** the Qwen projection result has not been tested against harmless requests that sound harmful, in Hindi, and
   cross-lingual transfer can collapse on such items (Balani & Panda 2026). Harmless Hindi requests also project high on the refusal
   direction (§5.1).
+- **Exploratory analysis:** the same-item AUROC and gap-ratio comparison and the Llama per-layer curves (§7.1, Figure 2) were added
+  after the registered studies. They are descriptive and test no hypothesis.
 - **Refusal, not harm:** our directions are refusal directions read at the last template token. We fitted no separate harmfulness direction
   (cf. Zhao et al. 2025).
 - **No prompting baseline:** we compare against no system-prompt or translate-to-English baseline.
@@ -559,6 +621,7 @@ split, the least reliable label.
 | Llama unrefused more often than Qwen | descriptive | 404 paired items | +13.9 [+9.4, +18.3] compliance; +9.2 [+4.5, +14.1] incl. broken | COMPLY/BROKEN boundary |
 | Qwen Hindi projection at English strength | primary | 1,174 pairs | shift +0.17 [+0.02, +0.30] | none (no hard-negative test) |
 | Llama Hindi projection 28% of English | primary | 404 pairs | 0.51 vs 1.84 | none |
+| Hindi order kept, separation about a third of English (both models) | exploratory | 404 + 169 test pairs | AUROC HI 0.92 (Qwen) / 0.97 (Llama); gap ratio 0.33 / 0.30 | `results/v2/layer_proj/layer_proj_summary.json`; gate scores; checked in `export_figure_data.py` |
 | Explicit–soft direction, Hindi toward soft | primary | 1,069 / 404 pairs | Qwen −10.9 [−12.1, −9.6]; Llama −2.40 [−2.55, −2.26] | Llama fit on 11 soft examples |
 | Qwen gated fix, Hindi explicit | primary | 404 pairs, once | +17.1 [+13.1, +21.0]; English +15.8 | explicit refusal |
 | Qwen fix, Bengali confirmation | primary | 148 items, once | +23.6; BROKEN +8.1 [+2.0, +14.9], fail | Bengali labels not human-checked |
@@ -582,3 +645,4 @@ split, the least reliable label.
 | Phase 7 | yes | E arms double-scaled (about 4.8×); F2 sign error (addendum 2) | after stage 1, before stage 2 | E arms rerun; selection unchanged (R3) |
 | Phase 7 | yes | stage 2 run killed by a storage I/O error; rerun unchanged | before any grading | none |
 | Phase 7 | yes | test items reused from Phase 6 | registered | stated as a limit |
+| Per-layer projections (Llama) | no (exploratory) | forward-pass run added 2026-11-17 to draw the per-layer figure; same-item AUROC and gap ratios computed for both models | 2026-11-17, Phase 6 result addendum | no registered claim changes; qualifies the reading of the 28% result as scale, not order |
