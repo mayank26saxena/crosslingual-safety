@@ -9,18 +9,21 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Noto+Sans+Devanagari:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/tokens.css?v=8">
+<link rel="stylesheet" href="assets/tokens.css?v=10">
 </head>
 <body>
 <header class="top"><div class="col">
   <p class="kicker">Cross-lingual safety · research note</p>
   <h1>Why chat models refuse less in <span class="hi">Hindi</span></h1>
   <p class="standfirst">Asked the same harmful requests in English and in Hindi, two open chat models refuse far less often in Hindi. We look at what they do instead, what changes inside them, and how far steering can bring the refusals back.</p>
-  <div class="meta"><span><b>Mayank Saxena</b></span><span>17 November 2026</span><span id="readtime">14 min read</span><span><a href="https://github.com/mayank26saxena/crosslingual-safety">Code and data</a></span></div>
+  <div class="meta"><span><b>Mayank Saxena</b></span><span>17 November 2026</span><span id="readtime">14 min read</span><span><a href="https://github.com/mayank26saxena/crosslingual-safety" target="_blank" rel="noopener noreferrer">Code and data</a></span></div>
 </div></header>
 
 <main>
 <div class="col">
+  <p class="ledger-head">One request, three replies</p>
+  <div class="transcripts cold-open" id="tx-open"><div class="tx-tabs" hidden></div><div class="tx-body"></div></div>
+
   <p class="ledger-head">In short</p>
   <ol class="ledger">
     <li><div class="k">−32 / −42<small>points, Qwen / Llama</small></div><div>In Hindi, both models say an explicit “no” far less often. On the same 404 harmful requests, explicit refusal falls from 50% to 19% in Qwen3-8B and from 89% to 47% in Llama-3.1-8B.</div></li>
@@ -263,24 +266,24 @@
 
   <h2 id="references">References</h2>
   <ol class="refs">
-    <li id="ref-aakanksha2024">Aakanksha, Ahmadian, Ermis, Goldfarb-Tarrant, Kreutzer, Fadaee, Hooker (2024). The Multilingual Alignment Prism: Aligning Global and Local Preferences to Reduce Harm. Source of the Aya Red-teaming dataset. <a href="https://arxiv.org/abs/2406.18682">arXiv:2406.18682</a></li>
-    <li id="ref-arditi2024">Arditi, Obeso, Syed, Paleka, Panickssery, Gurnee, Nanda (2024). Refusal in Language Models Is Mediated by a Single Direction. NeurIPS 2024. <a href="https://arxiv.org/abs/2406.11717">arXiv:2406.11717</a></li>
-    <li id="ref-aziz2026">Aziz, Hanif, Koto (2026). Low-Resource Safety Failures Are Action Failures, Not Representation Failures. <a href="https://arxiv.org/abs/2606.01196">arXiv:2606.01196</a></li>
-    <li id="ref-balani2026">Balani & Panda (2026). Hard Negatives Reveal What Easy Negatives Hide: Cross-Lingual Harmfulness Representations Degrade with Resource Tier Under Hard Negatives. <a href="https://arxiv.org/abs/2609.27758">arXiv:2609.27758</a></li>
-    <li id="ref-banerjee2026">Banerjee et al. (2026). SurakshaEval: An Indic Safety Benchmark for Multilingual LLMs. <a href="https://arxiv.org/abs/2608.07862">arXiv:2608.07862</a></li>
-    <li id="ref-deng2024">Deng, Zhang, Pan, Bing (2024). Multilingual Jailbreak Challenges in Large Language Models. ICLR 2024. <a href="https://arxiv.org/abs/2310.06474">arXiv:2310.06474</a></li>
-    <li id="ref-fu2025">Fu & Liu (2025). How Reliable is Multilingual LLM-as-a-Judge? <a href="https://arxiv.org/abs/2505.12201">arXiv:2505.12201</a></li>
-    <li id="ref-lee2025">Lee et al. (2025). Programming Refusal with Conditional Activation Steering. ICLR 2025. <a href="https://arxiv.org/abs/2409.05907">arXiv:2409.05907</a></li>
-    <li id="ref-mondal2026">Mondal, Mamta, Varshney, Cocarascu, Ekbal (2026). IndicSafeEval: Safety Robustness of Large Language Models under Multilingual Persuasive Jailbreak Attacks. Findings of EMNLP 2026. <a href="https://arxiv.org/abs/2609.03781">arXiv:2609.03781</a></li>
-    <li id="ref-panickssery2024">Panickssery et al. (2024). Steering Llama 2 via Contrastive Activation Addition. <a href="https://arxiv.org/abs/2312.06681">arXiv:2312.06681</a></li>
-    <li id="ref-pattnayak2026">Pattnayak & Chowdhuri (2026). IndicSafe: A Benchmark for Evaluating Multilingual LLM Safety in South Asia. <a href="https://arxiv.org/abs/2603.17915">arXiv:2603.17915</a></li>
-    <li id="ref-qi2024">Qi et al. (2024). Safety Alignment Should Be Made More Than Just a Few Tokens Deep. <a href="https://arxiv.org/abs/2406.05946">arXiv:2406.05946</a></li>
-    <li id="ref-turner2023">Turner et al. (2023). Steering Language Models With Activation Engineering. <a href="https://arxiv.org/abs/2308.10248">arXiv:2308.10248</a></li>
-    <li id="ref-wang2024">Wang, Tu, Chen, Yuan, Huang, Jiao, Lyu (2024). All Languages Matter: On the Multilingual Safety of Large Language Models. Findings of ACL 2024. <a href="https://arxiv.org/abs/2310.00905">arXiv:2310.00905</a></li>
-    <li id="ref-wang2025">Wang, Wang, Liu, Schütze, Plank (2025). Refusal Direction is Universal Across Safety-Aligned Languages. <a href="https://arxiv.org/abs/2505.17306">arXiv:2505.17306</a></li>
-    <li id="ref-wu2025">Wu et al. (2025). AxBench: Steering LLMs? Even Simple Baselines Outperform Sparse Autoencoders. <a href="https://arxiv.org/abs/2501.17148">arXiv:2501.17148</a></li>
-    <li id="ref-yong2023">Yong, Menghini, Bach (2023). Low-Resource Languages Jailbreak GPT-4. NeurIPS 2023 SoLaR Workshop. <a href="https://arxiv.org/abs/2310.02446">arXiv:2310.02446</a></li>
-    <li id="ref-zhao2025">Zhao, Huang, Wu, Bau, Shi (2025). LLMs Encode Harmfulness and Refusal Separately. <a href="https://arxiv.org/abs/2507.11878">arXiv:2507.11878</a></li>
+    <li id="ref-aakanksha2024">Aakanksha, Ahmadian, Ermis, Goldfarb-Tarrant, Kreutzer, Fadaee, Hooker (2024). The Multilingual Alignment Prism: Aligning Global and Local Preferences to Reduce Harm. Source of the Aya Red-teaming dataset. <a href="https://arxiv.org/abs/2406.18682" target="_blank" rel="noopener noreferrer">arXiv:2406.18682</a></li>
+    <li id="ref-arditi2024">Arditi, Obeso, Syed, Paleka, Panickssery, Gurnee, Nanda (2024). Refusal in Language Models Is Mediated by a Single Direction. NeurIPS 2024. <a href="https://arxiv.org/abs/2406.11717" target="_blank" rel="noopener noreferrer">arXiv:2406.11717</a></li>
+    <li id="ref-aziz2026">Aziz, Hanif, Koto (2026). Low-Resource Safety Failures Are Action Failures, Not Representation Failures. <a href="https://arxiv.org/abs/2606.01196" target="_blank" rel="noopener noreferrer">arXiv:2606.01196</a></li>
+    <li id="ref-balani2026">Balani & Panda (2026). Hard Negatives Reveal What Easy Negatives Hide: Cross-Lingual Harmfulness Representations Degrade with Resource Tier Under Hard Negatives. <a href="https://arxiv.org/abs/2609.27758" target="_blank" rel="noopener noreferrer">arXiv:2609.27758</a></li>
+    <li id="ref-banerjee2026">Banerjee et al. (2026). SurakshaEval: An Indic Safety Benchmark for Multilingual LLMs. <a href="https://arxiv.org/abs/2608.07862" target="_blank" rel="noopener noreferrer">arXiv:2608.07862</a></li>
+    <li id="ref-deng2024">Deng, Zhang, Pan, Bing (2024). Multilingual Jailbreak Challenges in Large Language Models. ICLR 2024. <a href="https://arxiv.org/abs/2310.06474" target="_blank" rel="noopener noreferrer">arXiv:2310.06474</a></li>
+    <li id="ref-fu2025">Fu & Liu (2025). How Reliable is Multilingual LLM-as-a-Judge? <a href="https://arxiv.org/abs/2505.12201" target="_blank" rel="noopener noreferrer">arXiv:2505.12201</a></li>
+    <li id="ref-lee2025">Lee et al. (2025). Programming Refusal with Conditional Activation Steering. ICLR 2025. <a href="https://arxiv.org/abs/2409.05907" target="_blank" rel="noopener noreferrer">arXiv:2409.05907</a></li>
+    <li id="ref-mondal2026">Mondal, Mamta, Varshney, Cocarascu, Ekbal (2026). IndicSafeEval: Safety Robustness of Large Language Models under Multilingual Persuasive Jailbreak Attacks. Findings of EMNLP 2026. <a href="https://arxiv.org/abs/2609.03781" target="_blank" rel="noopener noreferrer">arXiv:2609.03781</a></li>
+    <li id="ref-panickssery2024">Panickssery et al. (2024). Steering Llama 2 via Contrastive Activation Addition. <a href="https://arxiv.org/abs/2312.06681" target="_blank" rel="noopener noreferrer">arXiv:2312.06681</a></li>
+    <li id="ref-pattnayak2026">Pattnayak & Chowdhuri (2026). IndicSafe: A Benchmark for Evaluating Multilingual LLM Safety in South Asia. <a href="https://arxiv.org/abs/2603.17915" target="_blank" rel="noopener noreferrer">arXiv:2603.17915</a></li>
+    <li id="ref-qi2024">Qi et al. (2024). Safety Alignment Should Be Made More Than Just a Few Tokens Deep. <a href="https://arxiv.org/abs/2406.05946" target="_blank" rel="noopener noreferrer">arXiv:2406.05946</a></li>
+    <li id="ref-turner2023">Turner et al. (2023). Steering Language Models With Activation Engineering. <a href="https://arxiv.org/abs/2308.10248" target="_blank" rel="noopener noreferrer">arXiv:2308.10248</a></li>
+    <li id="ref-wang2024">Wang, Tu, Chen, Yuan, Huang, Jiao, Lyu (2024). All Languages Matter: On the Multilingual Safety of Large Language Models. Findings of ACL 2024. <a href="https://arxiv.org/abs/2310.00905" target="_blank" rel="noopener noreferrer">arXiv:2310.00905</a></li>
+    <li id="ref-wang2025">Wang, Wang, Liu, Schütze, Plank (2025). Refusal Direction is Universal Across Safety-Aligned Languages. <a href="https://arxiv.org/abs/2505.17306" target="_blank" rel="noopener noreferrer">arXiv:2505.17306</a></li>
+    <li id="ref-wu2025">Wu et al. (2025). AxBench: Steering LLMs? Even Simple Baselines Outperform Sparse Autoencoders. <a href="https://arxiv.org/abs/2501.17148" target="_blank" rel="noopener noreferrer">arXiv:2501.17148</a></li>
+    <li id="ref-yong2023">Yong, Menghini, Bach (2023). Low-Resource Languages Jailbreak GPT-4. NeurIPS 2023 SoLaR Workshop. <a href="https://arxiv.org/abs/2310.02446" target="_blank" rel="noopener noreferrer">arXiv:2310.02446</a></li>
+    <li id="ref-zhao2025">Zhao, Huang, Wu, Bau, Shi (2025). LLMs Encode Harmfulness and Refusal Separately. <a href="https://arxiv.org/abs/2507.11878" target="_blank" rel="noopener noreferrer">arXiv:2507.11878</a></li>
   </ol>
 
   <h2>Citation</h2>
@@ -297,9 +300,9 @@
   regenerates from the id-only label tables and checks against the registered results. Requests are never quoted; the example replies are
   redacted excerpts, in English translation with the redacted Hindi original one click away, validated against the registered labels by <code>scripts/v2/export_examples.py</code>.</div></footer>
 
-<script src="data/figures.js?v=8"></script>
-<script src="data/examples.js?v=8"></script>
-<script src="assets/charts.js?v=8"></script>
+<script src="data/figures.js?v=10"></script>
+<script src="data/examples.js?v=10"></script>
+<script src="assets/charts.js?v=10"></script>
 <script>
   const F = window.FIGURES;
   const slot = (id, q) => document.querySelector(`#${id} ${q}`);
@@ -346,14 +349,15 @@
     const NAMES = { REFUSE_EXPLICIT: "explicit refusal", REFUSE_SOFT: "soft refusal", COMPLY: "complied", BROKEN: "broken" };
     const esc = (t) => t.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
     const fmtx = (t) => esc(t).replace(/(\w)'(\w)/g, "$1’$2").replace(/\[(redacted[^\]]*)\]/g, '<span class="redact">$1</span>').replace(/\[([^\]]+)\]/g, '<span class="aside">[$1]</span>');
-    function build(rootId, cols, takeKey) {
+    function build(rootId, cols, takeKey, opts = {}) {
       const root = document.getElementById(rootId); if (!root) return;
+      const items = opts.only ? E.items.filter((x) => x.id.includes(opts.only)) : E.items;
       const tabs = root.querySelector(".tx-tabs"), body = root.querySelector(".tx-body");
       const show = (i) => {
-        const it = E.items[i];
+        const it = items[i];
         [...tabs.children].forEach((b, j) => b.setAttribute("aria-selected", j === i));
         let h = `<div class="tx-request"><span class="lbl">request ${esc(it.id)} · summarised, not quoted</span>${esc(it.request_summary)}<span class="tx-tags">dataset harm tags: ${(it.harm || []).map(esc).join(" · ")}</span></div>`;
-        [["qwen", "Qwen3-8B"], ["llama", "Llama-3.1-8B"]].forEach(([m, name]) => {
+        (opts.models || [["qwen", "Qwen3-8B"], ["llama", "Llama-3.1-8B"]]).forEach(([m, name]) => {
           h += `<div class="tx-model">${name}</div><div class="tx-row" style="--n:${cols.length}">`;
           cols.forEach(([lang, cond, head]) => {
             const r = it.replies.find((x) => x.model === m && x.lang === lang && x.condition === cond);
@@ -370,17 +374,20 @@
           });
           h += "</div>";
         });
-        h += `<p class="tx-take">${esc(it[takeKey])}</p>`;
+        h += `<p class="tx-take">${esc(opts.caption || it[takeKey])}</p>`;
         body.innerHTML = h;
         body.querySelectorAll(".tx-flip").forEach((b) => b.onclick = () => {
           const c = b.closest(".tx-cell"), o = c.querySelector(".tx-orig"), t = c.querySelector(".tx-text:not(.tx-orig)");
           const showing = !o.hidden; o.hidden = showing; t.hidden = !showing;
           b.textContent = showing ? "show original Hindi" : "show English translation"; });
       };
-      E.items.forEach((it, i) => { const b = document.createElement("button"); b.type = "button"; b.setAttribute("role", "tab");
+      if (items.length === 1) tabs.hidden = true;
+      items.forEach((it, i) => { const b = document.createElement("button"); b.type = "button"; b.setAttribute("role", "tab");
         b.textContent = `${i + 1} · ${it.category}`; b.onclick = () => show(i); tabs.appendChild(b); });
       show(0);
     }
+    build("tx-open", [["en", "unsteered", "English"], ["hi", "unsteered", "Hindi"], ["hi", "repaired", "Hindi, with the fix"]], "takeaway_repair",
+      { only: "aya_redteaming__774", models: [["llama", "Llama-3.1-8B"]], caption: "Llama-3.1-8B refuses in English, answers in Hindi, and refuses again once our fix is applied. This is one request; section 02 shows more, and how typical it is." });
     build("tx-gap", [["en", "unsteered", "English"], ["hi", "unsteered", "Hindi"]], "takeaway_gap");
     build("tx-fix", [["hi", "unsteered", "Hindi, as it was"], ["hi", "repaired", "Hindi, repaired"]], "takeaway_repair");
     const S = E.stats, tb = document.querySelector("#rates tbody");
