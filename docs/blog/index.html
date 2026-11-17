@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Noto+Sans+Devanagari:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/tokens.css?v=13">
+<link rel="stylesheet" href="assets/tokens.css?v=14">
 </head>
 <body>
 <header class="top"><div class="col">
@@ -24,7 +24,7 @@
   <p class="ledger-head">In short</p>
   <ol class="ledger">
     <li><div class="k">−32 / −42<small>points, Qwen / Llama</small></div><div>In Hindi, both models say an explicit “no” far less often. On the same 404 harmful requests, explicit refusal falls from 50% to 19% in Qwen3-8B and from 89% to 47% in Llama-3.1-8B.</div></li>
-    <li><div class="k">115 of 148<small>of Qwen’s lost refusals</small></div><div>Qwen mostly sidesteps instead: 115 of the 148 refusals it loses become a reply that neither helps nor says no (a lecture, a warning, a safer topic). Llama sidesteps about as often as it simply does what was asked: in Hindi it does so on <span data-k="lc_hi"></span> of harmful requests, against <span data-k="lc_en"></span> in English.</div></li>
+    <li><div class="k">115 of 148<small>of Qwen’s lost refusals</small></div><div>Qwen mostly sidesteps: 115 of the 148 refusals it loses become a reply that neither helps nor says no. Llama sidesteps about as often as it simply complies, which it does on <span data-k="lc_hi"></span> of harmful Hindi requests (<span data-k="lc_en"></span> in English).</div></li>
     <li><div class="k"><span data-k="qg"></span> / <span data-k="lg"></span><small>Hindi contrast, share of English</small></div><div>Inside, both models can still tell harmful Hindi requests from harmless ones, but with only about a third of the English contrast. Qwen’s harmless Hindi prompts look more refusal-like; Llama’s harmful Hindi prompts look less.</div></li>
     <li><div class="k">+17 / +15<small>points of Hindi refusal</small></div><div>Steering the models toward refusing raises Hindi explicit refusal by 17 and 15 points. English refusal rises too (by 16 and 7), so Hindi catches up by only 1 and 7 points. The repair does cut how often Llama simply does what was asked in Hindi, from <span data-k="lc_hi"></span> to <span data-k="lc_fix"></span>.</div></li>
   </ol>
@@ -297,9 +297,9 @@
   regenerates from the id-only label tables and checks against the registered results. Requests are never quoted; the example replies are
   redacted excerpts, in English translation with the redacted Hindi original one click away, validated against the registered labels by <code>scripts/v2/export_examples.py</code>.</div></footer>
 
-<script src="data/figures.js?v=13"></script>
-<script src="data/examples.js?v=13"></script>
-<script src="assets/charts.js?v=13"></script>
+<script src="data/figures.js?v=14"></script>
+<script src="data/examples.js?v=14"></script>
+<script src="assets/charts.js?v=14"></script>
 <script>
   const F = window.FIGURES;
   const slot = (id, q) => document.querySelector(`#${id} ${q}`);
