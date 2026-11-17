@@ -62,10 +62,10 @@ h1 .hi { background: linear-gradient(transparent 62%, var(--mark) 62%); }
 /* in short */
 .ledger-head { font: 600 12px/1 var(--sans); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin: 0 0 12px; }
 .ledger { list-style: none; padding: 0; margin: 0 0 44px; }
-.ledger li { display: grid; grid-template-columns: 150px 1fr; gap: 20px; padding: 16px 0; border-top: 1px solid var(--rule); margin: 0;
+.ledger li { display: grid; grid-template-columns: 176px 1fr; gap: 20px; padding: 16px 0; border-top: 1px solid var(--rule); margin: 0;
   font-size: 16.5px; line-height: 1.55; }
 .ledger li:last-child { border-bottom: 1px solid var(--rule); }
-.ledger .k { font: 700 26px/1.1 var(--display); color: var(--ink); letter-spacing: -.03em; white-space: nowrap; }
+.ledger .k { font: 700 23px/1.1 var(--display); color: var(--ink); letter-spacing: -.03em; white-space: nowrap; }
 .ledger .k small { display: block; font: 500 11.5px/1.4 var(--sans); color: var(--muted); letter-spacing: 0; margin-top: 6px; white-space: normal; }
 
 /* sections */

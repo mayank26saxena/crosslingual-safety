@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Noto+Sans+Devanagari:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/tokens.css?v=17">
+<link rel="stylesheet" href="assets/tokens.css?v=19">
 </head>
 <body>
 <header class="top"><div class="col">
@@ -23,10 +23,10 @@
 <div class="col">
   <p class="ledger-head">In short</p>
   <ol class="ledger">
-    <li><div class="k">−32 / −42<small>points, Qwen / Llama</small></div><div>In Hindi, both models say an explicit “no” far less often. On the same 404 harmful requests, explicit refusal falls from 51% to 19% in Qwen3-8B and from 89% to 47% in Llama-3.1-8B.</div></li>
+    <li><div class="k"><span data-k="d_q"></span> / <span data-k="d_l"></span><small>points, Qwen / Llama</small></div><div>In Hindi, both models say an explicit “no” far less often. On the same 404 harmful requests, explicit refusal falls from 51% to 19% in Qwen3-8B and from 89% to 47% in Llama-3.1-8B.</div></li>
     <li><div class="k">115 of 148<small>of Qwen’s lost refusals</small></div><div>Qwen mostly sidesteps: 115 of the 148 refusals it loses become a reply that neither helps nor says no. Llama sidesteps about as often as it simply complies, which it does on <span data-k="lc_hi"></span> of harmful Hindi requests (<span data-k="lc_en"></span> in English).</div></li>
     <li><div class="k"><span data-k="qg"></span> / <span data-k="lg"></span><small>Hindi contrast, share of English</small></div><div>Inside, both models can still tell harmful Hindi requests from harmless ones, but with only about a third of the English contrast. Qwen’s harmless Hindi prompts look more refusal-like; Llama’s harmful Hindi prompts look less.</div></li>
-    <li><div class="k">+17 / +15<small>points of Hindi refusal</small></div><div>Steering the models toward refusing raises Hindi explicit refusal by 17 and 15 points. English refusal rises too (by 16 and 7), so Hindi catches up by only 1 and 7 points. The repair does cut how often Llama simply does what was asked in Hindi, from <span data-k="lc_hi"></span> to <span data-k="lc_fix"></span>.</div></li>
+    <li><div class="k"><span data-k="g_q_hi"></span> / <span data-k="g_l_hi"></span><small>points of Hindi refusal</small></div><div>On the same 404 held-out requests, steering the models toward refusing raises Hindi explicit refusal by <span data-k="g_q_hi_u"></span> and <span data-k="g_l_hi_u"></span> points (Llama’s just misses the +15 we registered in advance). English refusal rises too (by <span data-k="g_q_en_u"></span> and <span data-k="g_l_en_u"></span>), so Hindi catches up by only <span data-k="n_q_u"></span> and <span data-k="n_l_u"></span> points. The repair does cut how often Llama simply complies in Hindi, from <span data-k="lc_hi"></span> to <span data-k="lc_fix"></span>.</div></li>
   </ol>
 
   <p>Chat models are trained to decline harmful requests mostly in English. It is well known that this safeguard weakens in other languages (<a class="cite" href="#ref-yong2023">Yong et al. 2023</a>; <a class="cite" href="#ref-deng2024">Deng et al. 2024</a>; <a class="cite" href="#ref-wang2024">Wang et al. 2024</a>). What has been less clear is <em>what</em> the model does instead, and <em>why</em> its behaviour changes when only the language changes. We looked at two popular open 8B models in Hindi, one of the most widely spoken languages in the world. Every hypothesis test below was pre-registered, and failures are reported alongside successes. This is a study of these two models on one set of requests, with greedy decoding, not a claim about all chat models. “Refusal” here means a reply our judge labelled as an explicit refusal; it is not a measure of downstream harm.</p>
@@ -140,8 +140,8 @@
   <h2 id="s05"><span class="no">05</span><span class="nl">Can a targeted push make the models refuse more in Hindi?</span></h2>
   <p>We turned each diagnosis into a repair. The aim is simple: more explicit refusal of harmful Hindi requests, without making the model refuse harmless ones or break its replies.</p>
   <h3><span class="sub">05.1</span>A direction for refusal style</h3>
-  <p>Qwen’s problem looked like wording, so we searched for a second direction: one that separates prompts the model will refuse <em>explicitly</em> from prompts it will refuse <em>softly</em>, fitted on English replies only. It exists. Cross-validated, it predicts explicit versus soft with an AUROC of 0.93, and Hindi prompts sit somewhat toward its soft end (the shift is 22% of the English gap, below the 25% we had registered as meaningful).</p>
-  <p>It is also causal. On 150 requests Qwen refused explicitly in English but not in Hindi, adding this English direction to the model’s activations raised Hindi explicit refusal from 10% to 53% and halved compliance, with no change on harmless requests. Prior work shows that safety behaviour is concentrated in the first few tokens of a reply (<a class="cite" href="#ref-qi2024">Qi et al. 2024</a>), which is where an explicit “no” lives. As far as we know, no one had isolated refusal <em>style</em> as its own direction before.</p>
+  <p>Qwen’s lost refusals were mostly soft, so we hypothesised that refusal <em>style</em> might be encoded separately from the decision to refuse. To test this we searched for a second direction: one that separates prompts the model will refuse <em>explicitly</em> from prompts it will refuse <em>softly</em>, fitted on English replies only. It exists: cross-validated, it predicts explicit versus soft with an AUROC of 0.93. But the evidence that Hindi prompts sit toward its soft end is weak: the shift is 22% of the English gap, below the 25% we had registered as meaningful. So the wording explanation is a hypothesis that motivated the intervention, not a finding about Qwen’s Hindi prompts. The stronger evidence is what happens when we steer along the direction.</p>
+  <p>On 150 requests Qwen refused explicitly in English but not in Hindi, adding this English direction to the model’s activations raised Hindi explicit refusal from 10% to 53% and halved compliance, with no change on harmless requests. Prior work shows that safety behaviour is concentrated in the first few tokens of a reply (<a class="cite" href="#ref-qi2024">Qi et al. 2024</a>), which is where an explicit “no” lives. As far as we know, no one had isolated refusal <em>style</em> as its own direction before.</p>
   <p>This check differs from the held-out result in section 05.4. It was a pre-registered diagnostic on 150 requests chosen because Qwen refused explicitly in English but not in Hindi, so the starting rate is low by construction, and the vector was added to every reply with no gate. The held-out result covers all 404 requests with the gate, which pushes only harmful-looking prompts. The two gains are not comparable.</p>
   <h3><span class="sub">05.2</span>Gated steering</h3>
   <p>The repair is <em>gated steering</em>, which builds on activation steering (<a class="cite" href="#ref-turner2023">Turner et al. 2023</a>; <a class="cite" href="#ref-panickssery2024">Panickssery et al. 2024</a>) and its conditional form (<a class="cite" href="#ref-lee2025">Lee et al. 2025</a>):</p>
@@ -184,10 +184,10 @@
   <p>The goal is more explicit refusal in Hindi, and both repairs deliver: +17.1 points in Qwen and +14.6 in Llama on held-out requests. We also track English. A push that simply made the model refuse more of everything would raise Hindi refusal too, without fixing anything specific to Hindi, and the gap between the languages shows how much of the gain is Hindi-specific. English refusal also rose, so Hindi caught up by only 1.2 points in Qwen and 7.4 in Llama. The repair also reduces the most direct harm, a model simply doing what was asked: in Hindi, Llama's compliance with harmful requests falls from <span data-k="lc_hi"></span> to <span data-k="lc_fix"></span> and Qwen's from <span data-k="qc_hi"></span> to <span data-k="qc_fix"></span>.</p>
 </div>
 <figure class="fig wide" id="fig2">
-  <p class="fig-title">Both repairs raise Hindi explicit refusal by about 15 points, and both lift English too</p>
+  <p class="fig-title">Both repairs raise Hindi explicit refusal, and both lift English too</p>
   <p class="fig-sub">Explicit refusal of harmful requests before (open) and after (filled) each repair, on held-out requests, with 95% intervals. Changes are paired by request.</p>
   <div class="chart"></div>
-  <figcaption><b>Figure 6:</b> Qwen’s repair raised Hindi explicit refusal by 17 points (English: +16), so Hindi caught up by only 1.2 points, with an interval spanning zero. Llama’s raised Hindi by 14.6 (English: +7), closing the gap by 7.4 points, just short of the +15 and 10 bars we registered in advance.</figcaption>
+  <figcaption><b>Figure 6:</b> Qwen’s repair raised Hindi explicit refusal by <span data-k="g_q_hi_u"></span> points (English: <span data-k="g_q_en"></span>), so Hindi caught up by only <span data-k="n_q_u"></span> points, with an interval spanning zero. Llama’s raised Hindi by <span data-k="g_l_hi_u"></span> (English: <span data-k="g_l_en"></span>), closing the gap by <span data-k="n_l_u"></span> points, just short of the +15 and 10 bars we registered in advance.</figcaption>
   <details class="setup"><summary></summary><div class="body">
     <p>Qwen: gate on the layer-14 refusal score, threshold at the median English development score; push 1.25× the explicit–soft vector
       at layer 25. Llama: gate on the layer-10 refusal score, threshold at the median Hindi development score; push 1.5× the
@@ -234,8 +234,8 @@
   <h2 id="s07"><span class="no">07</span><span class="nl">Limits, and what’s next</span></h2>
   <h3>What didn’t hold up</h3>
   <div class="held-back">
-    <p><strong>A held-out language.</strong> We kept a Bengali test set sealed until the end. Qwen’s repair raised Bengali explicit refusal by 24 points, but it also garbled 8% more replies, beyond the limit we had set, so the registered verdict is <em>fail</em>. A follow-up on fresh Bengali requests didn’t reproduce the damage, which weakens but doesn’t overturn that verdict.</p>
-    <p><strong>A “Hindi switch”.</strong> We searched for MLP neurons that carry the English–Hindi difference. 100 neurons (of 307,200) account for three quarters of it, while random neurons account for none. But shifting them made Qwen refuse more in <em>English</em> (+15 points), not Hindi (+1).</p>
+    <p><strong>A held-out language.</strong> We kept a Bengali test set sealed until the end. Qwen’s repair raised Bengali explicit refusal by 23.6 points, but it also raised garbled replies by 8.1 points, beyond the 5-point limit we had set, so the registered verdict is <em>fail</em>. A follow-up on fresh Bengali requests didn’t reproduce the damage, which weakens but doesn’t overturn that verdict.</p>
+    <p><strong>A “Hindi switch”.</strong> We searched for MLP neurons that carry the English–Hindi difference. 100 neurons (of 307,200) account for three quarters of it, while random neurons account for none. But shifting them made Qwen refuse more in <em>English</em> (+15.2 points), not Hindi (+1.2).</p>
   </div>
   <h3>Limits</h3>
   <ul>
@@ -276,7 +276,7 @@
       <tr><td>Harmless requests answered</td><td><span data-k="sp_hl_en"></span></td><td><span data-k="sp_hl_es"></span></td></tr>
     </tbody>
   </table>
-  <p>Spanish shows a gap too. Explicit refusal falls by about <span data-k="sp_gap"></span> points, and <span data-k="sp_eo"></span> requests are refused explicitly only in English, against <span data-k="sp_so"></span> only in Spanish. Harmless requests are answered in both languages, so this is not general over-refusal. The gap is roughly half the size of the Hindi one (<span data-k="sp_hgap"></span> points for Qwen), which fits the idea that it grows as a language gets lower-resource, though this run cannot show that on its own.</p>
+  <p>Spanish shows a gap too. Explicit refusal falls by <span data-k="sp_gap"></span> points, and <span data-k="sp_eo"></span> requests are refused explicitly only in English, against <span data-k="sp_so"></span> only in Spanish. Harmless requests are answered in both languages, so this is not general over-refusal. The gap is roughly half the size of the Hindi one (<span data-k="sp_hgap"></span> points for Qwen), which fits the idea that it grows as a language gets lower-resource, though this run cannot show that on its own.</p>
   <p><strong>Caveats.</strong> Qwen only. The Spanish requests are a different set from the 404 Hindi pairs and used a shorter reply limit, so the two gaps are not strictly comparable. The labels come from AI judges only (two judges agreed with κ = 0.88), with no human check in Spanish, and the run was provisional, made before the Hindi judge was validated. Its replies were also generated before the model revision was pinned.</p>
 
     <h2 id="appendix-d">Appendix D: how we tried to keep ourselves honest</h2>
@@ -322,9 +322,9 @@
   regenerates from the id-only label tables and checks against the registered results. Requests are never quoted; the example replies are
   redacted excerpts, in English translation with the redacted Hindi original one click away, validated against the registered labels by <code>scripts/v2/export_examples.py</code>.</div></footer>
 
-<script src="data/figures.js?v=17"></script>
-<script src="data/examples.js?v=17"></script>
-<script src="assets/charts.js?v=17"></script>
+<script src="data/figures.js?v=19"></script>
+<script src="data/examples.js?v=19"></script>
+<script src="assets/charts.js?v=19"></script>
 <script>
   const F = window.FIGURES;
   const slot = (id, q) => document.querySelector(`#${id} ${q}`);
@@ -367,8 +367,11 @@
     const sh = F.spanish, hx = F.fig1.qwen.rows.find((r) => r.label === "REFUSE_EXPLICIT");
     Object.assign(vals, { sp_n: sh.harmful.n, sp_hn: sh.harmless.n, sp_ex_en: w(sh.harmful.explicit.en), sp_ex_es: w(sh.harmful.explicit.es), sp_any_en: w(sh.harmful.any.en), sp_any_es: w(sh.harmful.any.es),
       sp_cp_en: w(sh.harmful.comply.en), sp_cp_es: w(sh.harmful.comply.es), sp_hl_en: w(sh.harmless.comply.en), sp_hl_es: w(sh.harmless.comply.es),
-      sp_gap: Math.round(sh.harmful.explicit.en - sh.harmful.explicit.es), sp_eo: sh.harmful.explicit.en_only, sp_so: sh.harmful.explicit.es_only, sp_hgap: Math.abs(Math.round(hx.change.pts)) });
-    document.querySelectorAll("[data-k]").forEach((e) => { e.textContent = vals[e.dataset.k]; }); }
+      sp_gap: (sh.harmful.explicit.en - sh.harmful.explicit.es).toFixed(1), sp_eo: sh.harmful.explicit.en_only, sp_so: sh.harmful.explicit.es_only, sp_hgap: Math.abs(hx.change.pts).toFixed(1) });
+    const RW = (m) => F.fig1[m].rows.find((r) => r.label === "REFUSE_EXPLICIT"), AR = (m, l) => F.fig2[m].arms[l];
+    Object.assign(vals, { d_q: pm(RW("qwen").change.pts), d_l: pm(RW("llama").change.pts), g_q_hi: sgn(AR("qwen", "hi").change), g_l_hi: sgn(AR("llama", "hi").change),
+      g_q_en: sgn(AR("qwen", "en").change), g_l_en: sgn(AR("llama", "en").change), n_q: sgn(F.fig2.qwen.narrowing), n_l: sgn(F.fig2.llama.narrowing) });
+    document.querySelectorAll("[data-k]").forEach((e) => { const k = e.dataset.k; e.textContent = vals[k] !== undefined ? vals[k] : String(vals[k.replace(/_u$/, "")]).replace(/^\+/, ""); }); }
   Charts.mechanism(slot("figM", ".chart"), [
     { title: "Qwen3-8B", layers: 36, gate: 14, push: 25, tau: F.gate.qwen.tau.toFixed(2), what: "1.25 × explicit–soft direction" },
     { title: "Llama-3.1-8B", layers: 32, gate: 10, push: 11, tau: F.gate.llama.tau.toFixed(2), what: "1.5 × shortfall × refusal direction" },
