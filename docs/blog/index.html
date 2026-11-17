@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Same Gap, Different Signatures: The Hindi Refusal Gap in Two Open Chat Models</title>
+<title>Same request, weaker no: the Hindi refusal gap in two chat models</title>
 <meta name="description" content="Two open chat models refuse harmful requests far less often in Hindi than in English. They fail in different ways, inside and out, and the fix depends on the model.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,8 +13,8 @@
 <body>
 
 <header class="top"><div class="col">
-  <p class="series"><b>Paired</b> · notes on multilingual model behaviour · no. 1</p>
-  <h1>Same gap, different signatures</h1>
+  <p class="series"><b>Paired</b> · cross-lingual safety · no. 1</p>
+  <h1>Same request, weaker no</h1>
   <div class="pair-rule"></div>
   <p class="standfirst">Two open chat models refuse harmful requests far less often in Hindi than in English. Asked the same requests in
     both languages, they fail in different ways, inside and out, and a repair reaches Hindi in Llama only once its trigger is calibrated
@@ -42,12 +42,12 @@
   </ol>
 
   <p>Chat models are trained to decline harmful requests mostly in English. It is well known that this safeguard weakens in other
-    languages. What has been less clear is <em>what</em> the model does instead, and <em>why</em> its behaviour changes when only the
+    languages (<a class="cite" href="#ref-yong2023">Yong et al. 2023</a>; <a class="cite" href="#ref-deng2024">Deng et al. 2024</a>; <a class="cite" href="#ref-wang2024">Wang et al. 2024</a>). What has been less clear is <em>what</em> the model does instead, and <em>why</em> its behaviour changes when only the
     language changes. We looked at two popular open 8B models in Hindi, one of the most widely spoken languages in the world.</p>
 
   <h2><span class="no">01</span>How we measured it</h2>
   <p>Every harmful request was asked twice, once in Hindi and once in English. Most of them were written natively in Hindi by human
-    annotators (Aya Red-teaming) and come with a human English translation. Comparing the same request in both languages rules out the
+    annotators (Aya Red-teaming; <a class="cite" href="#ref-aakanksha2024">Aakanksha et al. 2024</a>) and come with a human English translation. Comparing the same request in both languages rules out the
     obvious confound: that the Hindi requests are simply different, or harder to understand. We screened every item:</p>
   <ul>
     <li>Is it actually a request?</li>
@@ -63,7 +63,8 @@
     <li><strong>soft refusal</strong>: neither helps nor says no; it lectures, warns or answers a safer question;</li>
     <li><strong>broken</strong>: incoherent or in the wrong language.</li>
   </ul>
-  <p>An AI judge assigned the labels. We validated it against a fluent Hindi speaker before trusting it (more on that below).</p>
+  <p>An AI judge assigned the labels. Multilingual AI judges are known to be uneven across languages (<a class="cite" href="#ref-fu2025">Fu & Liu 2025</a>), so we validated
+    ours against a fluent Hindi speaker before trusting it (more on that below).</p>
 </div>
 
 <div class="col"><h2><span class="no">02</span>One request, six replies</h2>
@@ -123,7 +124,7 @@
 
 <div class="col"><h2><span class="no">04</span>Where do Hindi requests land inside the model?</h2>
   <p>Interpretability research has found that chat models carry a <em>refusal direction</em>: a single direction in their internal
-    activations that tracks whether a request should be refused (Arditi et al. 2024). We found this direction using English prompts only,
+    activations that tracks whether a request should be refused (<a class="cite" href="#ref-arditi2024">Arditi et al. 2024</a>). We found this direction using English prompts only,
     then measured where Hindi prompts land on it, for the same requests.</p>
 </div>
 <figure class="fig wide" id="figL">
@@ -155,7 +156,8 @@
   <div class="chart"></div>
   <figcaption><b>Figure 3:</b> For harmful requests, Qwen's Hindi prompts sit exactly where the English ones do (5.39 vs 5.41). Llama's
     reach 28% of the English value. Qwen also shows a language offset: <em>harmless</em> Hindi requests jump toward "refuse", which is
-    why we describe this as a projection, not as proof that the model recognises harm.</figcaption>
+    why we describe this as a projection, not as proof that the model recognises harm: harmfulness and refusal can be encoded
+    separately (<a class="cite" href="#ref-zhao2025">Zhao et al. 2025</a>).</figcaption>
   <details class="setup"><summary></summary><div class="body">
     <p>The refusal direction is the difference of mean activations between English harmful and harmless prompts. Its layer is chosen
       where ablating it removes the most refusal, and it counts as valid if ablation removes at least half of the refusal-score gap.
@@ -174,7 +176,7 @@
   <p>That points the two models at different problems. In Qwen the refusal signal for Hindi harm is as strong as in English, so its
     weaker refusals probably arise later, in how the refusal is worded. In Llama the signal is still well ordered but small, so most Hindi
     harmful prompts score well below where English harmful prompts sit. This fits results showing that refusal directions are shared
-    across languages but weaker in lower-resource ones (Wang et al. 2025; Aziz et al. 2026). What is new here is the two patterns side by
+    across languages but weaker in lower-resource ones (<a class="cite" href="#ref-wang2025">Wang et al. 2025</a>; <a class="cite" href="#ref-aziz2026">Aziz et al. 2026</a>). What is new here is the two patterns side by
     side, in two models, on <em>identical</em> requests.</p>
 </div>
 
@@ -184,11 +186,13 @@
     predicts explicit versus soft with an AUROC of 0.93, and Hindi prompts sit toward its soft end.</p>
   <p>It is also causal. On 150 requests Qwen refused explicitly in English but not in Hindi, adding this English direction to the
     model's activations raised Hindi explicit refusal <strong>from 10% to 53%</strong> and halved compliance, with no change on harmless
-    requests. As far as we know, no one had isolated refusal <em>style</em> as its own direction before.</p>
+    requests. Prior work shows that safety behaviour is concentrated in the first few tokens of a reply (<a class="cite" href="#ref-qi2024">Qi et al. 2024</a>), which is where an
+    explicit "no" lives. As far as we know, no one had isolated refusal <em>style</em> as its own direction before.</p>
 </div>
 
 <div class="col"><h2><span class="no">06</span>Can a targeted push close the gap?</h2>
-  <p>We turned each diagnosis into a repair with <em>gated steering</em>:</p>
+  <p>We turned each diagnosis into a repair with <em>gated steering</em>, which builds on activation steering (<a class="cite" href="#ref-turner2023">Turner et al. 2023</a>; <a class="cite" href="#ref-panickssery2024">Panickssery et al. 2024</a>)
+    and its conditional form (<a class="cite" href="#ref-lee2025">Lee et al. 2025</a>):</p>
   <ol>
     <li>A gate reads the refusal signal for each prompt.</li>
     <li>If the prompt looks harmful, we add a fixed direction to the model's activations while it writes the reply.</li>
@@ -304,11 +308,11 @@
   </ul>
 
   <h2><span class="no">09</span>Related work</h2>
-  <p>The multilingual safety gap is well documented (Yong et al. 2023; Deng et al. 2024; Wang et al. 2024), including for Indic
-    languages (IndicSafe; IndicSafeEval). Refusal is mediated by a direction in activation space (Arditi et al. 2024) that is largely
-    shared across languages (Wang et al. 2025). Low-resource harm projects more weakly onto it, and a gate calibrated on the target
-    language helps Llama in particular (Aziz et al. 2026), which our Llama result independently supports. Conditional steering is
-    established (Lee et al. 2025).</p>
+  <p>The multilingual safety gap is well documented (<a class="cite" href="#ref-yong2023">Yong et al. 2023</a>; <a class="cite" href="#ref-deng2024">Deng et al. 2024</a>; <a class="cite" href="#ref-wang2024">Wang et al. 2024</a>), including for Indic languages
+    (<a class="cite" href="#ref-pattnayak2026">IndicSafe</a>; <a class="cite" href="#ref-mondal2026">IndicSafeEval</a>; <a class="cite" href="#ref-banerjee2026">SurakshaEval</a>). Refusal is mediated by a direction in activation space (<a class="cite" href="#ref-arditi2024">Arditi et al. 2024</a>) that is
+    largely shared across languages (<a class="cite" href="#ref-wang2025">Wang et al. 2025</a>). Low-resource harm projects more weakly onto it, and a gate calibrated on the target
+    language helps Llama in particular (<a class="cite" href="#ref-aziz2026">Aziz et al. 2026</a>), which our Llama result independently supports. Conditional steering is
+    established (<a class="cite" href="#ref-lee2025">Lee et al. 2025</a>).</p>
   <p>What we add:</p>
   <ul>
     <li>a response-side view: <em>what replaces</em> the refusal;</li>
@@ -322,15 +326,39 @@
   <ul>
     <li>two 8B models with greedy decoding;</li>
     <li>one AI judge and one human grader;</li>
-    <li>no comparison yet against simpler fixes, such as a safety system prompt or translating to English first;</li>
-    <li>the projection result hasn't been tested on harmless requests that merely <em>sound</em> harmful;</li>
+    <li>no comparison yet against simpler fixes, such as a safety system prompt or translating to English first, which can rival
+      steering (<a class="cite" href="#ref-wu2025">Wu et al. 2025</a>);</li>
+    <li>the projection result hasn't been tested on harmless requests that merely <em>sound</em> harmful, where cross-lingual
+      separation can collapse (<a class="cite" href="#ref-balani2026">Balani & Panda 2026</a>);</li>
     <li>the per-layer curves for Llama come from an exploratory run added after the registered studies.</li>
   </ul>
   <p><strong>Next:</strong> those baselines, a language-selective gate, and a fresh confirmation set for Llama.</p>
 
+  <h2>References</h2>
+  <ol class="refs">
+    <li id="ref-aakanksha2024">Aakanksha, Ahmadian, Ermis, Goldfarb-Tarrant, Kreutzer, Fadaee, Hooker (2024). The Multilingual Alignment Prism: Aligning Global and Local Preferences to Reduce Harm. Source of the Aya Red-teaming dataset. <a href="https://arxiv.org/abs/2406.18682">arXiv:2406.18682</a></li>
+    <li id="ref-arditi2024">Arditi, Obeso, Syed, Paleka, Panickssery, Gurnee, Nanda (2024). Refusal in Language Models Is Mediated by a Single Direction. NeurIPS 2024. <a href="https://arxiv.org/abs/2406.11717">arXiv:2406.11717</a></li>
+    <li id="ref-aziz2026">Aziz, Hanif, Koto (2026). Low-Resource Safety Failures Are Action Failures, Not Representation Failures. <a href="https://arxiv.org/abs/2606.01196">arXiv:2606.01196</a></li>
+    <li id="ref-balani2026">Balani & Panda (2026). Hard Negatives Reveal What Easy Negatives Hide: Cross-Lingual Harmfulness Representations Degrade with Resource Tier Under Hard Negatives. <a href="https://arxiv.org/abs/2609.27758">arXiv:2609.27758</a></li>
+    <li id="ref-banerjee2026">Banerjee et al. (2026). SurakshaEval: An Indic Safety Benchmark for Multilingual LLMs. <a href="https://arxiv.org/abs/2608.07862">arXiv:2608.07862</a></li>
+    <li id="ref-deng2024">Deng, Zhang, Pan, Bing (2024). Multilingual Jailbreak Challenges in Large Language Models. ICLR 2024. <a href="https://arxiv.org/abs/2310.06474">arXiv:2310.06474</a></li>
+    <li id="ref-fu2025">Fu & Liu (2025). How Reliable is Multilingual LLM-as-a-Judge? <a href="https://arxiv.org/abs/2505.12201">arXiv:2505.12201</a></li>
+    <li id="ref-lee2025">Lee et al. (2025). Programming Refusal with Conditional Activation Steering. ICLR 2025. <a href="https://arxiv.org/abs/2409.05907">arXiv:2409.05907</a></li>
+    <li id="ref-mondal2026">Mondal, Mamta, Varshney, Cocarascu, Ekbal (2026). IndicSafeEval: Safety Robustness of Large Language Models under Multilingual Persuasive Jailbreak Attacks. Findings of EMNLP 2026. <a href="https://arxiv.org/abs/2609.03781">arXiv:2609.03781</a></li>
+    <li id="ref-panickssery2024">Panickssery et al. (2024). Steering Llama 2 via Contrastive Activation Addition. <a href="https://arxiv.org/abs/2312.06681">arXiv:2312.06681</a></li>
+    <li id="ref-pattnayak2026">Pattnayak & Chowdhuri (2026). IndicSafe: A Benchmark for Evaluating Multilingual LLM Safety in South Asia. <a href="https://arxiv.org/abs/2603.17915">arXiv:2603.17915</a></li>
+    <li id="ref-qi2024">Qi et al. (2024). Safety Alignment Should Be Made More Than Just a Few Tokens Deep. <a href="https://arxiv.org/abs/2406.05946">arXiv:2406.05946</a></li>
+    <li id="ref-turner2023">Turner et al. (2023). Steering Language Models With Activation Engineering. <a href="https://arxiv.org/abs/2308.10248">arXiv:2308.10248</a></li>
+    <li id="ref-wang2024">Wang, Tu, Chen, Yuan, Huang, Jiao, Lyu (2024). All Languages Matter: On the Multilingual Safety of Large Language Models. Findings of ACL 2024. <a href="https://arxiv.org/abs/2310.00905">arXiv:2310.00905</a></li>
+    <li id="ref-wang2025">Wang, Wang, Liu, Schütze, Plank (2025). Refusal Direction is Universal Across Safety-Aligned Languages. <a href="https://arxiv.org/abs/2505.17306">arXiv:2505.17306</a></li>
+    <li id="ref-wu2025">Wu et al. (2025). AxBench: Steering LLMs? Even Simple Baselines Outperform Sparse Autoencoders. <a href="https://arxiv.org/abs/2501.17148">arXiv:2501.17148</a></li>
+    <li id="ref-yong2023">Yong, Menghini, Bach (2023). Low-Resource Languages Jailbreak GPT-4. NeurIPS 2023 SoLaR Workshop. <a href="https://arxiv.org/abs/2310.02446">arXiv:2310.02446</a></li>
+    <li id="ref-zhao2025">Zhao, Huang, Wu, Bau, Shi (2025). LLMs Encode Harmfulness and Refusal Separately. <a href="https://arxiv.org/abs/2507.11878">arXiv:2507.11878</a></li>
+  </ol>
+
   <h2>Citation</h2>
 <pre class="bib">@misc{hindirefusalgap2026,
-  title  = {Same Gap, Different Signatures: Diagnosing and Repairing the Hindi Refusal Gap in Two Open Chat Models},
+  title  = {Same Request, Weaker No: Diagnosing and Repairing the Hindi Refusal Gap in Two Open Chat Models},
   author = {[author]},
   year   = {2026},
   note   = {[preprint link]}

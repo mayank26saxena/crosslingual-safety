@@ -60,7 +60,7 @@ h1 { font: 600 44px/1.08 var(--serif); letter-spacing: -.015em; margin: 0 0 18px
   font-size: 17.5px; line-height: 1.5; }
 .ledger li:last-child { border-bottom: 1px solid var(--rule); }
 .ledger .k { font: 600 19px/1.2 var(--mono); color: var(--ink); letter-spacing: -.02em; padding-top: 2px; white-space: nowrap; }
-.ledger .k small { display: block; font: 500 11px/1.4 var(--sans); color: var(--muted); letter-spacing: 0; margin-top: 4px; }
+.ledger .k small { display: block; font: 500 11px/1.4 var(--sans); color: var(--muted); letter-spacing: 0; margin-top: 4px; white-space: normal; }
 .ledger-head { font: 600 12px/1 var(--sans); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin: 0 0 10px; }
 
 /* numbered question sections */
@@ -168,3 +168,9 @@ table.rates th { font: 600 12px var(--sans); color: var(--muted); }
 table.rates th.n, table.rates td.n { text-align: right; width: 90px; }
 table.rates .pc { color: var(--muted); }
 .rates-note { font: 14.5px/1.55 var(--sans); color: var(--ink-2); }
+a.cite { text-decoration: none; border-bottom: 1px dotted var(--accent); }
+a.cite:hover { border-bottom-style: solid; }
+ol.refs { font: 13.5px/1.55 var(--sans); color: var(--ink-2); padding-left: 1.4em; }
+ol.refs li { margin-bottom: 8px; scroll-margin-top: 24px; }
+ol.refs li:target { background: var(--tint); }
+ol.refs a { white-space: nowrap; }
