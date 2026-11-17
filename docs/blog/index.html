@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Noto+Sans+Devanagari:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/tokens.css?v=31">
+<link rel="stylesheet" href="assets/tokens.css?v=32">
 </head>
 <body>
 <header class="top"><div class="col">
@@ -29,10 +29,10 @@
     <li><div class="k"><span data-k="g_q_hi"></span> / <span data-k="g_l_hi"></span><small>points of Hindi refusal</small></div><div>Steering raised Hindi refusal on the same 404 held-out requests, by <span data-k="g_q_hi_u"></span> points for Qwen and <span data-k="g_l_hi_u"></span> for Llama.</div></li>
   </ol>
 
-  <p>Chat models are mainly trained to refuse harmful requests in English. Studies find that refusals weaken in other languages (<a class="cite" href="#ref-yong2023">Yong et al. 2023</a>; <a class="cite" href="#ref-deng2024">Deng et al. 2024</a>; <a class="cite" href="#ref-wang2024">Wang et al. 2024</a>), including Indic ones (<a class="cite" href="#ref-pattnayak2026">IndicSafe</a>; <a class="cite" href="#ref-mondal2026">IndicSafeEval</a>; <a class="cite" href="#ref-banerjee2026">SurakshaEval</a>). We ask what models do instead of refusing, and what changes inside them. This study adds three things: a side-by-side comparison of how refusals fail in two models, a look at their internal signals, and a steering fix that raises Hindi refusals but also lifts English ones.</p>
+  <p>Chat models are mainly trained to refuse harmful requests in English. Studies find that refusals weaken in other languages (<a class="cite" href="#ref-yong2023">Yong et al. 2023</a>; <a class="cite" href="#ref-deng2024">Deng et al. 2024</a>; <a class="cite" href="#ref-wang2024">Wang et al. 2024</a>), including Indic ones (<a class="cite" href="#ref-pattnayak2026">IndicSafe</a>; <a class="cite" href="#ref-mondal2026">IndicSafeEval</a>; <a class="cite" href="#ref-banerjee2026">SurakshaEval</a>). We ask what models do instead of refusing, and what changes inside them. This study adds three things: a side-by-side comparison of how refusals fail in two models, a look at their internal signals, and a steering intervention that raises Hindi refusals but also lifts English ones.</p>
 
   <h2 id="s01"><span class="no">01</span><span class="nl">How we measured it</span></h2>
-  <p>We studied Hindi with two open 8B models, pre-registered each hypothesis test, and report the failures too. The results cover these two models, this request set and greedy decoding (always taking the most likely next word), not all chat models. “Refusal” means our judge labelled a reply as an explicit refusal; it does not measure harm to users.</p>
+  <p>We studied Hindi with two open 8B models, pre-registered each hypothesis test, and report the failures too. The results cover these two models, this request set and greedy decoding (always picking the most likely next token, a word or part of a word), not all chat models. “Refusal” means our judge labelled a reply as an explicit refusal; it does not measure harm to users.</p>
   <p>Each harmful request was asked in Hindi and in English. Human annotators wrote most of them in Hindi (<a class="cite" href="#ref-aakanksha2024">Aya Red-teaming; Aakanksha et al. 2024</a>) with a human English translation, so we compare the languages on the same request. We screened every item for being a real request, a faithful translation, and one the model understood: items it misunderstood show the same gap. The held-out set is <strong>404 harmful and 169 harmless request pairs</strong>, identical for both models.</p>
   <p>Each reply gets one of four labels, checked in this order, so a reply that answers the request counts as complied even if it adds a warning.</p>
   <table class="plain">
@@ -78,7 +78,7 @@
   <p class="fig-sub">Top: refusal removed by ablating each layer’s direction. Bottom: how well the direction separates harmful from harmless requests.</p>
   <div class="legend"><span><i style="background:var(--ink)"></i>Refusal removed</span><span><i style="background:var(--ink-2)"></i>English</span><span><i style="background:var(--accent)"></i>Hindi</span></div>
   <div class="chart"></div>
-  <figcaption id="figL-cap"><b>Figure 2:</b> Removing the direction reduces Qwen’s refusal-score gap by <span data-k="qa"></span> at layer 14 (on the prompts used to pick the layer; 64% on held-out English prompts) and Llama’s by <span data-k="la"></span> at layer 10 (held-out). There it still ranks harmful Hindi requests above harmless ones: AUROC, where 1.0 means a perfect ranking, is <span data-k="qh"></span> and <span data-k="lh"></span> (English <span data-k="qe"></span> and <span data-k="le"></span>).</figcaption>
+  <figcaption id="figL-cap"><b>Figure 2:</b> Removing the direction reduces Qwen’s refusal-score gap by <span data-k="qa"></span> at layer 14 (on the prompts used to pick the layer; 64% on held-out English prompts) and Llama’s by <span data-k="la"></span> at layer 10 (held-out). At those layers, the direction still ranks harmful Hindi requests above harmless ones: AUROC, where 1.0 means a perfect ranking, is <span data-k="qh"></span> and <span data-k="lh"></span> (English <span data-k="qe"></span> and <span data-k="le"></span>).</figcaption>
   <details class="setup"><summary></summary><div class="body"><p>Directions are differences of mean last-token activations between English
     harmful and harmless prompts, one per layer. “Removed” is (unablated harmful score − ablated score) / (harmful − harmless score), on the
     refusal score defined from first reply tokens; ablation was tested on the first 80% of layers, as registered. Qwen curves: tier A (1,174 pairs) with PolyGuard harmless prompts. Llama curves: the 404
@@ -142,7 +142,7 @@
   <p>Figure 5 shows why English rises too: the gate asks whether a prompt looks harmful, and English harmful prompts score at least as high as Hindi ones. Llama’s Hindi-set threshold lets through about half of harmful Hindi requests by design, and none of the 169 harmless ones.</p>
   <p><strong>Side effects.</strong> We ran three checks.</p>
   <ul>
-    <li><strong>General ability.</strong> On 300 Global-MMLU questions per language, accuracy did not change (Qwen <span data-k="mm_q_hi"></span> in Hindi and <span data-k="mm_q_en"></span> in English; Llama <span data-k="mm_l_hi"></span> and <span data-k="mm_l_en"></span>).</li>
+    <li><strong>General ability.</strong> On 300 Global-MMLU questions per language, accuracy did not change (Qwen <span data-k="mm_q_hi"></span> in Hindi and <span data-k="mm_q_en"></span> in English; Llama <span data-k="mm_l_hi"></span> in Hindi and <span data-k="mm_l_en"></span> in English).</li>
     <li><strong>Harmless requests.</strong> Refusals stayed within our 3-point limit.</li>
     <li><strong>A weak test.</strong> The gate never opened on Qwen’s MMLU questions, so those replies could not change. Forcing steering on every question moved Qwen’s accuracy from 51.3% to 52.3% in Hindi and from 64.0% to 63.7% in English, within noise.</li>
   </ul>
@@ -233,9 +233,9 @@
 
 <footer><div class="col">Requests are never quoted. The example replies are redacted excerpts, in English translation with the redacted Hindi original one click away, and their labels were checked against the registered grades.</div></footer>
 
-<script src="data/figures.js?v=31"></script>
-<script src="data/examples.js?v=31"></script>
-<script src="assets/charts.js?v=31"></script>
+<script src="data/figures.js?v=32"></script>
+<script src="data/examples.js?v=32"></script>
+<script src="assets/charts.js?v=32"></script>
 <script>
   const F = window.FIGURES;
   const slot = (id, q) => document.querySelector(`#${id} ${q}`);
