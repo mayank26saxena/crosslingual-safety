@@ -332,6 +332,11 @@ def main():
     OUT.parent.mkdir(parents=True, exist_ok=True)
     data = dict(fig1=f1, fig2=f2, fig3=f3, layers=fig_layers(), gate=fig_gate(), dose=fig_dose(), severity=severity(), spanish=spanish(), guards=guards())
     check_gate(data)
+    qn, ln = data["fig2"]["qwen"]["narrowing_ci"], data["fig2"]["llama"]["narrowing_ci"]
+    ok = qn[0] < 0 < qn[1] and ln[0] > 0
+    print(f"{'OK ' if ok else 'BAD'} Qwen catch-up interval includes zero, Llama's does not (Appendix A claim)")
+    if not ok:
+        raise SystemExit("the appendix claim about the catch-up intervals no longer holds")
     json.dump(data, open(OUT, "w"), indent=1)
     # the same numbers as a script, so the page also works when opened from disk (file:// cannot fetch JSON)
     OUT.with_suffix(".js").write_text("window.FIGURES = " + json.dumps(data) + ";\n")
