@@ -76,6 +76,22 @@ def pattern_counts(lab):
     return out
 
 
+def harm_tags():
+    """Dataset harm categories per item id (metadata only; no request text)."""
+    tags = {}
+    for f in ("after_exclusions", "candidates"):
+        for line in open(ROOT / f"data/v2/{f}.jsonl", encoding="utf-8"):
+            r = json.loads(line)
+            c = r.get("harm_category")
+            if c:
+                try:
+                    c = json.loads(c) if isinstance(c, str) and c.startswith("[") else c
+                except ValueError:
+                    pass
+                tags[f"{r['source']}__{r['source_id']}"] = c if isinstance(c, list) else [c]
+    return tags
+
+
 def main():
     raw = SRC.read_text(encoding="utf-8")
     bad = []
@@ -132,6 +148,12 @@ def main():
         print(f"OK? {iid}: {len(it['replies'])} replies")
     if bad:
         raise SystemExit("examples failed validation:\n  " + "\n  ".join(bad))
+    tags = harm_tags()
+    for it in d["items"]:
+        iid = re.search(r"[a-z_]+__\d+", it["id"]).group(0)
+        if iid not in tags:
+            raise SystemExit(f"no dataset harm tag for {iid}")
+        it["harm"] = tags[iid]
     d["stats"] = pattern_counts(lab)
     # the request-level repair counts must reconcile with the registered Hindi explicit-refusal gains (Figure 6)
     f2 = json.load(open(ROOT / "docs/blog/data/figures.json"))["fig2"]

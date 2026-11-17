@@ -228,6 +228,23 @@ def check(f1, f2, f3):
         raise SystemExit("figure data disagrees with registered results")
 
 
+def severity():
+    """How often each model simply complies with a harmful request, in each language, and what the repair did (judge labels, 404 test pairs)."""
+    s7 = json.load(open(ROOT / "results/v2/phase7/stage2/stage2_results.json"))
+    s6 = json.load(open(ROOT / "results/v2/phase6/stageB/phase6_results.json"))["C1"]
+    q3 = json.load(open(ROOT / "results/v2/phase3/test/test_results.json"))["outcomes"]
+    llama = dict(en=s7["enharm"]["comply"]["base"], hi=s7["hiharm"]["comply"]["base"], hi_fixed=s7["hiharm"]["comply"]["arm"])
+    qwen = dict(en=100 * q3["test_harmful_en"]["comply"]["unsteered"], hi=100 * q3["test_harmful_hi"]["comply"]["unsteered"],
+                hi_fixed=100 * q3["test_harmful_hi"]["comply"]["gated"])
+    # cross-check Llama's unsteered rates against the Phase 6 replication (same items; tolerance covers a one-item relabel)
+    for k, ref in (("hi", 100 * s6["comply_hi"]["rate"]), ("en", 100 * s6["comply_en"]["rate"])):
+        ok = abs(llama[k] - ref) <= 0.5
+        print(f"{'OK ' if ok else 'BAD'} Llama {k} compliance: Phase 7 base {llama[k]:.2f} vs Phase 6 {ref:.2f}")
+        if not ok:
+            raise SystemExit("severity numbers disagree across phases")
+    return dict(llama=llama, qwen=qwen)
+
+
 def check_gate(data):
     """Same-item gate statistics must agree with the independent sources: Figure 3 harmful ratios, and for Llama the per-layer run."""
     g, f3, lay = data["gate"], data["fig3"], data["layers"]
@@ -262,7 +279,7 @@ def main():
     f1, f2, f3 = fig1(), fig2(), fig3()
     check(f1, f2, f3)
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    data = dict(fig1=f1, fig2=f2, fig3=f3, layers=fig_layers(), gate=fig_gate(), dose=fig_dose())
+    data = dict(fig1=f1, fig2=f2, fig3=f3, layers=fig_layers(), gate=fig_gate(), dose=fig_dose(), severity=severity())
     check_gate(data)
     json.dump(data, open(OUT, "w"), indent=1)
     # the same numbers as a script, so the page also works when opened from disk (file:// cannot fetch JSON)
