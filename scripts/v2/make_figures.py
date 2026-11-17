@@ -2,7 +2,7 @@
 
 Usage: uv run --no-project --with numpy --with matplotlib python -I scripts/v2/make_figures.py
 Reads docs/blog/data/figures.json (written and checked by scripts/v2/export_figure_data.py; run that first).
-Writes docs/paper/figures/fig{1,2,3}_*.{pdf,png}. PDFs embed TrueType fonts (pdf.fonttype 42) for camera-ready use.
+Writes docs/paper/figures/fig1_what_replaces_refusal, fig2_projection, fig3_repairs (.pdf, .png). PDFs embed TrueType fonts (pdf.fonttype 42) for camera-ready use.
 Design: the research-blog tokens (light surface, hairline grid, direct labels, interval whiskers, mono numbers) and the same palette as
 docs/blog/assets/tokens.css (validated with the dataviz validator).
 """
@@ -108,7 +108,7 @@ def fig2():
             ax.scatter([a["before"]], [y], s=30, facecolor="white", edgecolor=c, lw=1.3, zorder=3)
             ax.scatter([a["after"]], [y], s=34, color=c, edgecolor="white", lw=1, zorder=4)
             ax.text(103, y, f"{s(a['change'])} [{m(a['ci'][0])}, {m(a['ci'][1])}]", va="center", fontdict=dict(MONO, color=INK))
-        if key == "llama" and p.get("bar_explicit"):
+        if p.get("bar_explicit"):
             xb = p["arms"]["hi"]["before"] + p["bar_explicit"]
             ax.plot([xb, xb], [-0.3, 0.3], color="#c9503a", lw=1.1, ls=(0, (2, 1.5)))
             ax.text(xb, -0.55, "bar +15", ha="center", fontsize=6.5, color="#9b3a27")
@@ -122,7 +122,7 @@ def fig2():
         ax.text(0, -0.78, gap + (f" · bar {p['bar_gap']:g}" if p.get("bar_gap") else ""), fontdict=dict(MONO, size=7, color=INK2), va="top")
     fig.text(0.125, -0.06, "Explicit refusal of harmful requests, unsteered (open) → repaired (filled), held-out 404 pairs, run once. "
              "Right: paired change with bootstrap 95% CI.", fontsize=7, color=MUTED)
-    save(fig, "fig2_repairs")
+    save(fig, "fig3_repairs")
 
 
 def fig3():
@@ -157,10 +157,10 @@ def fig3():
                 weight="bold", va="top")
     fig.text(0.125, -0.12, "Mean projection on each model's English-fitted refusal direction (last template token), same 404 harmful and "
              "169 harmless test pairs. Ring: English · dot: Hindi · whiskers: bootstrap 95% CI.", fontsize=7, color=MUTED)
-    save(fig, "fig3_projection")
+    save(fig, "fig2_projection")
 
 
 if __name__ == "__main__":
     fig1()
-    fig2()
-    fig3()
+    fig3()  # projections -> Figure 2
+    fig2()  # repairs -> Figure 3

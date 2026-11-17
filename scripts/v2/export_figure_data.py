@@ -134,19 +134,23 @@ def check(f1, f2, f3):
     """Every headline must match the registered result files."""
     s7 = json.load(open(ROOT / "results/v2/phase7/stage2/stage2_results.json"))
     s6 = json.load(open(ROOT / "results/v2/phase6/stageB/phase6_results.json"))
+    q3 = json.load(open(ROOT / "results/v2/phase3/test/test_results.json"))["outcomes"]
     exp = lambda m, lang: next(r for r in f1[m]["rows"] if r["label"] == "REFUSE_EXPLICIT")[lang]["pct"]
     checks = [
-        ("Qwen test explicit EN 50.5", exp("qwen", "en"), 50.495),
-        ("Qwen test explicit HI 18.6", exp("qwen", "hi"), 18.564),
+        ("Qwen explicit EN = Phase 3 test", exp("qwen", "en"), 100 * q3["test_harmful_en"]["explicit"]["unsteered"]),
+        ("Qwen explicit HI = Phase 3 test", exp("qwen", "hi"), 100 * q3["test_harmful_hi"]["explicit"]["unsteered"]),
         ("Llama explicit EN = Phase 6", exp("llama", "en"), 100 * s6["C1"]["explicit_en"]["rate"]),
         ("Llama explicit HI = Phase 6", exp("llama", "hi"), 100 * s6["C1"]["explicit_hi"]["rate"]),
-        ("Qwen fix Hindi +17.1", f2["qwen"]["arms"]["hi"]["change"], 17.08),
-        ("Qwen fix English +15.8", f2["qwen"]["arms"]["en"]["change"], 15.84),
+        ("Qwen fix Hindi = Phase 3 test", f2["qwen"]["arms"]["hi"]["change"], 100 * q3["test_harmful_hi"]["explicit"]["diff"]),
+        ("Qwen fix English = Phase 3 test", f2["qwen"]["arms"]["en"]["change"], 100 * q3["test_harmful_en"]["explicit"]["diff"]),
+        ("Qwen Hindi comply = Phase 3 test", next(r for r in f1["qwen"]["rows"] if r["label"] == "COMPLY")["hi"]["pct"],
+         100 * q3["test_harmful_hi"]["comply"]["unsteered"]),
         ("Llama fix Hindi = Phase 7", f2["llama"]["arms"]["hi"]["change"], s7["hiharm"]["explicit"]["diff"]),
         ("Llama gap narrowing = Phase 7", f2["llama"]["narrowing"], s7["gap"]["narrowing"]),
         ("Llama projection ratio = Phase 6 C2", f3["llama"]["ratio"], s6["C2"]["ratio"]),
     ]
-    bad = [(n, a, b) for n, a, b in checks if abs(a - b) > 0.05 * max(1, abs(b)) and abs(a - b) > 0.06]
+    # absolute tolerance 0.05 (percentage points, or ratio units for the projection ratio): rounding only, no drift allowed
+    bad = [(n, a, b) for n, a, b in checks if abs(a - b) > (0.005 if "ratio" in n else 0.05)]
     for n, a, b in checks:
         print(f"{'OK ' if (n, a, b) not in bad else 'BAD'} {n}: exported {a:.3f}, registered {b:.3f}")
     if bad:

@@ -17,7 +17,7 @@
     <p class="kicker">Interpretability · Multilingual safety</p>
     <h1>Same gap, different signatures: why two chat models refuse less in Hindi</h1>
     <p class="dek">We asked two open models the same harmful requests in English and in Hindi. Both refuse far less in Hindi, but they
-      fail in different ways, inside and out, and a fix that suits one model barely helps the other.</p>
+      fail in different ways, inside and out, and a repair only reaches Hindi in Llama once its trigger is calibrated on Hindi.</p>
     <div class="byline">
       <div><b>Author</b>[author]</div>
       <div><b>Published</b>[date]</div>
@@ -31,7 +31,7 @@
 <div class="col">
   <div class="tldr">
     <p class="kicker">TL;DR</p>
-    <p>On the same 404 harmful requests, <strong>explicit refusal falls from 51% to 19% in Qwen3-8B</strong> and <strong>from 89% to 47%
+    <p>On the same 404 harmful requests, <strong>explicit refusal falls from 50% to 19% in Qwen3-8B</strong> and <strong>from 89% to 47%
       in Llama-3.1-8B</strong> when the request is in Hindi rather than English.</p>
     <p>The models fail differently. <strong>Qwen hedges</strong>: its lost refusals mostly become warnings and redirections that never say
       no. <strong>Llama hedges or complies</strong>, in similar shares.</p>
@@ -49,8 +49,7 @@
 
   <p>Chat models are trained to decline harmful requests mostly in English. It is well known that this safeguard weakens in other
     languages. What has been less clear is <em>what</em> the model does instead, and <em>why</em> its behaviour changes when only the
-    language changes. We looked at two popular open 8B models in Hindi, one of the most widely spoken languages in the world and one both
-    model families officially support.</p>
+    language changes. We looked at two popular open 8B models in Hindi, one of the most widely spoken languages in the world.</p>
 
   <h2>How we measured it</h2>
   <p>Every harmful request was asked twice, once in Hindi and once in English. Most of them were written natively in Hindi by human
@@ -87,7 +86,8 @@
     compliance and 75 soft refusal, so similar shares (p = 0.35). Llama answers Hindi harmful requests outright more often.</figcaption>
   <details class="setup"><summary></summary><div class="body">
     <p>Held-out test split, unsteered, greedy decoding. Labels from the LLM judge (Claude Sonnet 5.5), graded blind with every condition
-      shuffled together. Intervals: Wilson 95% for shares; paired bootstrap (10,000 resamples) for changes. The Llama labels were checked
+      shuffled together. Qwen's unsteered replies are the ones generated alongside its repair test (explicit refusal 50.5% → 18.6%);
+      the earlier baseline run on the same items gave 51.2% → 19.1%. Intervals: Wilson 95% for shares; paired bootstrap (10,000 resamples) for changes. The Llama labels were checked
       against a fluent human (see "Can we trust the labels?").</p>
     <div class="table"></div>
   </div></details>
@@ -100,13 +100,13 @@
     often</strong> as Qwen does on the same requests.</p>
 </div>
 
-<div class="col"><p class="exp-label">Experiment 2</p><h2>Does the model even register that the Hindi request is harmful?</h2>
+<div class="col"><p class="exp-label">Experiment 2</p><h2>Where do Hindi requests land inside the model?</h2>
   <p>Interpretability research has found that chat models carry a <em>refusal direction</em>: a single direction in their internal
     activations that tracks whether a request should be refused (Arditi et al. 2024). We found this direction using English prompts only,
     then measured where Hindi prompts land on it, for the same requests.</p>
 </div>
 <figure class="fig wide" id="fig3">
-  <p class="fig-title">Qwen registers Hindi harm at English strength; Llama barely does</p>
+  <p class="fig-title">Hindi harmful prompts project at English strength in Qwen, at 28% of it in Llama</p>
   <p class="fig-sub">Mean projection on each model's English-fitted refusal direction, at the last token before the reply, for the same
     held-out harmless and harmful requests in English (open) and Hindi (filled). Each model has its own scale.</p>
   <div class="legend"><span><i style="background:transparent;border:2px solid var(--ink-2);border-radius:50%"></i>English (ring)</span><span><i style="background:var(--accent);border-radius:50%"></i>Hindi</span></div>
@@ -123,7 +123,8 @@
 </figure>
 
 <div class="col">
-  <p>So the two models fail at different stages. Qwen gets the signal and fumbles the wording. Llama's signal is weak to begin with. This
+  <p>So the two models differ inside as well as out. In Qwen the refusal signal for Hindi harmful prompts is as strong as in English, so its
+    weaker refusals must arise later, in how the refusal is worded. In Llama the signal itself is weak. This
     matches a growing set of results showing that refusal directions are shared across languages but weaker in lower-resource ones (Wang
     et al. 2025; Aziz et al. 2026). The difference here is that the two patterns show up in two models on <em>identical</em> requests.</p>
 </div>
@@ -254,7 +255,7 @@
     { title: "Llama-3.1-8B", subtitle: `layer ${F.fig3.llama.layer}`, cells: F.fig3.llama.cells, note: `harmful Hindi at ${(100 * F.fig3.llama.ratio).toFixed(0)}% of English` },
   ], { table: slot("fig3", ".table") });
   Charts.repairs(slot("fig2", ".chart"), [
-    Object.assign({ title: "Qwen3-8B", subtitle: "push toward explicit refusal · passed its checks" }, F.fig2.qwen, { bar_explicit: null }),
+    Object.assign({ title: "Qwen3-8B", subtitle: "push toward explicit refusal · passed its checks" }, F.fig2.qwen),
     Object.assign({ title: "Llama-3.1-8B", subtitle: "push along the refusal direction, Hindi-set gate · narrowly missed its bars" }, F.fig2.llama),
   ], { table: slot("fig2", ".table") });
 </script>

@@ -60,9 +60,9 @@ default, non-adversarial requests and the same items for both models.
 2. **An explicit-versus-soft refusal direction.** To our knowledge, this is the first activation direction for refusal *style* rather
    than refusal itself. Hindi prompts sit toward its soft end, and adding it converts soft refusals into explicit ones (§4.2).
 3. **A contrast of internal signatures on identical items.** Qwen's Hindi harmful prompts project on the English refusal direction at
-   English strength; Llama's reach 28% of it (§4.2, Fig. 3).
+   English strength; Llama's reach 28% of it (§4.2, Fig. 2).
 4. **Pre-registered repairs, with their failures.** A repair can pass every registered check without narrowing the gap, and can fail
-   confirmation in a held-out language. A diagnosis-matched repair narrows the gap more, but still acts on English (§4.3, Fig. 2).
+   confirmation in a held-out language. A diagnosis-matched repair narrows the gap more, but still acts on English (§4.3, Fig. 3).
 
 ## 2 Related work
 
@@ -183,9 +183,11 @@ the same items, Llama leaves Hindi harmful requests unrefused more often than Qw
 
 ### 4.2 Internal signatures
 
-![Figure 3](figures/fig3_projection.png)
+![Figure 2](figures/fig2_projection.png)
 
-**Figure 3.** Hindi harmful prompts' projection on the English-fitted refusal direction, as a share of the English value.
+**Figure 2.** Mean projection on each model's English-fitted refusal direction for the same harmless and harmful test pairs, in
+English (ring) and Hindi (dot), with bootstrap 95% intervals. Hindi harmful prompts reach 100% of the English value in Qwen and 28% in
+Llama; harmless Hindi prompts in Qwen shift toward refusal.
 
 **Refusal direction.**
 - *Qwen.* The direction is valid at layer 14: ablation removes 64% of the held-out score gap. Hindi harmful prompts project at English
@@ -202,9 +204,9 @@ the same items, Llama leaves Hindi harmful requests unrefused more often than Qw
 
 ### 4.3 Repairs
 
-![Figure 2](figures/fig2_repairs.png)
+![Figure 3](figures/fig3_repairs.png)
 
-**Figure 2.** Explicit refusal before and after each repair, on held-out pairs, run once.
+**Figure 3.** Explicit refusal before and after each repair, on held-out pairs, run once.
 
 | Repair | Hindi explicit | English explicit | Gap | Verdict |
 |---|---|---|---|---|
