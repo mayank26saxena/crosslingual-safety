@@ -6,10 +6,10 @@ reply existed. **Outputs:** `results/v2/phase7/stage1/stage1_results.json`, `res
 **Labels:** `results/v2/labels/phase7_{1,1e,2}_llama_grades.csv` (ids only).
 
 Model `meta-llama/Llama-3.1-8B-Instruct` rev 0e9e39f2…, one A40 for every run, the pinned environment (driver 595.91.07 throughout).
-Labels are Sonnet 5.5 grades, blind and shuffled. The Phase 6 human check fell below its bar (four-label κ 0.643), so these results are
-provisional. The Phase 7 author check agrees on 29 of 30 steered replies (`2026-11-16_llama_human_checks.md`). F1 and F2 rest on explicit
-refusal, the best-validated distinction (κ 0.785). F3 and the "from former compliance" decomposition depend on the COMPLY/SOFT split,
-where the judge errs toward COMPLY on Llama, so they are secondary.
+Labels are Sonnet 5.5 grades, blind and shuffled. The Phase 6 human check fell below its bar (blind four-label κ 0.643), so these results are
+provisional. The Phase 7 author check agrees on 29 of 30 steered replies blind, and 30 of 30 after review (`2026-11-16_llama_human_checks.md`).
+F1 and F2 rest on explicit refusal, the best-validated label. F3 also agrees with the adjudicated human labels, but the COMPLY/SOFT split
+is the least reliable label.
 
 ## Outcome: compliance falls; the explicit-refusal and gap bars are narrowly missed
 
@@ -69,9 +69,9 @@ estimate (+18.0). That is the same shrinkage as Qwen's Phase 3 (21.4 to 17.1, 80
 ## Reading
 
 - **The diagnosis-matched push does what the diagnosis predicts.** Llama's Hindi failure is weak harm signal, so missing refusals become
-  compliance (judge labels; the human check later showed these are mostly soft refusals). By judge labels, Hindi COMPLY falls by 8.4 points and
-  any refusal rises by 9.2, so roughly 8.4 points of the +14.6 explicit gain come from former "compliance". Because the judge labels some
-  soft refusals as compliance on Llama, this split is uncertain. In Qwen the push
+  compliance (a mix of compliance and soft refusal, compliance narrowly ahead; see the human checks). Hindi COMPLY falls by 8.4 points and
+  any refusal rises by 9.2, so roughly 8.4 points of the +14.6 explicit gain come from former compliance. The adjudicated human labels
+  support this, though the COMPLY/SOFT boundary is the least reliable label. In Qwen the push
   mainly converted soft refusals into explicit ones (compliance fell only 3.7).
 - **The Hindi-calibrated gate fixes Phase 6's failure to fire.** The gate now opens on 47% of Hindi harmful prompts (1% in Phase 6), and
   even the explicit–soft push (E1) works once it fires. This agrees with Aziz et al. (2026), who found that Llama needs gate calibration in

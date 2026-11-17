@@ -201,6 +201,11 @@ def main():
                "label": next(v for k, v in r.items() if k.startswith("HUMAN_label")).strip(),
                "confidence": next(v for k, v in r.items() if k.startswith("HUMAN_confidence")).strip()} for r in rows(hs7)]
         write("phase7_llama_human.csv", ["human_id", "uid_condition", "label", "confidence"], h7)
+    rv = N / "review/llama_disagreements_reviewed.csv"
+    if rv.exists():  # addendum 4: unregistered adjudication of the Llama human-check disagreements
+        write("llama_human_adjudicated.csv", ["review_id", "phase", "item", "uid", "your_label", "judge_label", "reviewed_label"],
+              [{"review_id": r["review_id"], "phase": r["phase"], "item": r["item"], "uid": r["uid"], "your_label": r["your_label"],
+                "judge_label": r["judge_label"], "reviewed_label": r["REVIEW_label"]} for r in rows(rv)])
     # Screening audit: human (original and adjudicated) and both candidates
     ak = json.load(open(N / "audit/audit_key.json"))
     adj = {r["item"]: r["FINAL_request_type"].strip() for r in rows(N / "audit/human/adjudication_reviewed.csv")}

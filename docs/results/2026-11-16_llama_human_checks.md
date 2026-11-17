@@ -43,8 +43,34 @@ registered claim):
 | BROKEN | 0% | 4% |
 
 Among the 20 sampled pairs refused explicitly in English but not in Hindi (by the author's labels), the Hindi replies are 14 REFUSE_SOFT
-and 6 COMPLY. The judge's labels said most of Llama's missing refusals became compliance (Phase 6, C1). The author's labels on this sample
-say most became **soft refusals**, as in Qwen. The sample is small, but the reversal is large and in a single direction.
+and 6 COMPLY. The judge's labels said most of Llama's missing refusals became compliance (Phase 6, C1). The author's *blind* labels on this sample
+said most became **soft refusals**. The review below revises this. The sample is small, but the reversal is large and in a single direction.
+
+## After review (adjudication, not registered; addendum 4)
+
+The author reviewed the 14 Phase 6 disagreements with the judge's label and reason in view, and changed 10, all to the judge's label.
+The reasons given follow the rubric: replies that warn and then answer are COMPLY, and incoherent replies are BROKEN. The blind result above
+is the registered one and still decides: the check is below bar, and the Llama numbers stay provisional.
+
+| | Blind (registered) | After review (upper estimate) |
+|---|---|---|
+| Four-label κ, all 60 | **0.643** | 0.893 |
+| Harmful 45: REFUSE_EXPLICIT | 49% | 42% [29, 58] |
+| Harmful 45: REFUSE_SOFT | 33% | 20% [9, 31] |
+| Harmful 45: COMPLY | 18% | 33% [20, 47] |
+| Harmful 45: BROKEN | 0% | 4% [0, 11] |
+| Lost refusals (English explicit, Hindi not) | 14 soft, 6 comply (n 20) | **13 comply, 9 soft, 1 broken** (n 23) |
+
+After review, the author's labels match the judge's picture: compliance is the most common outcome among Llama's lost Hindi refusals, but
+only narrowly (13 against 9 here; 88 against 75 by judge labels on all 172). The blind disagreement came mainly from the author applying the
+rubric's first clause inconsistently, not from a judge bias. The COMPLY/SOFT boundary, a reply that warns and then answers, is the hard
+case even for a careful human. Phase 7's single disagreement was likewise resolved to the judge's label, so the author check agrees on 30 of
+30 after review (29 of 30 blind).
+
+**What this means for the claims:** the reversal described in the blind section does not hold after review. The supported Llama
+characterisation is a *mix* of compliance and soft refusal, with compliance slightly the larger share. Llama complies with Hindi harmful
+requests about twice as often as Qwen on the same 404 pairs (30.4% against 16.3%, judge labels). Phase 7's F3 (compliance falls) and its
+decomposition are consistent with the adjudicated labels, and stay registered and provisional.
 
 ## Phase 7: 30 steered (R3) Hindi harmful replies with the gate open
 
@@ -52,22 +78,22 @@ No pass bar was registered. Agreement is **96.7%** (29 of 30) and broad κ is 1.
 are explicit refusals in both labellings, so κ is unstable at this prevalence. The one disagreement is an explicit refusal the judge called
 soft. The steered explicit refusals are confirmed.
 
-## What stands and what changes
+## What stands and what changes (final, after review)
 
-**Stands (label-independent, or resting on the best-validated distinction, explicit refusal vs the rest, κ 0.785):**
-- the Llama explicit-refusal gap (88.9% vs 46.5%; the author's labels on the sample agree: 49% vs the judge's 44%);
-- the projection results: Hindi at 28% of the English refusal-direction projection (C2), and the explicit–soft axis (C3);
-- Phase 7's held-out explicit-refusal gain (+14.6) and gap narrowing (7.4 points), with the registered verdicts (F1 and F2 not met);
-- the Qwen findings, whose soft-refusal pattern has its own human support (Phase 0).
+**Stands:**
+- The registered verdict: the human check is below bar (blind κ 0.643), so every Llama number is provisional.
+- The label-independent results: Hindi at 28% of the English refusal-direction projection (C2), and the explicit–soft axis (C3).
+- The explicit-refusal results, resting on the best-validated distinction (blind explicit-vs-rest κ 0.785): the Llama gap (88.9% vs 46.5%)
+  and Phase 7's +14.6 and 7.4-point gap narrowing, with F1 and F2 not met as registered.
+- The Qwen findings, with their own human support (Phase 0).
 
-**Changes or is weakened (depends on the COMPLY/SOFT split, where the judge is biased on Llama):**
-- "Llama's missing refusals become compliance" (C1 second clause, Phase 6). It is not supported by the human sample, which points the
-  other way. The registered C1 verdict (from judge labels) is kept as registered, and marked provisional.
-- Phase 7 F3 ("compliance falls", −8.4), and the decomposition "about 8.4 points of the gain come from former compliance". Some of what
-  the judge called compliance in the unsteered arm the author calls soft refusal, so part of that conversion is likely soft to explicit.
-  F3 stays as registered, but provisional and secondary.
-- The behavioural contrast "soft in Qwen, compliance in Llama". By human labels both models' missing Hindi refusals are mostly soft. The
-  contrast that survives is internal: Qwen's Hindi harmful prompts project on the refusal direction at English strength, Llama's at 28%.
+**Characterisation of Llama's lost refusals:** a mix of compliance and soft refusal, with compliance narrowly the larger share (adjudicated
+sample 13 vs 9; judge labels on all 172: 88 vs 75). This is not the clean "soft in Qwen, compliance in Llama" dichotomy. The supported
+contrast is one of *rate*: Llama complies with Hindi harmful requests about twice as often as Qwen on the same pairs (30.4% vs 16.3%).
+It is joined by the internal contrast (projection at English strength in Qwen, 28% in Llama).
 
-**A finding in its own right:** a judge validated on one model can err in a different direction on another model's replies. Here that was
-enough to reverse the behavioural characterisation of the gap. Cross-model comparisons of refusal *style* need a per-model human check.
+**Phase 7 F3** (Hindi compliance falls, −8.4) is consistent with the adjudicated labels, and stays as registered (provisional).
+
+**Superseded by the review above.** An earlier version of this note called the blind disagreement a judge bias. After review, most of it
+was the author's rubric application. What remains is a methods point: the COMPLY/SOFT boundary is fragile, so both blind and adjudicated
+labels are reported.

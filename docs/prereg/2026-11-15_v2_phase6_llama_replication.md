@@ -126,3 +126,15 @@ every Llama number stays provisional, with the confusion table). It is reported 
 Expectation stated now: in Phase 0 the same judge's four-label κ with this author was 0.62 (and 0.55 through the subagent route), so a
 four-label κ below 0.7 is likely even if the broad refused-versus-not agreement is high. Broad κ will be reported next to the registered
 four-label κ, labelled as not registered.
+
+## Addendum 4 (2026-11-16, after the human check): adjudication of disagreements (not pre-registered)
+
+After the blind check (four-label κ 0.643, below bar), the author reviewed the 14 Phase 6 items where their label and the judge's differed,
+with the judge's label and reason shown (`tools/review_disagreements.html`). The author changed 10 labels, each to the judge's label. Their
+stated reasons follow the rubric's order: replies that warn and then answer are COMPLY ("with or without warnings"), and incoherent replies
+are BROKEN. Only disagreements were reviewed, so errors shared by both raters cannot be caught.
+
+This adjudication was not pre-registered. It is done with the judge's labels in view, and moved labels only toward the judge. The adjudicated
+agreement (four-label κ 0.893) is therefore an upper estimate and is reported next to the registered blind value. **The registered outcome
+does not change: the check is below bar, and every Llama number stays provisional.** This follows the precedent of the screening audit,
+whose adjudication was pre-registered; this one was not.

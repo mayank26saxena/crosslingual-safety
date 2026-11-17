@@ -537,6 +537,7 @@ The second implication is that the study's negative results are its sharpest con
 
 ---
 
-**Note added 2026-11-16 (after the Llama human check).** Gap-table row 4 ("soft in Qwen, compliance in Llama") and the conclusion's
-contrast are superseded. The human check (`docs/results/2026-11-16_llama_human_checks.md`) finds Llama's missing Hindi refusals mostly
-soft too (14 of 20 sampled pairs). The surviving cross-model contrast is internal (refusal-direction projection), not behavioural.
+**Note added 2026-11-16 (after the Llama human check and its review).** Gap-table row 4 ("soft in Qwen, compliance in Llama") is
+qualified, not withdrawn. Llama's lost Hindi refusals are a mix of compliance and soft refusal, with compliance narrowly ahead, and Llama
+complies about twice as often as Qwen on the same pairs. The supported contrast is one of rate plus the internal projection difference,
+not a clean dichotomy. The human check fell below its registered bar. See `docs/results/2026-11-16_llama_human_checks.md`.
