@@ -72,3 +72,18 @@ carried-over strength (the pre-registration lists this risk).
 
 Stage A about 33 min, stage B about 2 h 15 min on one A40 at $0.59/h, about $1.65 in all. Both pods were terminated, and their removal was
 confirmed by listing.
+
+## Exploratory addendum (2026-11-17): per-layer projections
+
+Not pre-registered; descriptive only, made for the blog's per-layer figure. Forward passes on the 404 harmful and 169 harmless test
+pairs project every layer's last-token output on that layer's English refusal direction (`scripts/v2/layer_projections.py`; outputs
+in `results/v2/layer_proj/`). The layer-10 values reproduce the stored Phase 6 projections (1,146 items, mean absolute difference
+0.006 on a mean magnitude of 0.99) and the harmful Hindi/English ratio of 0.278.
+
+- At layer 10 the direction still ranks Hindi harmful above Hindi harmless requests almost as well as it does in English
+  (AUROC 0.97 against 0.99). What is weak in Hindi is the size of the separation, not its order: the Hindi harmful–harmless gap is
+  0.30 of the English gap at layer 10.
+- So C2 should be read as a magnitude finding. Llama's Hindi harmful prompts sit low on the direction while remaining well ordered,
+  which is consistent with Phase 7, where a Hindi-calibrated gate threshold separated Hindi harmful from harmless requests usefully.
+- Qwen's Hindi gap ratio at its layer 14 is similar (0.32), for a different reason: its Hindi harmful prompts reach English strength,
+  but its Hindi harmless prompts also sit high (the language offset in Experiment 2).

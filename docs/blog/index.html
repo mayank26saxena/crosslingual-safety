@@ -105,13 +105,33 @@
     activations that tracks whether a request should be refused (Arditi et al. 2024). We found this direction using English prompts only,
     then measured where Hindi prompts land on it, for the same requests.</p>
 </div>
+<figure class="fig wide" id="figL">
+  <p class="fig-title">Refusal is carried in early-middle layers, and there both models still rank Hindi harmful requests above harmless ones</p>
+  <p class="fig-sub">Top: the share of the harmful–harmless refusal-score gap removed when that layer's English refusal direction is
+    ablated; the peak picks the layer we use. Bottom: how well the direction separates harmful from harmless requests at each layer,
+    for English and Hindi. Hover for per-layer values.</p>
+  <div class="legend"><span><i style="background:var(--ink)"></i>Refusal removed</span><span><i style="background:var(--ink-2)"></i>English</span><span><i style="background:var(--accent)"></i>Hindi</span></div>
+  <div class="chart"></div>
+  <figcaption id="figL-cap"><b>Figure 2:</b> Ablating the direction at layer 14 removes <span data-k="qa"></span> of Qwen's refusal-score
+    gap on the prompts used to find it (64% on held-out English prompts, the registered check); at layer 10 it removes
+    <span data-k="la"></span> of Llama's on held-out prompts. At those layers the direction still ranks Hindi harmful requests above
+    harmless ones (AUROC <span data-k="qh"></span> for Qwen and <span data-k="lh"></span> for Llama, against <span data-k="qe"></span> and
+    <span data-k="le"></span> in English). Ranking is not the whole story: Figure 3 shows <em>where</em> Hindi prompts sit on the scale,
+    and that is where the two models differ.</figcaption>
+  <details class="setup"><summary></summary><div class="body"><p>Directions are differences of mean last-token activations between English
+    harmful and harmless prompts, one per layer. "Removed" is (unablated harmful score − ablated score) / (harmful − harmless score), on the
+    refusal score defined from first reply tokens; ablation was tested on the first 80% of layers, as registered. Qwen curves: tier A (1,174 pairs) with PolyGuard harmless prompts. Llama curves: the 404
+    harmful and 169 harmless test pairs (separation computed by <code>scripts/v2/layer_projections.py</code>). AUROC is computed within each
+    language.</p></div></details>
+</figure>
+
 <figure class="fig wide" id="fig3">
   <p class="fig-title">Hindi harmful prompts project at English strength in Qwen, at 28% of it in Llama</p>
   <p class="fig-sub">Mean projection on each model's English-fitted refusal direction, at the last token before the reply, for the same
     held-out harmless and harmful requests in English (open) and Hindi (filled). Each model has its own scale.</p>
   <div class="legend"><span><i style="background:transparent;border:2px solid var(--ink-2);border-radius:50%"></i>English (ring)</span><span><i style="background:var(--accent);border-radius:50%"></i>Hindi</span></div>
   <div class="chart"></div>
-  <figcaption><b>Figure 2:</b> For harmful requests, Qwen's Hindi prompts sit exactly where the English ones do (5.39 vs 5.41). Llama's
+  <figcaption><b>Figure 3:</b> For harmful requests, Qwen's Hindi prompts sit exactly where the English ones do (5.39 vs 5.41). Llama's
     reach 28% of the English value. Qwen also shows a language offset: <em>harmless</em> Hindi requests jump toward "refuse", which is
     why we describe this as a projection, not as proof that the model recognises harm.</figcaption>
   <details class="setup"><summary></summary><div class="body">
@@ -153,12 +173,40 @@
       threshold, the gate opened on only 1% of Llama's Hindi harmful prompts.</li>
   </ul>
 </div>
+<figure class="fig wide" id="figM">
+  <p class="fig-title">Where each repair reads and where it writes</p>
+  <p class="fig-sub">Each box is a decoder layer. The gate reads the prompt's score on the refusal direction at one layer; if the score is
+    above the threshold, a fixed vector is added at a later layer for the whole reply.</p>
+  <div class="chart"></div>
+  <figcaption><b>Figure 4:</b> Qwen reads at layer 14 and writes the explicit-vs-soft direction at layer 25. Llama reads at layer 10 and
+    writes more of the refusal direction itself, one layer later. Qwen's threshold is the median score of English development harmful
+    requests; Llama's is the median of Hindi ones.</figcaption>
+</figure>
+
+<div class="col"><h3>How hard to push?</h3>
+  <p>A stronger push raises refusal more, but at some point the model starts producing garbled text. We tried several strengths on
+    development requests and kept the strongest one that stayed inside the guards we had fixed in advance.</p></div>
+<figure class="fig wide" id="figD">
+  <p class="fig-title">Stronger pushes buy more Hindi refusal until replies start to break</p>
+  <p class="fig-sub">Each dot is one candidate setting on development requests: its gain in Hindi explicit refusal against its change in
+    broken replies. The shaded area is where a setting qualifies. Filled dots are the settings taken to the held-out test.</p>
+  <div class="chart"></div>
+  <figcaption><b>Figure 5:</b> For Qwen, looser gates added refusal but broke too many replies; the 50th-percentile gate at 1.25× was the
+    strongest that stayed in bounds. For Llama, doubling the explicit–soft push broke 23% of replies, while the refusal-direction pushes
+    stayed clean.</figcaption>
+  <details class="setup"><summary></summary><div class="body"><p>Qwen: 401 Hindi harmful and 171 harmless development requests, nine settings
+    (strength 0.75, 1.0, 1.25 × gate at the 50th, 25th or 10th percentile of English development scores); the selection rule had no
+    minimum gain, only broken output within +5 and harmless refusal within +3 (English was checked at test). Llama: 150 Hindi harmful and 60
+    harmless development requests, five pushes; a setting needed at least +15 points, broken output within +5, harmless refusal within +3,
+    and English explicit refusal not below −3 with English broken output within +3.</p></div></details>
+</figure>
+
 <figure class="fig wide" id="fig2">
   <p class="fig-title">Both repairs raise Hindi refusal, and both lift English too</p>
   <p class="fig-sub">Explicit refusal before (open) and after (filled) each repair on the held-out requests, with 95% intervals. Changes
     are paired by request, with bootstrap intervals in brackets.</p>
   <div class="chart"></div>
-  <figcaption><b>Figure 3:</b> Qwen's repair raised Hindi explicit refusal by 17 points but English by 16, so the gap barely moved
+  <figcaption><b>Figure 6:</b> Qwen's repair raised Hindi explicit refusal by 17 points but English by 16, so the gap barely moved
     (narrowing +1.2, interval spanning zero). Llama's repair raised Hindi by 14.6 and narrowed the gap by 7.4, just short of the bars we
     registered in advance (+15 and 10).</figcaption>
   <details class="setup"><summary></summary><div class="body">
@@ -169,6 +217,20 @@
       benign inputs, so those checks are weak.</p>
     <div class="table"></div>
   </div></details>
+</figure>
+
+<figure class="fig wide" id="figG">
+  <p class="fig-title">Why the repairs lift English too: the gate sees English harm at least as clearly</p>
+  <p class="fig-sub">Every held-out request as a dot, placed by its score on the refusal direction at the gate layer. The red line is the
+    gate threshold; requests to its right get the push. Drag the sliders to move the threshold and watch the open shares change.</p>
+  <div class="controls"></div>
+  <div class="chart"></div>
+  <figcaption><b>Figure 7:</b> Qwen's English-set threshold opens on 47% of harmful requests in both languages, so English is pushed as
+    much as Hindi. Llama's Hindi-set threshold opens on 47% of Hindi harmful requests but 92% of English ones. No threshold opens for
+    Hindi harm without also opening for English harm.</figcaption>
+  <details class="setup"><summary></summary><div class="body"><p>Gate scores are the projections the gate actually read during the
+    held-out run (Qwen layer 14, Llama layer 10), for the unsteered prompts: 404 harmful and 169 harmless pairs per language. Thresholds as
+    registered: Qwen at the median English development harmful score, Llama at the median Hindi development harmful score.</p></div></details>
 </figure>
 
 <div class="col">
@@ -254,6 +316,27 @@
     { title: "Qwen3-8B", subtitle: `layer ${F.fig3.qwen.layer}`, cells: F.fig3.qwen.cells, note: `harmful Hindi at ${(100 * F.fig3.qwen.ratio).toFixed(0)}% of English` },
     { title: "Llama-3.1-8B", subtitle: `layer ${F.fig3.llama.layer}`, cells: F.fig3.llama.cells, note: `harmful Hindi at ${(100 * F.fig3.llama.ratio).toFixed(0)}% of English` },
   ], { table: slot("fig3", ".table") });
+  const L = F.layers;
+  Charts.layerProfile(slot("figL", ".chart"), [
+    { title: "Qwen3-8B", subtitle: "36 layers", layers: L.qwen.layers, chosen: L.qwen.chosen, ablation: L.qwen.ablation_removed, auroc_en: L.qwen.auroc_en, auroc_hi: L.qwen.auroc_hi, ratio: null },
+    { title: "Llama-3.1-8B", subtitle: "32 layers", layers: L.llama.layers, chosen: L.llama.chosen, ablation: L.llama.ablation_removed, auroc_en: L.llama.auroc_en, auroc_hi: L.llama.auroc_hi, ratio: L.llama.ratio_harmful },
+  ]);
+  { const pct = (v) => Math.round(100 * v) + "%", two = (v) => v.toFixed(2), q = L.qwen, l = L.llama;
+    const vals = { qa: pct(q.ablation_removed[q.chosen]), la: pct(l.ablation_removed[l.chosen]), qh: two(q.auroc_hi[q.chosen]),
+      lh: l.auroc_hi ? two(l.auroc_hi[l.chosen]) : "n/a", qe: two(q.auroc_en[q.chosen]), le: l.auroc_en ? two(l.auroc_en[l.chosen]) : "n/a" };
+    document.querySelectorAll("#figL-cap [data-k]").forEach((e) => { e.textContent = vals[e.dataset.k]; }); }
+  Charts.mechanism(slot("figM", ".chart"), [
+    { title: "Qwen3-8B", layers: 36, gate: 14, push: 25, tau: F.gate.qwen.tau.toFixed(2), what: "1.25 × explicit–soft direction" },
+    { title: "Llama-3.1-8B", layers: 32, gate: 10, push: 11, tau: F.gate.llama.tau.toFixed(2), what: "1.5 × shortfall × refusal direction" },
+  ]);
+  Charts.dose(slot("figD", ".chart"), [
+    Object.assign({ title: "Qwen3-8B", subtitle: "9 settings · 401 dev pairs" }, F.dose.qwen),
+    Object.assign({ title: "Llama-3.1-8B", subtitle: "5 pushes · 150 dev pairs" }, F.dose.llama),
+  ]);
+  Charts.gate(slot("figG", ".chart"), [
+    Object.assign({ title: "Qwen3-8B", subtitle: "layer 14 · English-set threshold" }, F.gate.qwen),
+    Object.assign({ title: "Llama-3.1-8B", subtitle: "layer 10 · Hindi-set threshold" }, F.gate.llama),
+  ], { controls: slot("figG", ".controls") });
   Charts.repairs(slot("fig2", ".chart"), [
     Object.assign({ title: "Qwen3-8B", subtitle: "push toward explicit refusal · passed its checks" }, F.fig2.qwen),
     Object.assign({ title: "Llama-3.1-8B", subtitle: "push along the refusal direction, Hindi-set gate · narrowly missed its bars" }, F.fig2.llama),

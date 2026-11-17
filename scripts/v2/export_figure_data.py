@@ -130,6 +130,63 @@ def fig3():
     return res
 
 
+def fig_layers():
+    """Where refusal lives: per-layer ablation effect and harmful/harmless separation, both models."""
+    d = json.load(open(ROOT / "results/v2/direction/direction_results.json"))
+    v = d["meta"]["validity"]
+    q_removed = [(v["fit_harmful_s"] - x) / (v["fit_harmful_s"] - v["fit_harmless_s"]) for x in d["meta"]["sweep"]]
+    pl = d["per_layer"]["hi"]
+    esq = json.load(open(ROOT / "results/v2/es_dir/es_dir_results.json"))["cv_auroc"]
+    sb = json.load(open(ROOT / "results/v2/phase6/stageB/stageB_results.json"))
+    r = sb["refusal"]
+    l_removed = [(r["heldout_harmful_s"] - x) / r["gap"] for x in r["sweep"]]
+    res = dict(qwen=dict(layers=len(pl["rho"]), chosen=d["lstar"], ablation_removed=q_removed, auroc_en=pl["auroc_english"],
+                         auroc_hi=pl["auroc_target"], rho=pl["rho"], es_cv_auroc=esq, es_layer=24, items="tier A 1,174 pairs; PolyGuard harmless"),
+               llama=dict(layers=32, chosen=r["layer"], ablation_removed=l_removed, es_cv_auroc=sb["explicit_soft"]["cv_auroc"], es_layer=18,
+                          items="404 harmful and 169 harmless test pairs"))
+    lp = ROOT / "results/v2/layer_proj/layer_proj_summary.json"
+    if lp.exists():
+        z = json.load(open(lp))
+        res["llama"].update(auroc_en=z["auroc_en"], auroc_hi=z["auroc_hi"], rho=z["rho"], ratio_harmful=z["ratio_harmful"])
+    return res
+
+
+def fig_gate():
+    """The gate: per-prompt refusal-direction scores on the test items, with each model's threshold."""
+    res = {}
+    q = [json.loads(l) for l in open(ROOT / "results/v2/phase3/test/test_replies.jsonl")]
+    l = [json.loads(x) for x in open(ROOT / "results/v2/phase7/stage2/stage2_replies.jsonl")]
+    for model, rows, tau, which in (("qwen", q, 5.515399932861328, "English-set threshold (median of English development harmful)"),
+                                    ("llama", l, None, "Hindi-set threshold (median of Hindi development harmful)")):
+        un = [r for r in rows if r["condition"].endswith("unsteered") and r["set"] in ("test_harmful", "test_harmless")]
+        if tau is None:
+            tau = next(r["tau"] for r in rows if r.get("tau") is not None and not r["condition"].endswith("unsteered"))
+        cells = {}
+        for st in ("test_harmful", "test_harmless"):
+            for lang in ("en", "hi"):
+                v = [r["score"] for r in un if r["set"] == st and r["lang"] == lang]
+                cells[f"{st.split('_')[1]}_{lang}"] = dict(scores=[round(x, 3) for x in v], open=sum(x > tau for x in v) / len(v), n=len(v))
+        res[model] = dict(tau=tau, threshold=which, cells=cells, layer=14 if model == "qwen" else 10)
+    return res
+
+
+def fig_dose():
+    """How hard to push: development sweeps, gain in Hindi explicit refusal against broken output, with the guards."""
+    t = json.load(open(ROOT / "results/v2/phase3/tune/tune_selection.json"))
+    q = [dict(label=f"α {g['alpha']}, τ {g['tau_percentile']}th", alpha=g["alpha"], tau_pct=g["tau_percentile"],
+              explicit=100 * g["d_explicit_harmful"], broken=100 * g["d_broken_harmful"], harmless=100 * g["d_broad_harmless"],
+              gate_harmful=g["gate_rate"]["dev_harmful"], gate_harmless=g["gate_rate"]["dev_harmless"], qualifies=g["qualifies"],
+              chosen=(g["alpha"] == t["chosen"]["alpha"] and g["tau_percentile"] == t["chosen"]["tau_percentile"]) if isinstance(t["chosen"], dict) else False)
+         for g in t["grid"]]
+    s1 = json.load(open(ROOT / "results/v2/phase7/stage1/stage1_results.json"))
+    names = {"E1": "explicit–soft 1.25×", "E2": "explicit–soft 2.5×", "R1": "refusal dir. 0.5×", "R2": "refusal dir. 1.0×", "R3": "refusal dir. 1.5×"}
+    l = [dict(label=names[a], arm=a, explicit=v["hiharm"]["explicit"]["diff"], broken=v["hiharm"]["broken"]["diff"],
+              harmless=v["hiharmless"]["broad"]["diff"], qualifies=v["qualifies"], chosen=(a == s1.get("stage1_choice")))
+         for a, v in s1["arms"].items()]
+    return dict(qwen=dict(points=q, n=401, guards=dict(broken=5, harmless=3, gain=None)),
+                llama=dict(points=l, n=150, guards=dict(broken=5, harmless=3, gain=15)))
+
+
 def check(f1, f2, f3):
     """Every headline must match the registered result files."""
     s7 = json.load(open(ROOT / "results/v2/phase7/stage2/stage2_results.json"))
@@ -161,7 +218,7 @@ def main():
     f1, f2, f3 = fig1(), fig2(), fig3()
     check(f1, f2, f3)
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    data = dict(fig1=f1, fig2=f2, fig3=f3)
+    data = dict(fig1=f1, fig2=f2, fig3=f3, layers=fig_layers(), gate=fig_gate(), dose=fig_dose())
     json.dump(data, open(OUT, "w"), indent=1)
     # the same numbers as a script, so the page also works when opened from disk (file:// cannot fetch JSON)
     OUT.with_suffix(".js").write_text("window.FIGURES = " + json.dumps(data) + ";\n")

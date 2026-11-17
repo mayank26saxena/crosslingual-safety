@@ -101,3 +101,9 @@ table.data td.n { font-family: var(--mono); font-size: 12px; text-align: right; 
 .neg .kicker { color: var(--t-comply); margin-bottom: 6px; }
 pre.bib { font: 12.5px/1.5 var(--mono); background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 14px; overflow-x: auto; }
 footer { border-top: 1px solid var(--rule); margin-top: 64px; padding: 24px 0 48px; font: 13px/1.5 var(--sans); color: var(--muted); }
+
+/* slider controls (gate figure) */
+.controls { display: flex; flex-wrap: wrap; gap: 18px; margin: 4px 0 10px; font: 13.5px/1.4 var(--sans); color: var(--ink-2); }
+.slider { display: inline-flex; align-items: center; gap: 8px; }
+.slider input[type=range] { width: 180px; accent-color: var(--c-comply); }
+.slider button { font: 12px var(--sans); border: 1px solid var(--rule); background: #fff; border-radius: 6px; padding: 2px 8px; cursor: pointer; color: var(--ink-2); }
