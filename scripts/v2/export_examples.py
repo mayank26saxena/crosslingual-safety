@@ -2,7 +2,8 @@
 
 Usage: python3 -I scripts/v2/export_examples.py
 Reads docs/blog/data/examples.json (redacted, translated excerpts; requests summarised at category level, never quoted). Fails unless:
-  - no Devanagari or Bengali script appears anywhere (Hindi replies are shown in translation only);
+  - Devanagari appears only in "original" fields (the redacted Hindi originals), each with the same number of redactions as its English
+    excerpt; no Bengali script anywhere;
   - every request summary is at most 16 words and every excerpt at most 80 words, with no URLs;
   - every judge label matches the registered, id-only label tables (Qwen: Phase 3 test; Llama: Phase 7 stage 2), so the examples
     cannot drift from the graded data. The excerpts themselves are hand-redacted and reviewed; this script checks form and labels only.
@@ -15,6 +16,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 SRC = ROOT / "docs/blog/data/examples.json"
 OUT = ROOT / "docs/blog/data/examples.js"
+SAME = set()
 
 
 def labels():
@@ -63,18 +65,29 @@ def pattern_counts(lab):
     g = lambda m, i, l: lab.get((m, i, l, "unsteered"))
     q = [i for i in items if g("qwen", i, "en") == "REFUSE_EXPLICIT" and g("qwen", i, "hi") == "REFUSE_SOFT"]
     l = [i for i in items if g("llama", i, "en") == "REFUSE_EXPLICIT" and g("llama", i, "hi") == "COMPLY"]
-    return dict(n=len(items), qwen_explicit_to_soft=len(q), llama_explicit_to_comply=len(l), both=len(set(q) & set(l)))
+    out = dict(n=len(items), qwen_explicit_to_soft=len(q), llama_explicit_to_comply=len(l), both=len(set(q) & set(l)))
+    # what the repair did, request by request (Hindi): misses, pushes applied (gate fired), misses turned into explicit refusals
+    for m in ("qwen", "llama"):
+        miss = [i for i in items if g(m, i, "hi") != "REFUSE_EXPLICIT"]
+        pushed = [i for i in miss if (m, i, "hi") not in SAME]
+        fixed = [i for i in pushed if lab.get((m, i, "hi", "repaired")) == "REFUSE_EXPLICIT"]
+        lost = [i for i in items if g(m, i, "hi") == "REFUSE_EXPLICIT" and lab.get((m, i, "hi", "repaired")) != "REFUSE_EXPLICIT"]
+        out[m] = dict(hi_not_explicit=len(miss), pushed=len(pushed), became_explicit=len(fixed), explicit_lost=len(lost))
+    return out
 
 
 def main():
     raw = SRC.read_text(encoding="utf-8")
     bad = []
-    if re.search(r"[\u0900-\u09FF]", raw):
-        bad.append("non-Latin (Devanagari/Bengali) script present")
+    deva = re.compile(r"[\u0900-\u097F]")
+    if re.search(r"[\u0980-\u09FF]", raw):
+        bad.append("Bengali script present")
     if re.search(r"https?://|www\.", raw):
         bad.append("URL present")
     d = json.loads(raw)
+    global SAME
     lab, same = labels()
+    SAME = same
     hum = human_labels()
     for it in d["items"]:
         m = re.search(r"[a-z_]+__\d+", it["id"])
@@ -84,10 +97,26 @@ def main():
         iid = m.group(0)
         if len(it["request_summary"].split()) > 16:
             bad.append(f"{iid}: request summary too long")
+        for field in ("id", "category", "request_summary", "takeaway"):
+            if deva.search(it[field]):
+                bad.append(f"{iid}: Hindi script outside an 'original' field ({field})")
         for r in it["replies"]:
             k = (r["model"], iid, r["lang"], r["condition"])
             if len(r["excerpt"].split()) > 80:
                 bad.append(f"{k}: excerpt too long")
+            if deva.search(r["excerpt"]):
+                bad.append(f"{k}: Hindi script in the English excerpt")
+            if r["lang"] == "hi":
+                o = r.get("original")
+                if not o:
+                    bad.append(f"{k}: Hindi reply without its redacted original")
+                else:
+                    if o.count("[redacted") != r["excerpt"].count("[redacted"):
+                        bad.append(f"{k}: original and excerpt redact a different number of spans")
+                    if len(o.split()) > 90:
+                        bad.append(f"{k}: original too long")
+            elif r.get("original"):
+                bad.append(f"{k}: English reply should not carry an original")
             if lab.get(k) != r["judge"]:
                 bad.append(f"{k}: judge label {r['judge']} != registered {lab.get(k)}")
             if r["condition"] == "repaired":
@@ -102,6 +131,16 @@ def main():
     if bad:
         raise SystemExit("examples failed validation:\n  " + "\n  ".join(bad))
     d["stats"] = pattern_counts(lab)
+    # the request-level repair counts must reconcile with the registered Hindi explicit-refusal gains (Figure 6)
+    f2 = json.load(open(ROOT / "docs/blog/data/figures.json"))["fig2"]
+    for m in ("qwen", "llama"):
+        st = d["stats"][m]
+        net = 100 * (st["became_explicit"] - st["explicit_lost"]) / d["stats"]["n"]
+        if abs(net - f2[m]["arms"]["hi"]["change"]) > 0.05:
+            bad.append(f"{m}: repair counts give {net:.2f} pts, registered {f2[m]['arms']['hi']['change']:.2f}")
+        print(f"{m}: net {net:.2f} pts vs registered {f2[m]['arms']['hi']['change']:.2f}")
+    if bad:
+        raise SystemExit("examples failed validation:\n  " + "\n  ".join(bad))
     print("pattern counts:", d["stats"])
     OUT.write_text("window.EXAMPLES = " + json.dumps(d, ensure_ascii=False) + ";\n", encoding="utf-8")
     print("all checks passed; wrote", OUT.relative_to(ROOT))

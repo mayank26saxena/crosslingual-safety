@@ -160,3 +160,11 @@ footer { border-top: 1px solid var(--rule); margin-top: 64px; padding: 22px 0 48
 figure.fig.wide { width: calc(100% - 40px); max-width: calc(var(--measure) - 40px); margin: 30px auto 34px; padding: 18px 0 0; }
 .tx-cell .aside { color: var(--muted); font-style: italic; }
 .tx-head { flex-direction: column; align-items: flex-start; gap: 3px; }
+.tx-orig { font-family: "Noto Sans Devanagari", var(--sans); font-size: 14px; line-height: 1.7; }
+.tx-flip { margin-top: 8px; font: 500 11.5px var(--mono); color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer;
+  text-decoration: underline; text-underline-offset: 3px; }
+table.rates { margin: 4px 0 10px; font-size: 14px; }
+table.rates th { font: 600 12px var(--sans); color: var(--muted); }
+table.rates th.n, table.rates td.n { text-align: right; width: 90px; }
+table.rates .pc { color: var(--muted); }
+.rates-note { font: 14.5px/1.55 var(--sans); color: var(--ink-2); }

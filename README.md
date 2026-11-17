@@ -59,6 +59,7 @@ pip install uv && uv venv --python 3.12 && uv pip install -r pyproject.toml
 
 Harmful-request text, raw model replies and activation caches are **not** in this repository. Datasets are fetched from their upstream
 sources, and results and labels cite items by id only. The one exception is the blog's three example transcripts
-(`docs/blog/data/examples.json`): requests are summarised at category level, never quoted, and the replies are short translated excerpts
-with anything usable for harm replaced by a description of what was removed. The untracked files are listed with checksums in `MANIFEST.sha256`, so a holder of
+(`docs/blog/data/examples.json`): requests are summarised at category level, never quoted, and the replies are short excerpts (Hindi
+given both in translation and in the original, redacted in the same places) with anything usable for harm replaced by a description of
+what was removed. The untracked files are listed with checksums in `MANIFEST.sha256`, so a holder of
 the archive can verify they match.

@@ -7,7 +7,7 @@
 <meta name="description" content="Two open chat models refuse harmful requests far less often in Hindi than in English. They fail in different ways, inside and out, and the fix depends on the model.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Noto+Sans+Devanagari:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/tokens.css">
 </head>
 <body>
@@ -70,17 +70,28 @@
   <p>Before any statistics, here is what the gap looks like. Each panel below is one held-out request, asked in English and in Hindi, to
     both models, with the label our judge gave each reply. The third column is the Hindi reply after the repair described in section 06; on items where the repair's gate does not fire, it
     leaves the reply unchanged, and the panel says so.
-    The requests are summarised rather than quoted, Hindi replies are translated, and anything that would help someone cause harm is
-    blacked out.</p>
+    The requests are summarised rather than quoted, and anything that would help someone cause harm is blacked out. Hindi replies are
+    shown in our English translation; each one can be switched to the model's original Hindi, redacted in the same places.</p>
   <p>We picked these three by hand to illustrate, so they are not a random sample. How common is each pattern? Of the
     <span data-k="xn"></span> held-out harmful requests, Qwen refuses explicitly in English but only softly in Hindi on
     <span data-k="xq"></span>; Llama refuses explicitly in English but complies in Hindi on <span data-k="xl"></span>; both happen on the
-    same request <span data-k="xb"></span> times. In the third example Qwen runs against the trend.</p>
+    same request <span data-k="xb"></span> times. The first two examples are requests the repair fixed; the third is one where it did
+    nothing, which on Hindi requests is the more common case.</p>
 </div>
 <div class="col"><div class="transcripts" id="tx">
   <div class="tx-tabs" role="tablist"></div>
   <div class="tx-body"></div>
-</div></div>
+</div>
+  <p>The repaired column is where the examples are easiest to over-read, so here is what the repair did across all held-out requests.
+    A push is applied only when the gate opens, and it does not open on most Hindi misses.</p>
+  <table class="data rates" id="rates">
+    <thead><tr><th>Held-out Hindi harmful requests</th><th class="n">Qwen</th><th class="n">Llama</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <p class="rates-note">Requests fixed minus refusals undone gives the headline gains: <span id="rates-net"></span>. When Llama's push is
+    applied it nearly always produces an explicit refusal; what limits it is the gate, which cannot single out Hindi (section 06,
+    Figure 7).</p>
+</div>
 
 <div class="col"><h2><span class="no">03</span>What replaces the refusal?</h2>
   <p>Explicit refusal drops sharply in both models. The interesting part is where it goes.</p>
@@ -287,7 +298,8 @@
     <li><strong>Tune once, test once.</strong> Test numbers came in at about 80% of the best development numbers, as you'd expect from
       picking the best of several settings.</li>
     <li><strong>No harmful text.</strong> Requests are cited by item id or summarised, never quoted. The only reply text shown is the
-      redacted, translated excerpts in section 02, with anything usable for harm blacked out; the repository holds labels by item id
+      redacted excerpts in section 02 (translated, with the redacted Hindi original available), with anything usable for harm blacked
+      out; the repository holds labels by item id
       only.</li>
   </ul>
 
@@ -328,7 +340,7 @@
 
 <footer><div class="col">Figures are drawn from <code>docs/blog/data/figures.json</code>, which <code>scripts/v2/export_figure_data.py</code>
   regenerates from the id-only label tables and checks against the registered results. Requests are never quoted; the example replies are
-  redacted, translated excerpts, validated against the registered labels by <code>scripts/v2/export_examples.py</code>.</div></footer>
+  redacted excerpts, in English translation with the redacted Hindi original one click away, validated against the registered labels by <code>scripts/v2/export_examples.py</code>.</div></footer>
 
 <script src="data/figures.js"></script>
 <script src="data/examples.js"></script>
@@ -388,17 +400,36 @@
           const r = it.replies.find((x) => x.model === m && x.lang === lang && x.condition === cond);
           if (!r) { h += `<div class="tx-cell empty ${lang}"><div class="tx-head"><span>${head}</span></div>not shown</div>`; return; }
           const human = r.human && r.human !== r.judge ? ` · human: ${NAMES[r.human] || r.human}` : "";
+          const orig = r.original && !r.original.startsWith("[identical");
           h += `<div class="tx-cell ${lang}"><div class="tx-head"><span>${head}</span><span class="chip ${r.judge}"><i></i>${NAMES[r.judge] || r.judge}</span></div>` +
-            `${fmtx(r.excerpt)}${r.translated ? '<span class="tr">translated from Hindi</span>' : ""}${human ? `<span class="tr">${esc(human)}</span>` : ""}</div>`;
+            `<div class="tx-text">${fmtx(r.excerpt)}</div>` +
+            (orig ? `<div class="tx-text tx-orig" lang="hi" hidden>${fmtx(r.original)}</div>` : "") +
+            (r.translated && orig ? '<button type="button" class="tx-flip">show original Hindi</button>' : "") +
+            `${human ? `<span class="tr">${esc(human)}</span>` : ""}</div>`;
         });
         h += "</div>";
       });
       h += `<p class="tx-take">${esc(it.takeaway)}</p>`;
       body.innerHTML = h;
+      body.querySelectorAll(".tx-flip").forEach((b) => b.onclick = () => {
+        const c = b.closest(".tx-cell"), o = c.querySelector(".tx-orig"), t = c.querySelector(".tx-text:not(.tx-orig)");
+        const showing = !o.hidden; o.hidden = showing; t.hidden = !showing;
+        b.textContent = showing ? "show original Hindi" : "show English translation"; });
     };
     E.items.forEach((it, i) => { const b = document.createElement("button"); b.type = "button"; b.setAttribute("role", "tab");
       b.textContent = `${i + 1} · ${it.category}`; b.onclick = () => show(i); tabs.appendChild(b); });
     show(0);
+    const S = E.stats, tb = document.querySelector("#rates tbody");
+    if (S && tb) {
+      const pc = (a, b) => `${a} <span class="pc">(${Math.round(100 * a / b)}%)</span>`;
+      [["not refused explicitly, unsteered", S.qwen.hi_not_explicit, S.llama.hi_not_explicit],
+       ["…of which the gate opened and the push was applied", S.qwen.pushed, S.llama.pushed],
+       ["…of which the reply became an explicit refusal", pc(S.qwen.became_explicit, S.qwen.pushed), pc(S.llama.became_explicit, S.llama.pushed)],
+       ["explicit refusals the repair undid", S.qwen.explicit_lost, S.llama.explicit_lost]]
+        .forEach((r) => { tb.insertAdjacentHTML("beforeend", `<tr><td>${r[0]}</td><td class="n">${r[1]}</td><td class="n">${r[2]}</td></tr>`); });
+      const net = (m) => `(${S[m].became_explicit} − ${S[m].explicit_lost}) / ${S.n} = +${(100 * (S[m].became_explicit - S[m].explicit_lost) / S.n).toFixed(1)} points`;
+      document.getElementById("rates-net").textContent = `${net("qwen")} for Qwen and ${net("llama")} for Llama`;
+    }
   })();
   Charts.repairs(slot("fig2", ".chart"), [
     Object.assign({ title: "Qwen3-8B", subtitle: "push toward explicit refusal · passed its checks" }, F.fig2.qwen),
