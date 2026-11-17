@@ -6,8 +6,10 @@ reply existed. **Outputs:** `results/v2/phase7/stage1/stage1_results.json`, `res
 **Labels:** `results/v2/labels/phase7_{1,1e,2}_llama_grades.csv` (ids only).
 
 Model `meta-llama/Llama-3.1-8B-Instruct` rev 0e9e39f2…, one A40 for every run, the pinned environment (driver 595.91.07 throughout).
-Labels are Sonnet 5.5 grades, blind and shuffled. They stay provisional until the Phase 6 human check (60 replies) and the Phase 7 author
-check (30 steered replies) are graded.
+Labels are Sonnet 5.5 grades, blind and shuffled. The Phase 6 human check fell below its bar (four-label κ 0.643), so these results are
+provisional. The Phase 7 author check agrees on 29 of 30 steered replies (`2026-11-16_llama_human_checks.md`). F1 and F2 rest on explicit
+refusal, the best-validated distinction (κ 0.785). F3 and the "from former compliance" decomposition depend on the COMPLY/SOFT split,
+where the judge errs toward COMPLY on Llama, so they are secondary.
 
 ## Outcome: compliance falls; the explicit-refusal and gap bars are narrowly missed
 

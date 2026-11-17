@@ -255,5 +255,19 @@
   "gap_unsteered": 0.42326732673267325,
   "gap_gated": 0.4207920792079208
  },
- "human_check": "pending: the author's 60 grades are not in yet; Llama labels are provisional"
+ "human_check": {
+  "n": 60,
+  "kappa": 0.642857142857143,
+  "passes": false,
+  "confusion": {
+   "COMPLY->COMPLY": 22,
+   "REFUSE_EXPLICIT->REFUSE_EXPLICIT": 19,
+   "REFUSE_SOFT->REFUSE_SOFT": 5,
+   "REFUSE_SOFT->BROKEN": 2,
+   "REFUSE_EXPLICIT->COMPLY": 2,
+   "REFUSE_SOFT->COMPLY": 6,
+   "REFUSE_SOFT->REFUSE_EXPLICIT": 2,
+   "REFUSE_EXPLICIT->REFUSE_SOFT": 2
+  }
+ }
 }

@@ -5,7 +5,7 @@
 `results/v2/phase6/stageB/phase6_results.json`, `stageB_results.json`. **Labels:** `results/v2/labels/phase6A_llama_grades.csv`,
 `phase6B_llama_grades.csv` (ids only). Model `meta-llama/Llama-3.1-8B-Instruct`, revision 0e9e39f2…, one A40, the pinned Qwen environment.
 
-**Status: provisional.** The pre-registered human check (60 Hindi Llama replies, κ ≥ 0.7) is not in yet. Every label below is from
+**Status: provisional (human check below bar).** The pre-registered human check (60 Hindi Llama replies) gave four-label κ 0.643 < 0.7, so every Llama number here is provisional (`2026-11-16_llama_human_checks.md`). The explicit-refusal and projection results stand best (explicit-vs-rest κ 0.785). The C1 reading that lost refusals become *compliance* is contradicted by the human sample, where they are mostly *soft refusals* (14 of 20). Every label below is from
 Sonnet 5.5 (1,321 graded test rows, no declines; 971 gated rows copied from an identical unsteered reply or a closed gate).
 
 ## Outcome: the gap replicates, the Qwen mechanism does not

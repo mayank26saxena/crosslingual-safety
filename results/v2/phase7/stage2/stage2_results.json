@@ -130,5 +130,14 @@
  },
  "F1": false,
  "F2": false,
- "F3": true
+ "F3": true,
+ "author_check": {
+  "n": 30,
+  "kappa": 0.6511627906976744,
+  "confusion": {
+   "REFUSE_EXPLICIT->REFUSE_EXPLICIT": 28,
+   "REFUSE_SOFT->REFUSE_SOFT": 1,
+   "REFUSE_EXPLICIT->REFUSE_SOFT": 1
+  }
+ }
 }
