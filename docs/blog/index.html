@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Noto+Sans+Devanagari:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/tokens.css?v=11">
+<link rel="stylesheet" href="assets/tokens.css?v=12">
 </head>
 <body>
 <header class="top"><div class="col">
@@ -297,9 +297,9 @@
   regenerates from the id-only label tables and checks against the registered results. Requests are never quoted; the example replies are
   redacted excerpts, in English translation with the redacted Hindi original one click away, validated against the registered labels by <code>scripts/v2/export_examples.py</code>.</div></footer>
 
-<script src="data/figures.js?v=11"></script>
-<script src="data/examples.js?v=11"></script>
-<script src="assets/charts.js?v=11"></script>
+<script src="data/figures.js?v=12"></script>
+<script src="data/examples.js?v=12"></script>
+<script src="assets/charts.js?v=12"></script>
 <script>
   const F = window.FIGURES;
   const slot = (id, q) => document.querySelector(`#${id} ${q}`);
@@ -346,45 +346,44 @@
     const NAMES = { REFUSE_EXPLICIT: "explicit refusal", REFUSE_SOFT: "soft refusal", COMPLY: "complied", BROKEN: "broken" };
     const esc = (t) => t.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
     const fmtx = (t) => esc(t).replace(/(\w)'(\w)/g, "$1’$2").replace(/\[(redacted[^\]]*)\]/g, '<span class="redact">$1</span>').replace(/\[([^\]]+)\]/g, '<span class="aside">[$1]</span>');
-    function build(rootId, cols, takeKey, opts = {}) {
+    const MODELS = [["qwen", "Qwen3-8B"], ["llama", "Llama-3.1-8B"]];
+    const SHORT = { REFUSE_EXPLICIT: "explicit", REFUSE_SOFT: "soft", COMPLY: "complied", BROKEN: "broken" };
+    const pick = (it, m, lang, cond) => it.replies.find((x) => x.model === m && x.lang === lang && x.condition === cond);
+    const unchanged = (r) => !!r && r.excerpt.startsWith("[identical");
+    const seqChip = (r, same) => r ? `<span class="chip ${r.judge}${same ? " same" : ""}"><i></i>${same ? "unchanged" : SHORT[r.judge]}</span>` : "";
+    // cols: [lang, condition, bubble heading]; strip: the arrow sequence shown in the column header; takeKey: which sentence to show first
+    function build(rootId, cols, strip, takeKey) {
       const root = document.getElementById(rootId); if (!root) return;
-      const items = opts.only ? E.items.filter((x) => x.id.includes(opts.only)) : E.items;
-      const tabs = root.querySelector(".tx-tabs"), body = root.querySelector(".tx-body");
-      const show = (i) => {
-        const it = items[i];
-        [...tabs.children].forEach((b, j) => b.setAttribute("aria-selected", j === i));
-        let h = `<div class="tx-request"><span class="lbl">request ${esc(it.id)} · summarised, not quoted</span>${esc(it.request_summary)}<span class="tx-tags">dataset harm tags: ${(it.harm || []).map(esc).join(" · ")}</span></div>`;
-        (opts.models || [["qwen", "Qwen3-8B"], ["llama", "Llama-3.1-8B"]]).forEach(([m, name]) => {
-          h += `<div class="tx-model">${name}</div><div class="tx-row" style="--n:${cols.length}">`;
+      let h = `<div class="ex-bar"><span>One row per request. Each coloured label is the judge's verdict on that reply. Open a row to read the replies; Hindi replies appear in English translation.</span>` +
+        `<label class="ex-switch"><input type="checkbox"> Show original Hindi</label></div>` +
+        `<div class="ex-head"><span>Request</span>${MODELS.map(([, n]) => `<span>${n}<small>${strip}</small></span>`).join("")}<span></span></div>`;
+      E.items.forEach((it, i) => {
+        h += `<div class="ex-item${i === 0 ? " open" : ""}"><button type="button" class="ex-row" aria-expanded="${i === 0}"><span class="ex-cat"><b>${i + 1}</b>${esc(it.category)}</span>` +
+          MODELS.map(([m, n]) => `<span class="ex-seq"><em class="ex-mn">${n}</em>` + cols.map(([lang, cond], k) => { const r = pick(it, m, lang, cond); return seqChip(r, k > 0 && unchanged(r)); }).join('<i class="ex-arrow">→</i>') + `</span>`).join("") +
+          `<span class="ex-caret" aria-hidden="true"></span></button><div class="ex-detail">` +
+          `<p class="ex-take"><b>What to notice.</b> ${esc(it[takeKey])}</p>` +
+          `<div class="ex-ask"><span>You asked</span>${esc(it.request_summary)}<small>dataset harm tags: ${(it.harm || []).map(esc).join(" · ")}</small></div>`;
+        MODELS.forEach(([m, name]) => {
+          h += `<div class="ex-model">${name}</div><div class="ex-replies" style="--n:${cols.length}">`;
           cols.forEach(([lang, cond, head]) => {
-            const r = it.replies.find((x) => x.model === m && x.lang === lang && x.condition === cond);
-            if (!r) { h += `<div class="tx-cell ${lang} unchanged"><div class="tx-head"><span>${head}</span></div>not shown</div>`; return; }
-            const chip = `<span class="chip ${r.judge}"><i></i>${NAMES[r.judge] || r.judge}</span>`;
-            if (r.excerpt.startsWith("[identical")) {
-              h += `<div class="tx-cell ${lang} unchanged"><div class="tx-head"><span>${head}</span>${chip}</div>The gate did not open for this request, so the reply is unchanged.</div>`; return; }
+            const r = pick(it, m, lang, cond);
+            if (!r) return;
+            if (unchanged(r)) { h += `<div class="ex-bubble same"><div class="ex-bh"><span>${head}</span>${seqChip(r, false)}</div>The gate did not open for this request, so the reply is unchanged.</div>`; return; }
             const orig = r.original && !r.original.startsWith("[identical");
             const human = r.human && r.human !== r.judge ? `human: ${NAMES[r.human] || r.human}` : "";
-            h += `<div class="tx-cell ${lang}"><div class="tx-head"><span>${head}</span>${chip}</div><div class="tx-text">${fmtx(r.excerpt)}</div>` +
-              (orig ? `<div class="tx-text tx-orig" lang="hi" hidden>${fmtx(r.original)}</div>` : "") +
-              (r.translated && orig ? '<button type="button" class="tx-flip">show original Hindi</button>' : "") +
-              (human ? `<span class="tr">${esc(human)}</span>` : "") + `</div>`;
+            h += `<div class="ex-bubble ${lang}"><div class="ex-bh"><span>${head}</span>${seqChip(r, false)}</div><div class="t-en${orig ? " has-orig" : ""}">${fmtx(r.excerpt)}</div>` +
+              (orig ? `<div class="t-hi" lang="hi">${fmtx(r.original)}</div>` : "") + (human ? `<span class="tr">${esc(human)}</span>` : "") + `</div>`;
           });
           h += "</div>";
         });
-        h += `<p class="tx-take">${esc(opts.caption || it[takeKey])}</p>`;
-        body.innerHTML = h;
-        body.querySelectorAll(".tx-flip").forEach((b) => b.onclick = () => {
-          const c = b.closest(".tx-cell"), o = c.querySelector(".tx-orig"), t = c.querySelector(".tx-text:not(.tx-orig)");
-          const showing = !o.hidden; o.hidden = showing; t.hidden = !showing;
-          b.textContent = showing ? "show original Hindi" : "show English translation"; });
-      };
-      if (items.length === 1) tabs.hidden = true;
-      items.forEach((it, i) => { const b = document.createElement("button"); b.type = "button"; b.setAttribute("role", "tab");
-        b.textContent = `${i + 1} · ${it.category}`; b.onclick = () => show(i); tabs.appendChild(b); });
-      show(0);
+        h += `</div></div>`;
+      });
+      root.className = "ex"; root.innerHTML = h;
+      root.querySelectorAll(".ex-row").forEach((b) => b.onclick = () => { const it = b.parentElement; const o = it.classList.toggle("open"); b.setAttribute("aria-expanded", o); });
+      root.querySelector(".ex-switch input").onchange = (e) => root.classList.toggle("orig", e.target.checked);
     }
-    build("tx-gap", [["en", "unsteered", "English"], ["hi", "unsteered", "Hindi"]], "takeaway_gap");
-    build("tx-fix", [["hi", "unsteered", "Hindi, as it was"], ["hi", "repaired", "Hindi, repaired"]], "takeaway_repair");
+    build("tx-gap", [["en", "unsteered", "English"], ["hi", "unsteered", "Hindi"]], "English → Hindi", "takeaway_gap");
+    build("tx-fix", [["hi", "unsteered", "Hindi, as it was"], ["hi", "repaired", "Hindi, repaired"]], "Hindi → repaired", "takeaway_repair");
     const S = E.stats, tb = document.querySelector("#rates tbody");
     if (S && tb) {
       const pc = (a, b) => `${a} <span class="pc">(${Math.round(100 * a / b)}%)</span>`;
