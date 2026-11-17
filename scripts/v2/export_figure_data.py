@@ -245,6 +245,27 @@ def severity():
     return dict(llama=llama, qwen=qwen)
 
 
+def guards():
+    """General-ability check (Global-MMLU, 300 questions per language) before and after each repair, asserted unchanged as the post says."""
+    q3 = json.load(open(ROOT / "results/v2/phase3/test/test_results.json"))
+    s7 = json.load(open(ROOT / "results/v2/phase7/stage2/stage2_results.json"))
+    qa = q3["outcomes"]
+    out = dict(qwen=dict(hi=100 * qa["mmlu_hi"]["accuracy"]["unsteered"], en=100 * qa["mmlu_en"]["accuracy"]["unsteered"],
+                         hi_after=100 * qa["mmlu_hi"]["accuracy"]["gated"], en_after=100 * qa["mmlu_en"]["accuracy"]["gated"], n=qa["mmlu_hi"]["accuracy"]["n"],
+                         gate_on_mmlu=max(q3["gate_rate"]["mmlu_hi"], q3["gate_rate"]["mmlu_en"])),
+               llama=dict(hi=s7["mmlu"]["hi"]["unsteered"], en=s7["mmlu"]["en"]["unsteered"], hi_after=s7["mmlu"]["hi"]["R3"], en_after=s7["mmlu"]["en"]["R3"]))
+    for m, d in out.items():
+        ok = abs(d["hi"] - d["hi_after"]) < 0.05 and abs(d["en"] - d["en_after"]) < 0.05
+        print(f"{'OK ' if ok else 'BAD'} {m} Global-MMLU unchanged: Hindi {d['hi']:.1f} -> {d['hi_after']:.1f}, English {d['en']:.1f} -> {d['en_after']:.1f}")
+        if not ok:
+            raise SystemExit("Global-MMLU changed; the post says it did not")
+    ok = out["qwen"]["gate_on_mmlu"] == 0
+    print(f"{'OK ' if ok else 'BAD'} Qwen gate never opened on a Global-MMLU question (text claim)")
+    if not ok:
+        raise SystemExit("the gate opened on MMLU; revise the post")
+    return out
+
+
 def spanish():
     """Appendix C: the Qwen Spanish control, computed from the id-only label table and cross-checked against the provisional result file."""
     import csv
@@ -309,7 +330,7 @@ def main():
     f1, f2, f3 = fig1(), fig2(), fig3()
     check(f1, f2, f3)
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    data = dict(fig1=f1, fig2=f2, fig3=f3, layers=fig_layers(), gate=fig_gate(), dose=fig_dose(), severity=severity(), spanish=spanish())
+    data = dict(fig1=f1, fig2=f2, fig3=f3, layers=fig_layers(), gate=fig_gate(), dose=fig_dose(), severity=severity(), spanish=spanish(), guards=guards())
     check_gate(data)
     json.dump(data, open(OUT, "w"), indent=1)
     # the same numbers as a script, so the page also works when opened from disk (file:// cannot fetch JSON)

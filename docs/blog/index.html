@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Noto+Sans+Devanagari:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/tokens.css?v=22">
+<link rel="stylesheet" href="assets/tokens.css?v=23">
 </head>
 <body>
 <header class="top"><div class="col">
@@ -212,6 +212,7 @@
 </figure>
 <div class="col">
   <p>Figure 7 shows why English rises too: the gate asks whether a prompt looks harmful, and English harmful prompts score at least as high as Hindi ones. For Llama, a Hindi-set threshold still works. It is the median Hindi development score, so it lets through about half of Hindi harmful requests by design. What is not by design is the other side: the same threshold lets through none of the 169 Hindi harmless requests, because Llama still orders Hindi harmful prompts above harmless ones, only on a smaller scale. Llama’s gap narrows more partly because its English refusal was already near the ceiling (89%), leaving little room to rise.</p>
+  <p><strong>Side effects.</strong> We also checked general ability and over-refusal. On 300 Global-MMLU questions per language, accuracy did not move: Qwen stayed at <span data-k="mm_q_hi"></span> in Hindi and <span data-k="mm_q_en"></span> in English, Llama at <span data-k="mm_l_hi"></span> and <span data-k="mm_l_en"></span>. Refusal of the 169 harmless requests stayed within the 3-point rise we allowed. Both checks are weak, though. The gate never opened on a Qwen MMLU question, so those replies are identical by construction; the checks show that the gate stays quiet on benign inputs, not what steering does to them. The more direct test is to force the push on for every question. For Qwen, Global-MMLU accuracy then went from 51.3% to 52.3% in Hindi and from 64.0% to 63.7% in English, within noise for 300 questions.</p>
   <h3><span class="sub">05.5</span>Request by request</h3>
   <p>The repair only acts when its gate opens, so averages hide what it does to individual requests. The table counts, across all 404 held-out requests, what happened to the Hindi replies that were not explicit refusals.</p>
   <table class="data rates" id="rates">
@@ -312,9 +313,9 @@
 
 <footer><div class="col">Requests are never quoted. The example replies are redacted excerpts, in English translation with the redacted Hindi original one click away, and their labels were checked against the registered grades.</div></footer>
 
-<script src="data/figures.js?v=22"></script>
-<script src="data/examples.js?v=22"></script>
-<script src="assets/charts.js?v=22"></script>
+<script src="data/figures.js?v=23"></script>
+<script src="data/examples.js?v=23"></script>
+<script src="assets/charts.js?v=23"></script>
 <script>
   const F = window.FIGURES;
   const slot = (id, q) => document.querySelector(`#${id} ${q}`);
@@ -354,6 +355,8 @@
         ["Repair: Hindi catches up by (points)", (m) => `${sgn(F.fig2[m].narrowing)} ${ci(F.fig2[m].narrowing_ci, pm)}`]];
       rows.forEach(([name, fn]) => est.insertAdjacentHTML("beforeend", `<tr><td>${name}</td><td>${fn("qwen")}</td><td>${fn("llama")}</td></tr>`));
     }
+    const gd = F.guards, pc1 = (v) => v.toFixed(1) + "%";
+    Object.assign(vals, { mm_q_hi: pc1(gd.qwen.hi_after), mm_q_en: pc1(gd.qwen.en_after), mm_l_hi: pc1(gd.llama.hi_after), mm_l_en: pc1(gd.llama.en_after) });
     const sh = F.spanish, hx = F.fig1.qwen.rows.find((r) => r.label === "REFUSE_EXPLICIT");
     Object.assign(vals, { sp_n: sh.harmful.n, sp_hn: sh.harmless.n, sp_ex_en: w(sh.harmful.explicit.en), sp_ex_es: w(sh.harmful.explicit.es), sp_any_en: w(sh.harmful.any.en), sp_any_es: w(sh.harmful.any.es),
       sp_cp_en: w(sh.harmful.comply.en), sp_cp_es: w(sh.harmful.comply.es), sp_hl_en: w(sh.harmless.comply.en), sp_hl_es: w(sh.harmless.comply.es),
