@@ -150,9 +150,8 @@ table.rates .pc { color: var(--muted); }
 .rates-note { font: 14px/1.55 var(--sans); color: var(--ink-2); }
 
 /* callouts, citations, footer */
-.held-back { border-left: 3px solid var(--c-comply); background: #fdf5f3; border-radius: 0 8px 8px 0; padding: 14px 18px 4px; margin: 22px 0; }
-.held-back .lbl { font: 600 11.5px/1 var(--sans); text-transform: uppercase; letter-spacing: .1em; color: var(--t-comply); margin: 0 0 10px; }
-.held-back p { font-size: 16px; }
+.held-back { border-left: 3px solid var(--c-comply); padding: 2px 0 0 20px; margin: 8px 0 22px; }
+.held-back p:last-child { margin-bottom: 8px; }
 a.cite { text-decoration: none; border-bottom: 1px dotted var(--brand); }
 a.cite:hover { border-bottom-style: solid; }
 ol.refs { font: 13.5px/1.55 var(--sans); color: var(--ink-2); padding-left: 1.4em; }
@@ -169,8 +168,9 @@ footer { border-top: 1px solid var(--rule); margin-top: 60px; padding: 22px 0 48
 
 
 /* floating contents list: fixed on the left from 900px up; below that, a small "Contents" button opens it as a panel */
-nav.rail { display: none; }
-.rail-toggle { display: none; }
+nav.rail { display: none; opacity: 0; pointer-events: none; transition: opacity .3s ease, transform .3s ease; transform: translateX(-6px); }
+.rail-toggle { display: none; opacity: 0; pointer-events: none; transition: opacity .3s ease; }
+body.scrolled nav.rail, body.scrolled .rail-toggle { opacity: 1; pointer-events: auto; transform: none; }
 nav.rail p { font: 600 11px var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0 0 14px; }
 nav.rail a { display: block; padding: 7px 0; color: #8b918d; text-decoration: none; transition: color .15s; font: 14px/1.35 var(--sans); }
 nav.rail a span { font: 500 11px var(--mono); margin-right: 8px; opacity: .8; }
