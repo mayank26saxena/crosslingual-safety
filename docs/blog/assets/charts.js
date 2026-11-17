@@ -59,8 +59,8 @@
 
   /* Paired dumbbells: for each category, English -> Hindi share with Wilson whiskers, one panel per model. */
   function pairedShift(container, panels, opts = {}) {
-    const narrow = container.clientWidth < 640;
-    const W = narrow ? Math.max(320, container.clientWidth) : 920, rowH = 44, top = 74, panelGap = 34, labelW = narrow ? 104 : 118, padR = 58;
+    const narrow = container.clientWidth < 720;
+    const W = narrow ? Math.max(320, container.clientWidth) : 920, rowH = 44, top = 74, panelGap = 34, labelW = container.clientWidth < 500 ? 116 : 128, padR = 58;
     const colW = narrow ? W - labelW : (W - labelW - panelGap) / 2, innerW = colW - padR;
     const panelH = top + 4 * rowH + 74, H = narrow ? panelH * panels.length : panelH;
     const s = svg(container, W, H);
@@ -72,7 +72,7 @@
       xgrid(g, x, [0, 25, 50, 75, 100], top - 4, top + 4 * rowH - 10);
       p.rows.forEach((r, i) => {
         const y = top + 14 + i * rowH, c = css(COLOR[r.label]);
-        if (pi === 0 || narrow) text(g, -14, y + 4, NAME[r.label], { "text-anchor": "end", "font-size": 13.5, "font-weight": 600 });
+        if (pi === 0 || narrow) text(g, -14, y + 4, NAME[r.label], { "text-anchor": "end", "font-size": 13, "font-weight": 600 });
         whisker(g, x(r.en.ci[0]), x(r.en.ci[1]), y, css("--ink-2"));
         whisker(g, x(r.hi.ci[0]), x(r.hi.ci[1]), y, c);
         el("line", { x1: x(r.en.pct), x2: x(r.hi.pct), y1: y, y2: y, stroke: c, "stroke-width": 2.5, opacity: 0.85 }, g);
@@ -102,7 +102,7 @@
 
   /* Before -> after arrows per language, with the gap and a registered bar; one panel per model. */
   function repairs(container, panels, opts = {}) {
-    const narrow = container.clientWidth < 640;
+    const narrow = container.clientWidth < 720;
     const W = narrow ? Math.max(320, container.clientWidth) : 920, top = 78, rowH = 46, labelW = narrow ? 64 : 150, padR = narrow ? 70 : 160;
     const panelH = top + 2 * rowH + (narrow ? 74 : 58);
     const H = panels.length * panelH;
@@ -142,7 +142,7 @@
 
   /* Projection small multiples: harmless and harmful, English and Hindi, each model on its own axis. */
   function projections(container, panels, opts = {}) {
-    const narrow = container.clientWidth < 640;
+    const narrow = container.clientWidth < 720;
     const W = narrow ? Math.max(320, container.clientWidth) : 920, panelGap = 40, labelW = 92, padR = 18, top = 78, rowH = 60;
     const colW = narrow ? W : (W - panelGap) / 2, panelH = top + 2 * rowH + 52, H = narrow ? panelH * panels.length : panelH;
     const s = svg(container, W, H);
@@ -187,7 +187,7 @@
 
   /* Layer profile: per-layer curves (ablation effect, separation by language), chosen layer highlighted, hover crosshair. */
   function layerProfile(container, panels) {
-    const narrow = container.clientWidth < 640;
+    const narrow = container.clientWidth < 720;
     const W = narrow ? Math.max(320, container.clientWidth) : 920, gap = 40, padL = 44, padR = narrow ? 56 : 14, top = 74, rowH = 110, rowGap = 48;
     const colW = narrow ? W : (W - gap) / 2, innerW = colW - padL - padR;
     const rows = [
@@ -249,7 +249,7 @@
 
   /* Gate distribution: every prompt's gate score as a dot, threshold line with a draggable slider that updates the open shares. */
   function gate(container, panels, opts = {}) {
-    const narrow = container.clientWidth < 640;
+    const narrow = container.clientWidth < 720;
     const W = narrow ? Math.max(320, container.clientWidth) : 920, gap = 40, labelW = 112, padR = 64, top = 70, rowH = 44;
     const colW = narrow ? W : (W - gap) / 2, innerW = colW - labelW - padR;
     const order = [["harmless_en", "Harmless · EN"], ["harmless_hi", "Harmless · HI"], ["harmful_en", "Harmful · EN"], ["harmful_hi", "Harmful · HI"]];
@@ -298,7 +298,7 @@
 
   /* Mechanism diagram: residual stream with the gate read-out and the push, one row per model. */
   function mechanism(container, specs) {
-    const narrow = container.clientWidth < 640;
+    const narrow = container.clientWidth < 720;
     const W = narrow ? Math.max(320, container.clientWidth) : 920, rowH = narrow ? 200 : 150, top = 18;
     const H = top + specs.length * rowH;
     const s = svg(container, W, H);
@@ -332,7 +332,7 @@
 
   /* Dose-response: each candidate setting by Hindi explicit gain (x) and broken-output change (y), with guard lines. */
   function dose(container, panels) {
-    const narrow = container.clientWidth < 640;
+    const narrow = container.clientWidth < 720;
     const W = narrow ? Math.max(320, container.clientWidth) : 920, gap = 46, padL = 46, padR = 16, top = 72, h = 250;
     const colW = narrow ? W : (W - gap) / 2, innerW = colW - padL - padR;
     const panelH = top + h + 46, H = narrow ? panelH * panels.length : panelH;
