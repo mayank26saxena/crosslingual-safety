@@ -538,6 +538,6 @@ The second implication is that the study's negative results are its sharpest con
 ---
 
 **Note added 2026-11-16 (after the Llama human check and its review).** Gap-table row 4 ("soft in Qwen, compliance in Llama") is
-qualified, not withdrawn. Llama's lost Hindi refusals are a mix of compliance and soft refusal, with compliance narrowly ahead, and Llama
-complies about twice as often as Qwen on the same pairs. The supported contrast is one of rate plus the internal projection difference,
+qualified, not withdrawn. Llama's lost Hindi refusals are a mix of compliance and soft refusal, in similar shares, and Llama
+fails to refuse 1.4–1.9 times as often as Qwen on the same pairs. The supported contrast is one of rate plus the internal projection difference,
 not a clean dichotomy. The human check fell below its registered bar. See `docs/results/2026-11-16_llama_human_checks.md`.

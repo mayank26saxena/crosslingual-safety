@@ -20,7 +20,7 @@ toward the soft end. Pushing along that second direction, gated on the refusal-d
 on held-out pairs, but it raises English by 16, so the gap barely narrows. It also failed a pre-registered Bengali confirmation on a guard
 against garbled output. A search for Hindi-specific neurons finds a small set that carries most of the internal English–Hindi difference,
 but moving them changes behaviour in English, not Hindi. In Llama-3.1-8B-Instruct the gap on the same pairs is larger (89% to 47%). Its missing refusals split between compliance and soft
-refusal, and it complies with Hindi harmful requests about twice as often as Qwen (30% against 16%). Its internal signature also differs:
+refusal, and it fails to refuse Hindi harmful requests 1.4–1.9 times as often as Qwen (depending on whether broken replies count). Its internal signature also differs:
 Hindi harmful prompts reach only 28% of the English projection on the refusal direction. A repair matched to that diagnosis pushes along the refusal direction, with a gate threshold set on Hindi data. On held-out
 pairs it raises Hindi explicit refusal by 15 points and narrows the gap by 7 points. It narrowly misses its
 pre-registered bars for explicit refusal (+15) and gap narrowing (10 points). All studies were pre-registered, tuned on development items and
@@ -52,8 +52,8 @@ protocol.
 
 1. **A response-side decomposition of the gap.** We use paired, screened, same-request measurement with a four-way label on default
    (non-adversarial) requests. In Qwen3-8B most of the missing Hindi explicit refusals become *soft refusals*. In Llama-3.1-8B-Instruct
-   they split between compliance and soft refusal, and Llama complies with Hindi harmful requests about twice as often as Qwen on the same
-   pairs. Prior multilingual work scores refusal as binary or as a harm scale, so it cannot see this.
+   they split between compliance and soft refusal in similar shares, and Llama fails to refuse Hindi harmful requests 1.4–1.9 times as
+   often as Qwen on the same pairs. Prior multilingual work scores refusal as binary or as a harm scale, so it cannot see this.
    - *A measurement caution.* The COMPLY/SOFT boundary is fragile. The hard case is a reply that warns and then answers. Our Llama human
      check fell below its registered bar on this boundary (blind four-label κ 0.643). After the grader re-applied the rubric to the
      disagreements, agreement was 0.893. We use the reviewed labels as the human reference and report both values.
@@ -332,8 +332,9 @@ low-resource scripts. These grades came from a judge validated on Hindi only.
 Llama refuses explicitly far more than Qwen in English, and its gap is larger; it holds on both sources (Aya −43.0, IndicSafe −38.8
 points). By judge labels, the 172 pairs refused explicitly in English but not in Hindi split into COMPLY 88, REFUSE_SOFT 75 and BROKEN 9.
 The human check, after review, agrees: on the 23 such pairs in the sample, 13 compliance, 9 soft and 1 broken. The blind human labels had
-leaned soft (14 of 20), mainly on replies that warn and then answer. So Llama's lost refusals are a mix, with compliance narrowly ahead.
-The clearer contrast with Qwen is the rate: on the same 404 pairs Llama complies in Hindi 30.4% of the time, Qwen 16.3%.
+leaned soft (14 of 20), mainly on replies that warn and then answer. So Llama's lost refusals are a mix of compliance and soft refusal in similar shares (judge 88 vs 75, p = 0.35). The clearer contrast with
+Qwen is the rate. On the same 404 pairs Llama complies in Hindi 30.2% of the time and Qwen 16.3% (+13.9 [+9.4, +18.3]). Counting broken
+replies too, since the judge's COMPLY/BROKEN boundary differed from the human's on Qwen, the rates are 33.2% vs 24.0% (+9.2 [+4.5, +14.1]).
 
 ---
 
@@ -543,3 +544,41 @@ of English harmful prompts, and English explicit refusal rises 7.2 points from a
 Code, pre-registrations, addenda, id-only labels and a checksum manifest of the untracked inputs are in the repository. `REPRODUCE.md`
 maps each number to its command. Harmful request and reply text is not redistributed. Each study cost a few dollars of GPU time on one
 48 GB GPU; per-run costs are in the result documents. **[Total to be summed from the result documents.]**
+
+## Appendix B: Claim-to-evidence table
+
+Primary claims are registered and rest on explicit refusal or on label-free projections. Descriptive claims rest on the COMPLY/SOFT
+split, the least reliable label.
+
+| Claim | Type | Sample | Estimate [95% CI] | Depends on |
+|---|---|---|---|---|
+| Qwen explicit-refusal gap | primary | 404 pairs | −32.2 [−37.4, −26.5] | explicit refusal (human κ 0.91) |
+| Llama explicit-refusal gap | primary | 404 pairs | −42.3 [−47.3, −37.4] | explicit refusal (human κ 0.785 blind) |
+| Qwen lost refusals mostly soft | descriptive | 448 pairs; 150 human-graded | soft 170 → 265 | COMPLY/SOFT split (human-checked) |
+| Llama lost refusals: compliance and soft in similar shares | descriptive | 172 pairs; 23 human-reviewed | 88 vs 75 (p = 0.35); 13 vs 9 | COMPLY/SOFT split |
+| Llama unrefused more often than Qwen | descriptive | 404 paired items | +13.9 [+9.4, +18.3] compliance; +9.2 [+4.5, +14.1] incl. broken | COMPLY/BROKEN boundary |
+| Qwen Hindi projection at English strength | primary | 1,174 pairs | shift +0.17 [+0.02, +0.30] | none (no hard-negative test) |
+| Llama Hindi projection 28% of English | primary | 404 pairs | 0.51 vs 1.84 | none |
+| Explicit–soft direction, Hindi toward soft | primary | 1,069 / 404 pairs | Qwen −10.9 [−12.1, −9.6]; Llama −2.40 [−2.55, −2.26] | Llama fit on 11 soft examples |
+| Qwen gated fix, Hindi explicit | primary | 404 pairs, once | +17.1 [+13.1, +21.0]; English +15.8 | explicit refusal |
+| Qwen fix, Bengali confirmation | primary | 148 items, once | +23.6; BROKEN +8.1 [+2.0, +14.9], fail | Bengali labels not human-checked |
+| Llama fix (R3), Hindi explicit | primary | 404 pairs, once | +14.6 [+11.1, +18.3], bar +15 | explicit refusal |
+| Llama fix, gap narrowing | primary | 404 pairs | 7.4 [+3.2, +11.6], bar 10 | explicit refusal |
+| Llama fix, compliance falls | primary (secondary rank) | 404 pairs | −8.4 [−11.1, −5.9] | COMPLY label |
+| Hindi neurons: no Hindi-only lever | primary | 79 / 322 pairs | Hindi +1.2 [−2.5, +5.0]; English +15.2 | explicit refusal |
+| Llama human check | registered gate | 60 items | κ 0.643 [0.48, 0.79], bar 0.7 | one human grader |
+
+## Appendix C: Protocol and deviations
+
+| Study | Registered before data | Deviation | When recorded | Effect on results |
+|---|---|---|---|---|
+| Baseline split | yes | first split drained the failure pattern; redrawn once before use | before any use | none (first split unused) |
+| Screening audit | yes | adjudication of 29 items with model labels shown | pre-registered addendum | adjudicated agreement reported as upper estimate |
+| Phase 3 test | yes | one grading part stopped by the judge's safety filter; retried once | before analysis | none |
+| Phase 4b sweep | yes | 2 of 12 parts stopped by the safety filter; filled post hoc by a second judge | addendum before result; fill after | outcome unchanged |
+| Phase 6 | yes | cache-crop bug in the two-token refusal score, fixed after smoke run | addendum before full run | none |
+| Phase 6 | yes | human check graded after aggregate results were seen (addendum 3); disagreements adjudicated with judge labels shown (4); reviewed labels adopted (5) | before / after grading | blind κ 0.643 reported as registered; 0.893 as upper estimate |
+| Phase 7 | yes | procedure details stated loosely in prereg (addendum 1) | before data | none |
+| Phase 7 | yes | E arms double-scaled (about 4.8×); F2 sign error (addendum 2) | after stage 1, before stage 2 | E arms rerun; selection unchanged (R3) |
+| Phase 7 | yes | stage 2 run killed by a storage I/O error; rerun unchanged | before any grading | none |
+| Phase 7 | yes | test items reused from Phase 6 | registered | stated as a limit |

@@ -10,7 +10,7 @@ label. Both graded files match their sheets item for item, with unchanged text.
 
 ## Phase 6: 60 unsteered Hindi replies (45 harmful, 15 harmless)
 
-**Registered outcome: the check fails.** Cohen's κ on four labels is **0.643**, below the registered 0.7. Under the rule, **every Llama
+**Registered outcome: the check fails.** Cohen's κ on four labels is **0.643** [0.48, 0.79], below the registered 0.7 (the interval spans the bar). Under the rule, **every Llama
 number is reported as provisional, with the confusion table.**
 
 | | Value |
@@ -61,15 +61,15 @@ is the registered one and still decides: the check is below bar, and the Llama n
 | Harmful 45: BROKEN | 0% | 4% [0, 11] |
 | Lost refusals (English explicit, Hindi not) | 14 soft, 6 comply (n 20) | **13 comply, 9 soft, 1 broken** (n 23) |
 
-After review, the author's labels match the judge's picture: compliance is the most common outcome among Llama's lost Hindi refusals, but
-only narrowly (13 against 9 here; 88 against 75 by judge labels on all 172). The blind disagreement came mainly from the author applying the
+After review, the author's labels match the judge's picture: compliance and soft refusal occur in similar shares among Llama's lost Hindi
+refusals (13 against 9 here; 88 against 75 by judge labels on all 172, p = 0.35). The blind disagreement came mainly from the author applying the
 rubric's first clause inconsistently, not from a judge bias. The COMPLY/SOFT boundary, a reply that warns and then answers, is the hard
 case even for a careful human. Phase 7's single disagreement was likewise resolved to the judge's label, so the author check agrees on 30 of
 30 after review (29 of 30 blind).
 
 **What this means for the claims:** the reversal described in the blind section does not hold after review. The supported Llama
 characterisation is a *mix* of compliance and soft refusal, with compliance slightly the larger share. Llama complies with Hindi harmful
-requests about twice as often as Qwen on the same 404 pairs (30.4% against 16.3%, judge labels). Phase 7's F3 (compliance falls) and its
+requests 1.4–1.9 times as often (compliance 30.2% vs 16.3%, +13.9 [+9.4, +18.3]; compliance plus broken 33.2% vs 24.0%, +9.2 [+4.5, +14.1]) on the same 404 pairs (judge labels). Phase 7's F3 (compliance falls) and its
 decomposition are consistent with the adjudicated labels, and stay registered and provisional.
 
 ## Phase 7: 30 steered (R3) Hindi harmful replies with the gate open
@@ -90,9 +90,8 @@ soft. The steered explicit refusals are confirmed.
   and Phase 7's +14.6 and 7.4-point gap narrowing, with F1 and F2 not met as registered.
 - The Qwen findings, with their own human support (Phase 0).
 
-**Characterisation of Llama's lost refusals:** a mix of compliance and soft refusal, with compliance narrowly the larger share (adjudicated
-sample 13 vs 9; judge labels on all 172: 88 vs 75). This is not the clean "soft in Qwen, compliance in Llama" dichotomy. The supported
-contrast is one of *rate*: Llama complies with Hindi harmful requests about twice as often as Qwen on the same pairs (30.4% vs 16.3%).
+**Characterisation of Llama's lost refusals:** a mix of compliance and soft refusal, in similar shares (judge 88 vs 75 of 172, p = 0.35; reviewed sample 13 vs 9). This is not the clean "soft in Qwen, compliance in Llama" dichotomy. The supported
+contrast is one of *rate*: Llama fails to refuse Hindi harmful requests 1.4–1.9 times as often (compliance 30.2% vs 16.3%, +13.9 [+9.4, +18.3]; compliance plus broken 33.2% vs 24.0%, +9.2 [+4.5, +14.1]) on the same pairs.
 It is joined by the internal contrast (projection at English strength in Qwen, 28% in Llama).
 
 **Phase 7 F3** (Hindi compliance falls, −8.4) is consistent with the adjudicated labels, and stays as registered (provisional).

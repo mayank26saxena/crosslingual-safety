@@ -7,8 +7,8 @@
 
 **Status: human-validated after adjudication; blind check below bar (addenda 4–5).** The pre-registered human check (60 Hindi Llama replies) gave blind four-label κ 0.643 < 0.7,
 which under the frozen rule makes these numbers provisional (`2026-11-16_llama_human_checks.md`). An unregistered review of the disagreements (addendum 4)
-raised agreement to 0.893 (an upper estimate) and supports the judge's reading below: lost refusals are a mix, compliance narrowly ahead
-(13 compliance, 9 soft of 23 sampled pairs).
+raised agreement to 0.893 (an upper estimate) and supports the judge's reading below: lost refusals are a mix of compliance and soft refusal in
+similar shares (13 compliance, 9 soft of 23 sampled pairs; not a significant difference).
 
 ## Outcome: the gap replicates, the Qwen mechanism does not
 
@@ -24,7 +24,7 @@ raised agreement to 0.893 (an upper estimate) and supports the judge's reading b
 
 On 404 harmful pairs Llama refuses explicitly in English 88.9% of the time and in Hindi 46.5%. The −42-point gap is larger than Qwen's
 (−33). By source: Aya −43.0 [−48.4, −37.7], IndicSafe −38.8 [−50.7, −26.9]. Where Qwen's lost Hindi refusals mostly became soft refusals,
-Llama's split between compliance and soft refusal, compliance narrowly ahead (88 vs 75 of 172): Hindi COMPLY is 30.2% against 8.7% in English, and any refusal (explicit or soft) is 66.8% against 90.8%.
+Llama's split between compliance and soft refusal in similar shares (88 vs 75 of 172, p = 0.35): Hindi COMPLY is 30.2% against 8.7% in English, and any refusal (explicit or soft) is 66.8% against 90.8%.
 BROKEN Hindi replies are 3.0%. Harmless over-refusal is low in both languages (Hindi 2.4%, English 4.1%).
 
 ### C2: Llama does not recognise Hindi harm as strongly
@@ -56,8 +56,8 @@ carried-over strength (the pre-registration lists this risk).
 - The explicit-refusal gap is not specific to Qwen. It is larger in Llama.
 - The mechanism differs. In Qwen, Hindi harm is recognised at English strength and the gap is in how the refusal is worded (explicit vs.
   soft). In Llama, Hindi harmful prompts project weakly on the refusal direction. The missing refusals split between compliance and soft
-  refusal, with compliance narrowly ahead (judge labels; the reviewed human sample agrees). The claim the data support is "the gap exists in
-  both models, with different internal signatures, and Llama complies about twice as often as Qwen".
+  refusal in similar shares (judge labels; the reviewed human sample agrees). The claim the data support is "the gap exists in
+  both models, with different internal signatures, and Llama fails to refuse 1.4–1.9 times as often as Qwen".
 - A gate whose threshold is set on English is a poor fit for a model whose Hindi refusal signal is weak (Phase 7 sets it on Hindi). Phase 6 tested no
   Llama-specific fix, and none was pre-registered.
 

@@ -69,7 +69,7 @@ estimate (+18.0). That is the same shrinkage as Qwen's Phase 3 (21.4 to 17.1, 80
 ## Reading
 
 - **The diagnosis-matched push does what the diagnosis predicts.** Llama's Hindi failure is weak harm signal, so missing refusals become
-  compliance (a mix of compliance and soft refusal, compliance narrowly ahead; see the human checks). Hindi COMPLY falls by 8.4 points and
+  compliance (a mix of compliance and soft refusal in similar shares; see the human checks). Hindi COMPLY falls by 8.4 points and
   any refusal rises by 9.2, so roughly 8.4 points of the +14.6 explicit gain come from former compliance. The adjudicated human labels
   support this, though the COMPLY/SOFT boundary is the least reliable label. In Qwen the push
   mainly converted soft refusals into explicit ones (compliance fell only 3.7).
