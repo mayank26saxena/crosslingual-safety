@@ -2,7 +2,8 @@
 
 Usage: uv run --no-project --with numpy --with matplotlib python -I scripts/v2/make_figures.py
 Reads docs/blog/data/figures.json (written and checked by scripts/v2/export_figure_data.py; run that first).
-Writes docs/paper/figures/fig1_what_replaces_refusal, fig2_projection, fig3_repairs (.pdf, .png). PDFs embed TrueType fonts (pdf.fonttype 42) for camera-ready use.
+Writes docs/paper/figures/fig1_what_replaces_refusal, fig2_projection, fig3_repairs, fig4_layers, fig5_mechanism, fig6_dose,
+fig7_gate (.pdf, .png). PDFs embed TrueType fonts (pdf.fonttype 42) for camera-ready use.
 Design: the research-blog tokens (light surface, hairline grid, direct labels, interval whiskers, mono numbers) and the same palette as
 docs/blog/assets/tokens.css (validated with the dataviz validator).
 """
@@ -160,7 +161,164 @@ def fig3():
     save(fig, "fig2_projection")
 
 
+MODELS = (("qwen", "Qwen3-8B"), ("llama", "Llama-3.1-8B"))
+
+
+def fig_layers():
+    L = F["layers"]
+    fig, axes = plt.subplots(2, 2, figsize=(7.0, 3.6), sharex="col", gridspec_kw={"hspace": 0.55, "wspace": 0.22, "height_ratios": [1, 1]})
+    for col, (key, title) in enumerate(MODELS):
+        d = L[key]
+        top, bot = axes[0, col], axes[1, col]
+        for ax in (top, bot):
+            ax.axvspan(d["chosen"] - 0.5, d["chosen"] + 0.5, color="#eef3f9", zorder=0)
+            ax.grid(axis="y", color=RULE, lw=0.6)
+            ax.set_axisbelow(True)
+            ax.tick_params(length=0)
+            ax.set_xlim(-0.5, d["layers"] - 0.5)
+            for t in ax.get_xticklabels() + ax.get_yticklabels():
+                t.set_fontfamily("monospace")
+        ab = d["ablation_removed"]
+        top.plot(range(len(ab)), [100 * v for v in ab], color=INK, lw=1.4)
+        top.set_ylim(min(-5, 100 * min(ab) - 5), 105)
+        top.set_yticks([0, 50, 100])
+        top.set_yticklabels(["0%", "50%", "100%"], fontfamily="monospace", fontsize=7, color=MUTED)
+        top.text(d["chosen"] + 0.9, 96, f"layer {d['chosen']}", fontsize=7.5, weight="bold", color=ACCENT, va="top")
+        top.set_title(title, loc="left", fontsize=9.5, weight="bold", pad=16)
+        top.text(0, 1.04, "refusal removed by ablating this layer's direction", transform=top.transAxes, fontsize=7, color=MUTED)
+        ends = []
+        for k, c, name in (("en", INK2, "English"), ("hi", ACCENT, "Hindi")):
+            v = d.get(f"auroc_{k}")
+            if v:
+                bot.plot(range(len(v)), v, color=c, lw=1.4)
+                ends.append([len(v) - 1, v[-1], name, c])
+        ends.sort(key=lambda e: e[1])
+        if len(ends) == 2 and ends[1][1] - ends[0][1] < 0.05:
+            mid = (ends[0][1] + ends[1][1]) / 2
+            ends[0][1], ends[1][1] = mid - 0.025, mid + 0.025
+        for x, y, name, c in ends:
+            bot.text(x + 0.8, y, name, fontsize=7, weight="bold", color=c, va="center")
+        bot.set_ylim(0.48, 1.02)
+        bot.set_yticks([0.5, 0.75, 1.0])
+        bot.set_yticklabels(["0.50", "0.75", "1.00"], fontfamily="monospace", fontsize=7, color=MUTED)
+        bot.text(0, 1.04, "harmful vs harmless separation (AUROC)", transform=bot.transAxes, fontsize=7, color=MUTED)
+        bot.set_xlabel("layer", fontsize=7.5, color=MUTED)
+        bot.tick_params(axis="x", labelsize=7)
+    fig.text(0.125, -0.07, "Per-layer English refusal direction (difference of means). Top: share of the harmful–harmless refusal-score gap removed\n"
+             "by ablation (Qwen: fit prompts; Llama: held-out). Bottom: AUROC within each language. Band: chosen layer.", fontsize=7, color=MUTED)
+    save(fig, "fig4_layers")
+
+
+def fig_mechanism():
+    spec = (("Qwen3-8B", 36, 14, 25, F["gate"]["qwen"]["tau"], "English-set", "1.25 × explicit–soft direction"),
+            ("Llama-3.1-8B", 32, 10, 11, F["gate"]["llama"]["tau"], "Hindi-set", "1.5 × shortfall × refusal direction"))
+    fig, axes = plt.subplots(2, 1, figsize=(7.0, 2.9), gridspec_kw={"hspace": 0.15})
+    for ax, (title, L, g, pu, tau, tset, what) in zip(axes, spec):
+        ax.set_xlim(-10.5, 37.5)
+        ax.set_ylim(-2.3, 2.3)
+        ax.axis("off")
+        ax.text(-10.5, 0, title, fontsize=9, weight="bold", va="center")
+        ax.plot([-0.4, L - 0.6], [0, 0], color=AXIS, lw=4, solid_capstyle="round", zorder=1)
+        for l in range(L):
+            fc, ec = ("#eef3f9", ACCENT) if l == g else (("#fbf0e8", "#c9503a") if l == pu else ("white", RULE))
+            ax.add_patch(plt.Rectangle((l - 0.4, -0.35), 0.8, 0.7, facecolor=fc, edgecolor=ec, lw=0.8, zorder=2))
+        ax.text(-0.4, -0.75, "prompt →", fontsize=6.5, color=MUTED, va="top")
+        ax.text(L - 0.6, -0.75, "→ reply", fontsize=6.5, color=MUTED, va="top", ha="right")
+        bbox = lambda c: dict(boxstyle="round,pad=0.35", facecolor="white", edgecolor=c, lw=0.8)
+        ax.annotate(f"read: score on refusal direction\nlayer {g} · open if > {tau:.2f} ({tset})", xy=(g, 0.4), xytext=(g, 1.55),
+                    ha="center", va="center", fontsize=6.5, color="#1c4f8f", bbox=bbox(ACCENT),
+                    arrowprops=dict(arrowstyle="-", color=ACCENT, lw=1))
+        ax.annotate(f"add: {what}\nat layer {pu} input, every position", xy=(pu, -0.4), xytext=(min(max(pu, 13), L - 6), -1.6),
+                    ha="center", va="center", fontsize=6.5, color="#9b3a27", bbox=bbox("#c9503a"),
+                    arrowprops=dict(arrowstyle="-|>", color="#c9503a", lw=1, mutation_scale=7))
+    fig.text(0.125, 0.0, "Each box is a decoder layer. If the gate score at the last prompt token exceeds the threshold, a fixed vector is "
+             "added for the whole reply.", fontsize=7, color=MUTED)
+    save(fig, "fig5_mechanism")
+
+
+def fig_dose():
+    fig, axes = plt.subplots(1, 2, figsize=(7.0, 2.8), gridspec_kw={"wspace": 0.25})
+    subs = {"qwen": "9 settings · 401 dev pairs", "llama": "5 pushes · 150 dev pairs"}
+    for ax, (key, title) in zip(axes, MODELS):
+        p = F["dose"][key]
+        xs, ys = [q["explicit"] for q in p["points"]], [q["broken"] for q in p["points"]]
+        xlo, xhi = min(-10, math.floor(min(xs) / 10) * 10), max(50, math.ceil(max(xs) / 10) * 10)
+        ylo, yhi = min(-2, math.floor(min(ys))), max(10, math.ceil(max(ys) / 5) * 5)
+        ax.set_xlim(xlo, xhi)
+        ax.set_ylim(ylo, yhi + 1)
+        ax.grid(color=RULE, lw=0.6)
+        ax.set_axisbelow(True)
+        ax.tick_params(length=0, labelsize=7)
+        ax.set_xticks(range(xlo, xhi + 1, 10))
+        ax.set_xticklabels([s(t, 0) if t else "0" for t in range(xlo, xhi + 1, 10)], fontfamily="monospace", color=MUTED)
+        yt = list(range(math.ceil(ylo / 5) * 5, yhi + 1, 5))
+        ax.set_yticks(yt)
+        ax.set_yticklabels([s(t, 0) if t else "0" for t in yt], fontfamily="monospace", color=MUTED)
+        gx = p["guards"]["gain"] if p["guards"]["gain"] is not None else 0
+        ax.add_patch(plt.Rectangle((gx, ylo), xhi - gx, p["guards"]["broken"] - ylo, facecolor="#eef3f9", edgecolor="none", zorder=0))
+        ax.axhline(p["guards"]["broken"], color="#c9503a", lw=1, ls=(0, (3, 2)))
+        ax.text(xhi - 1, p["guards"]["broken"] + 0.4, f"broken-output guard (+{p['guards']['broken']})", ha="right", fontsize=6.5, color="#9b3a27")
+        if p["guards"]["gain"] is not None:
+            ax.axvline(gx, color=ACCENT, lw=1, ls=(0, (3, 2)))
+            ax.text(gx + 1, yhi, f"selection bar (+{gx})", fontsize=6.5, color="#1c4f8f", va="top")
+        placed = []
+        for q in sorted(p["points"], key=lambda q: not q["chosen"]):
+            c = ACCENT if q["qualifies"] else "#8a9194"
+            ax.scatter([q["explicit"]], [q["broken"]], s=55 if q["chosen"] else 26, facecolor=c if q["chosen"] else "white", edgecolor=c,
+                       lw=1.2, zorder=4)
+            px, py = q["explicit"], q["broken"]
+            clash = any(abs(px - a) < 18 and abs(py - b) < 0.12 * (yhi - ylo) for a, b in placed)
+            if q["chosen"] or (len(p["points"]) <= 5 and not clash):
+                right = px > xhi - 15
+                ax.text(px + (-1.5 if right else 1.5), py + 0.05 * (yhi - ylo), q["label"] + (" · chosen" if q["chosen"] else ""),
+                        fontsize=6.5, weight="bold" if q["chosen"] else "normal", color=INK2, ha="right" if right else "left")
+                placed.append((px, py))
+        ax.set_title(title, loc="left", fontsize=9.5, weight="bold", pad=14)
+        ax.text(0, 1.03, subs[key], transform=ax.transAxes, fontdict=dict(MONO, size=7))
+        ax.set_xlabel("Hindi explicit refusal, change (pts)", fontsize=7.5, color=MUTED)
+    axes[0].set_ylabel("broken replies, change (pts)", fontsize=7.5, color=MUTED)
+    fig.text(0.125, -0.1, "Development requests. Shaded: settings within the registered guards. Filled: setting taken to the held-out test. "
+             "Blue: qualifies · grey: does not.", fontsize=7, color=MUTED)
+    save(fig, "fig6_dose")
+
+
+def fig_gate():
+    import random
+    rows = (("harmless_en", "Harmless · EN", INK2), ("harmless_hi", "Harmless · HI", ACCENT), ("harmful_en", "Harmful · EN", INK2),
+            ("harmful_hi", "Harmful · HI", ACCENT))
+    fig, axes = plt.subplots(1, 2, figsize=(7.0, 2.5), sharey=True, gridspec_kw={"wspace": 0.32})
+    for ax, (key, title) in zip(axes, MODELS):
+        g = F["gate"][key]
+        rng = random.Random(0)
+        for y, (k, name, c) in zip((3, 2, 1, 0), rows):
+            v = g["cells"][k]["scores"]
+            ax.scatter(v, [y + rng.uniform(-0.28, 0.28) for _ in v], s=3, color=c, alpha=0.45, lw=0)
+            share = sum(x > g["tau"] for x in v) / len(v)
+            ax.text(1.02, y, f"{100 * share:.0f}% open", transform=ax.get_yaxis_transform(), va="center", fontdict=dict(MONO, size=6.5, color=INK))
+        ax.axvline(g["tau"], color="#c9503a", lw=1.2)
+        ax.text(g["tau"], -0.75, f"threshold {g['tau']:.2f}", ha="center", va="top", fontsize=6.5, color="#9b3a27")
+        ax.set_yticks([3, 2, 1, 0])
+        ax.set_yticklabels([r[1] for r in rows], fontsize=7.5)
+        ax.tick_params(axis="y", labelleft=(key == "qwen"))
+        ax.set_ylim(-0.9, 3.5)
+        ax.grid(axis="x", color=RULE, lw=0.6)
+        ax.set_axisbelow(True)
+        ax.tick_params(length=0, labelsize=7)
+        for t in ax.get_xticklabels():
+            t.set_fontfamily("monospace")
+        ax.xaxis.tick_top()
+        ax.set_title(f"{title}\nlayer {g['layer']}, {'English' if key == 'qwen' else 'Hindi'}-set threshold", loc="left", fontsize=8.5,
+                     weight="bold", pad=16)
+    fig.text(0.125, -0.1, "Gate score of each held-out request (refusal-direction projection at the last prompt token).\nRight: share above "
+             "the threshold as run, i.e. requests that received the push.", fontsize=7, color=MUTED)
+    save(fig, "fig7_gate")
+
+
 if __name__ == "__main__":
     fig1()
     fig3()  # projections -> Figure 2
     fig2()  # repairs -> Figure 3
+    fig_layers()
+    fig_mechanism()
+    fig_dose()
+    fig_gate()
