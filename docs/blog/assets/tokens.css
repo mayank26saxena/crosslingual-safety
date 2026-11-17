@@ -237,3 +237,16 @@ figure.fig.wide { width: calc(100% - 40px); max-width: calc(var(--measure) - 40p
 [hidden] { display: none !important; }
 table.plain small { color: var(--muted); font-size: 12px; }
 body.at-end nav.rail, body.at-end .rail-toggle { opacity: 0; pointer-events: none; }
+
+/* collapsible methods and checks */
+.appx-head { font: 600 30px/1.12 var(--display); letter-spacing: -.025em; margin: 68px 0 6px; }
+.appx-intro { font: 14px/1.5 var(--sans); color: var(--muted); margin: 0 0 14px; }
+details.appx { border-top: 1px solid var(--rule); scroll-margin-top: 20px; }
+details.appx:last-of-type { border-bottom: 1px solid var(--rule); }
+details.appx > summary { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 0; cursor: pointer; list-style: none; font: 600 17px/1.3 var(--display); letter-spacing: -.01em; }
+details.appx > summary::-webkit-details-marker { display: none; }
+details.appx > summary::after { content: "+"; font: 500 20px var(--mono); color: var(--muted); }
+details.appx[open] > summary::after { content: "\2212"; }
+details.appx > summary:hover { color: var(--brand); }
+.appx-body { padding: 0 0 22px; }
+.appx-body figure.fig.wide { width: 100%; max-width: none; margin: 18px 0 8px; }

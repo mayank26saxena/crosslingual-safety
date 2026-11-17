@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Noto+Sans+Devanagari:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/tokens.css?v=24">
+<link rel="stylesheet" href="assets/tokens.css?v=25">
 </head>
 <body>
 <header class="top"><div class="col">
@@ -124,7 +124,7 @@
 </figure>
 <div class="col">
   <h3><span class="sub">05.2</span>What the repairs achieve</h3>
-  <p>Both repairs increased explicit refusals in Hindi on held-out requests: by <span data-k="g_q_hi_u"></span> points for Qwen and <span data-k="g_l_hi_u"></span> for Llama. We also track English, because a push that made the model refuse more of everything would raise Hindi refusal without fixing anything specific to Hindi. English rose too (<span data-k="g_q_en_u"></span> and <span data-k="g_l_en_u"></span> points), so Hindi caught up by only <span data-k="n_q_u"></span> and <span data-k="n_l_u"></span>. Compliance with harmful Hindi requests fell, from <span data-k="lc_hi"></span> to <span data-k="lc_fix"></span> for Llama and from <span data-k="qc_hi"></span> to <span data-k="qc_fix"></span> for Qwen.</p>
+  <p>Both repairs increased explicit refusals in Hindi on held-out requests (Figure 5). We also track English, because a push that made the model refuse more of everything would raise Hindi refusal without fixing anything specific to Hindi. English rose too, so Hindi caught up by much less than it gained. The repairs did cut compliance with harmful Hindi requests, from <span data-k="lc_hi"></span> to <span data-k="lc_fix"></span> for Llama and from <span data-k="qc_hi"></span> to <span data-k="qc_fix"></span> for Qwen.</p>
 </div>
 <figure class="fig wide" id="fig2">
   <p class="fig-title">Both repairs raise Hindi explicit refusal, and both lift English too</p>
@@ -172,16 +172,14 @@
   </ul>
   <p><strong>Next:</strong> those baselines, a gate selective for Hindi, and a fresh confirmation set for Llama.</p>
 
-  <h2 id="appendix-a">Appendix A: estimates and uncertainty</h2>
-  <p>The headline estimates with their sample sizes. Every language comparison uses the same 404 harmful requests, and each repair was tested once on them.</p>
+  <h2 class="appx-head">Methods and checks</h2>
+  <p class="appx-intro">Supporting detail for the numbers above. Open any section.</p>
+  <details class="appx" id="appendix-a"><summary>Appendix A: estimates and uncertainty</summary><div class="appx-body"><p>The headline estimates with their sample sizes. Every language comparison uses the same 404 harmful requests, and each repair was tested once on them.</p>
   <table class="plain" id="est"><thead><tr><th>Estimate</th><th>Qwen3-8B</th><th>Llama-3.1-8B</th></tr></thead><tbody></tbody></table>
-  <p>Single rates use 95% Wilson intervals, which ignore the pairing. Differences are paired by request, with 95% bootstrap intervals from 10,000 resamples. We did not correct for multiple comparisons. The headline comparisons were registered in advance; repair settings were chosen on separate development requests and tested once, so the intervals do not include that selection (held-out gains were about 80% of the best development gains). They describe this request set only.</p>
-
-  <h2 id="appendix-b">Appendix B: can we trust the labels?</h2>
-  <p>Many results depend on separating a soft refusal from a reply that warns but then answers. This is difficult. A fluent Hindi reader blindly graded 60 Llama replies. Initial agreement was κ = 0.64, below our registered threshold of 0.7. Most disagreements involved warnings followed by answers. The grader then reapplied the rubric: a warning followed by an answer counts as compliance. Agreement rose to 0.89. We report both results.</p>
-  <p>The headline results use explicit refusals, which had stronger agreement in the blind check (κ = 0.79). Qwen’s judge passed its validation check with κ = 0.82.</p>
-  <h2 id="appendix-c">Appendix C: is this just Hindi? A Spanish control</h2>
-  <p>Is the gap unique to Hindi? We ran a smaller control in Spanish, a high-resource language, on Qwen3-8B only: <span data-k="sp_n"></span> harmful and <span data-k="sp_hn"></span> harmless Aya Red-teaming requests, each with an English version, labelled by an AI judge.</p>
+  <p>Single rates use 95% Wilson intervals, which ignore the pairing. Differences are paired by request, with 95% bootstrap intervals from 10,000 resamples. We did not correct for multiple comparisons. The headline comparisons were registered in advance; repair settings were chosen on separate development requests and tested once, so the intervals do not include that selection (held-out gains were about 80% of the best development gains). They describe this request set only.</p></div></details>
+  <details class="appx" id="appendix-b"><summary>Appendix B: can we trust the labels?</summary><div class="appx-body"><p>Many results depend on separating a soft refusal from a reply that warns but then answers. This is difficult. A fluent Hindi reader blindly graded 60 Llama replies. Initial agreement was κ = 0.64, below our registered threshold of 0.7. Most disagreements involved warnings followed by answers. The grader then reapplied the rubric: a warning followed by an answer counts as compliance. Agreement rose to 0.89. We report both results.</p>
+  <p>The headline results use explicit refusals, which had stronger agreement in the blind check (κ = 0.79). Qwen’s judge passed its validation check with κ = 0.82.</p></div></details>
+  <details class="appx" id="appendix-c"><summary>Appendix C: is this just Hindi? A Spanish control</summary><div class="appx-body"><p>Is the gap unique to Hindi? We ran a smaller control in Spanish, a high-resource language, on Qwen3-8B only: <span data-k="sp_n"></span> harmful and <span data-k="sp_hn"></span> harmless Aya Red-teaming requests, each with an English version, labelled by an AI judge.</p>
   <table class="plain">
     <thead><tr><th></th><th>English</th><th>Spanish</th></tr></thead>
     <tbody>
@@ -191,14 +189,9 @@
       <tr><td>Harmless requests answered</td><td><span data-k="sp_hl_en"></span></td><td><span data-k="sp_hl_es"></span></td></tr>
     </tbody>
   </table>
-  <p>Spanish shows a gap too: explicit refusal falls by <span data-k="sp_gap"></span> points (<span data-k="sp_eo"></span> requests refused only in English, <span data-k="sp_so"></span> only in Spanish), and harmless requests are still answered. That is about half the Hindi gap (<span data-k="sp_hgap"></span> points for Qwen), consistent with a larger gap for lower-resource languages, but this run cannot establish that. <strong>Caveats:</strong> Qwen only; a different request set and a shorter reply limit than the Hindi runs, so the gaps are not directly comparable; AI-judge labels only (two judges agreed, κ = 0.88); and a provisional run made before the Hindi judge was validated and the model revision pinned.</p>
-
-  <h2 id="appendix-d">Appendix D: the refusal-style direction</h2>
-  <p>Most of Qwen’s lost refusals were soft, so we looked for a direction separating explicit from soft refusals, fitted on English replies only (AUROC 0.93). Hindi prompts shift only slightly toward its soft end (22% of the English gap, below our registered 25% threshold), so “wording” is a hypothesis, not a finding. It did motivate a steering test: on 150 requests Qwen refused explicitly in English but not in Hindi, adding the direction raised Hindi explicit refusal from 10% to 53% and halved compliance. That diagnostic used hand-picked requests and no gate, so it is not comparable to the held-out result below.</p>
-
-  <h2 id="appendix-e">Appendix E: how hard to push</h2>
-  <p>We tried several steering strengths on development requests and kept the strongest one that stayed inside limits set in advance (broken replies within +5 points, harmless refusal within +3).</p>
-</div>
+  <p>Spanish shows a gap too: explicit refusal falls by <span data-k="sp_gap"></span> points (<span data-k="sp_eo"></span> requests refused only in English, <span data-k="sp_so"></span> only in Spanish), and harmless requests are still answered. That is about half the Hindi gap (<span data-k="sp_hgap"></span> points for Qwen), consistent with a larger gap for lower-resource languages, but this run cannot establish that. <strong>Caveats:</strong> Qwen only; a different request set and a shorter reply limit than the Hindi runs, so the gaps are not directly comparable; AI-judge labels only (two judges agreed, κ = 0.88); and a provisional run made before the Hindi judge was validated and the model revision pinned.</p></div></details>
+  <details class="appx" id="appendix-d"><summary>Appendix D: the refusal-style direction</summary><div class="appx-body"><p>Most of Qwen’s lost refusals were soft, so we looked for a direction separating explicit from soft refusals, fitted on English replies only (AUROC 0.93). Hindi prompts shift only slightly toward its soft end (22% of the English gap, below our registered 25% threshold), so “wording” is a hypothesis, not a finding. It did motivate a steering test: on 150 requests Qwen refused explicitly in English but not in Hindi, adding the direction raised Hindi explicit refusal from 10% to 53% and halved compliance. That diagnostic used hand-picked requests and no gate, so it is not comparable to the held-out result below.</p></div></details>
+  <details class="appx" id="appendix-e"><summary>Appendix E: how hard to push</summary><div class="appx-body"><p>We tried several steering strengths on development requests and kept the strongest one that stayed inside limits set in advance (broken replies within +5 points, harmless refusal within +3).</p>
 <figure class="fig wide" id="figD">
   <p class="fig-title">Stronger pushes buy more Hindi refusal until replies start to break</p>
   <p class="fig-sub">Each dot is one setting tested on development requests. It shows the change in Hindi refusals and broken replies. The shaded area marks settings that met our limits. Filled dots show the settings tested on held-out requests.</p>
@@ -209,13 +202,11 @@
     minimum gain, only broken output within +5 and harmless refusal within +3 (English was checked at test). Llama: 150 Hindi harmful and 60
     harmless development requests, five pushes; a setting needed at least +15 points, broken output within +5, harmless refusal within +3,
     and English explicit refusal not below −3 with English broken output within +3.</p></div></details>
-</figure>
-<div class="col">
-  <h2 id="appendix-f">Appendix F: how we tried to keep ourselves honest</h2>
-  <ul>
+</figure></div></details>
+  <details class="appx" id="appendix-f"><summary>Appendix F: how we tried to keep ourselves honest</summary><div class="appx-body"><ul>
     <li><strong>Rules first.</strong> Before each experiment we recorded what we would measure, how we would choose a setting and what would count as success; later changes went into dated addenda. The per-layer Llama curves in Figure 2 were added afterwards. They are descriptive and test no hypothesis.</li>
     <li><strong>No harmful text.</strong> Requests are summarised, never quoted. The only reply text shown is the redacted excerpts in sections 02 and 05, with anything usable for harm blacked out.</li>
-  </ul>
+  </ul></div></details>
 
   <h2 id="references">References</h2>
   <ol class="refs">
@@ -242,9 +233,9 @@
 
 <footer><div class="col">Requests are never quoted. The example replies are redacted excerpts, in English translation with the redacted Hindi original one click away, and their labels were checked against the registered grades.</div></footer>
 
-<script src="data/figures.js?v=24"></script>
-<script src="data/examples.js?v=24"></script>
-<script src="assets/charts.js?v=24"></script>
+<script src="data/figures.js?v=25"></script>
+<script src="data/examples.js?v=25"></script>
+<script src="assets/charts.js?v=25"></script>
 <script>
   const F = window.FIGURES;
   const slot = (id, q) => document.querySelector(`#${id} ${q}`);
@@ -363,10 +354,10 @@
     }
   })();
   (function rail() {
-    const hs = [...document.querySelectorAll("main h2[id]")]; if (!hs.length) return;
+    const hs = [...document.querySelectorAll("main h2[id], main details.appx[id]")]; if (!hs.length) return;
     const nav = document.createElement("nav"); nav.className = "rail"; nav.innerHTML = "<p>Contents</p>";
     const links = hs.map((h) => { const a = document.createElement("a"); a.href = "#" + h.id;
-      const no = h.querySelector(".no"); a.innerHTML = (no ? `<span>${no.textContent}</span>` : "") + h.textContent.replace(no ? no.textContent : "", "").trim();
+      const no = h.querySelector(".no"); const lab = h.matches("details") ? h.querySelector("summary") : h; a.innerHTML = (no ? `<span>${no.textContent}</span>` : "") + lab.textContent.replace(no ? no.textContent : "", "").trim();
       nav.appendChild(a); return a; });
     document.body.appendChild(nav);
     const btn = document.createElement("button"); btn.type = "button"; btn.className = "rail-toggle"; btn.textContent = "Contents";
@@ -375,6 +366,12 @@
     const update = () => { document.body.classList.toggle("scrolled", scrollY > 160); const ft = document.querySelector("footer"); document.body.classList.toggle("at-end", !!ft && ft.getBoundingClientRect().top < innerHeight - 40); let cur = -1; hs.forEach((h, i) => { if (h.getBoundingClientRect().top < innerHeight * 0.35) cur = i; });
       links.forEach((a, i) => a.classList.toggle("on", i === cur)); };
     addEventListener("scroll", update, { passive: true }); addEventListener("resize", update); update();
+  })();
+  (function appendices() {
+    const open = (hash) => { const d = hash && hash.length > 1 ? document.getElementById(hash.slice(1)) : null; if (d && d.matches("details.appx") && !d.open) d.open = true; };
+    document.addEventListener("click", (e) => { const a = e.target.closest('a[href^="#appendix"]'); if (a) open(a.getAttribute("href")); });
+    addEventListener("hashchange", () => open(location.hash)); open(location.hash);
+    document.querySelectorAll("details.appx").forEach((d) => d.addEventListener("toggle", () => { if (d.open && d.querySelector("figure.fig") && window.Charts.redraw) window.Charts.redraw(); }));
   })();
   Charts.repairs(slot("fig2", ".chart"), [
     Object.assign({ title: "Qwen3-8B", subtitle: "push toward explicit refusal · passed its checks" }, F.fig2.qwen),

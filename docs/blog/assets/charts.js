@@ -393,4 +393,5 @@
     if (Math.abs(window.innerWidth - lastW) > 40) { lastW = window.innerWidth; registry.forEach((d) => d()); } }, 150); });
   window.Charts = { pairedShift: responsive(pairedShift), repairs: responsive(repairs), projections: responsive(projections),
     layerProfile: responsive(layerProfile), gate: responsive(gate), mechanism: responsive(mechanism), dose: responsive(dose) };
+  window.Charts.redraw = () => registry.forEach((d) => d());
 })();
