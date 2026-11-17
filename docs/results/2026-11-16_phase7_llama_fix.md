@@ -69,8 +69,9 @@ estimate (+18.0). That is the same shrinkage as Qwen's Phase 3 (21.4 to 17.1, 80
 ## Reading
 
 - **The diagnosis-matched push does what the diagnosis predicts.** Llama's Hindi failure is weak harm signal, so missing refusals become
-  compliance. Pushing along the refusal direction turns compliance into refusal: Hindi COMPLY falls by 8.4 points and any refusal rises by
-  9.2. Of the +14.6 explicit gain, about 8.4 points come from former compliance and about 5.4 from former soft refusals. In Qwen the push
+  compliance (judge labels; the human check later showed these are mostly soft refusals). By judge labels, Hindi COMPLY falls by 8.4 points and
+  any refusal rises by 9.2, so roughly 8.4 points of the +14.6 explicit gain come from former "compliance". Because the judge labels some
+  soft refusals as compliance on Llama, this split is uncertain. In Qwen the push
   mainly converted soft refusals into explicit ones (compliance fell only 3.7).
 - **The Hindi-calibrated gate fixes Phase 6's failure to fire.** The gate now opens on 47% of Hindi harmful prompts (1% in Phase 6), and
   even the explicit–soft push (E1) works once it fires. This agrees with Aziz et al. (2026), who found that Llama needs gate calibration in
