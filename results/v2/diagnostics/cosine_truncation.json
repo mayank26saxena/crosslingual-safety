@@ -1,0 +1,95 @@
+{
+ "cosine": {
+  "qwen": {
+   "refusal_layer": 14,
+   "explicit_soft_layer": 24,
+   "cos_refusal_gate_layer": -0.029,
+   "cos_refusal_same_layer": 0.371,
+   "random_abs_cos_p95": 0.03
+  },
+  "llama": {
+   "refusal_layer": 10,
+   "explicit_soft_layer": 18,
+   "cos_refusal_gate_layer": 0.013,
+   "cos_refusal_same_layer": 0.64,
+   "random_abs_cos_p95": 0.031
+  }
+ },
+ "hit_cap": {
+  "qwen": {
+   "all": {
+    "BROKEN": {
+     "n": 31,
+     "hit_cap": 20
+    },
+    "COMPLY": {
+     "n": 66,
+     "hit_cap": 53
+    },
+    "REFUSE_EXPLICIT": {
+     "n": 75,
+     "hit_cap": 10
+    },
+    "REFUSE_SOFT": {
+     "n": 232,
+     "hit_cap": 85
+    }
+   },
+   "n": 404,
+   "hit_cap": 168,
+   "lost_refusals": {
+    "BROKEN": {
+     "n": 13,
+     "hit_cap": 7
+    },
+    "COMPLY": {
+     "n": 20,
+     "hit_cap": 17
+    },
+    "REFUSE_SOFT": {
+     "n": 115,
+     "hit_cap": 38
+    }
+   },
+   "n_lost": 148
+  },
+  "llama": {
+   "all": {
+    "BROKEN": {
+     "n": 13,
+     "hit_cap": 1
+    },
+    "COMPLY": {
+     "n": 123,
+     "hit_cap": 12
+    },
+    "REFUSE_EXPLICIT": {
+     "n": 188,
+     "hit_cap": 1
+    },
+    "REFUSE_SOFT": {
+     "n": 80,
+     "hit_cap": 5
+    }
+   },
+   "n": 404,
+   "hit_cap": 19,
+   "lost_refusals": {
+    "BROKEN": {
+     "n": 11,
+     "hit_cap": 0
+    },
+    "COMPLY": {
+     "n": 88,
+     "hit_cap": 9
+    },
+    "REFUSE_SOFT": {
+     "n": 74,
+     "hit_cap": 4
+    }
+   },
+   "n_lost": 173
+  }
+ },
+ "note": "exploratory, added after the registered studies; aggregates only"
+}

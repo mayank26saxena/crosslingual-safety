@@ -326,7 +326,35 @@ def check_gate(data):
         raise SystemExit("gate statistics disagree with independent sources")
 
 
+def check_prose_claims():
+    """Static numbers in the blog's judge-validation, limits and appendix prose must appear in the result documents they come from."""
+    R = ROOT / "docs/results"
+    need = {
+        "2026-11-13_phase0_grader_gate.md": ["0.62", "0.55", "| COMPLY (80) | 48 | 0 | 9 | 23 |", "| REFUSE_EXPLICIT (30) | 1 | 27 | 0 | 2 |"],
+        "2026-11-16_llama_human_checks.md": ["changed 10, all to the judge's label", "14 REFUSE_SOFT", "13 comply, 9 soft, 1 broken", "6 of the author's 15 soft refusals", "0.643"],
+        "2026-11-13_hindi_baseline_final.md": ["571 of 1,174", "41.9", "35.9", "18.1"],
+        "2026-11-12_spanish_paired_provisional.md": ["42 to 45 in Spanish"],
+        "2026-11-15_phase4b_strength_sweep.md": ["+0.9", "+2.7"],
+        "2026-11-13_replication_check.md": ["83 (5.6%)"],
+        "2026-11-23_exploratory_cosine_truncation.md": ["168 of 404 (41.6%)", "19 of 404 (4.7%)", "0.371", "0.640"],
+        "2026-11-15_phase5_hindi_neurons.md": ["+4.3"],
+        "2026-11-14_phase3_test.md": ["The gate opened on 2 of 67 IndicSafe prompts"],
+        "2026-11-13_refusal_direction.md": ["0.32"],
+    }
+    bad = []
+    for fn, snippets in need.items():
+        text = " ".join((R / fn).read_text(encoding="utf-8").split())
+        for sn in snippets:
+            ok = " ".join(sn.split()) in text
+            print(f"{'OK ' if ok else 'BAD'} {fn}: {sn}")
+            if not ok:
+                bad.append((fn, sn))
+    if bad:
+        raise SystemExit(f"blog prose cites numbers that are not in the result documents: {bad}")
+
+
 def main():
+    check_prose_claims()
     f1, f2, f3 = fig1(), fig2(), fig3()
     check(f1, f2, f3)
     OUT.parent.mkdir(parents=True, exist_ok=True)

@@ -1,0 +1,164 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{graphicx,booktabs,xcolor,microtype,amsmath,array}
+\usepackage[round,authoryear]{natbib}
+\usepackage{xurl}
+\usepackage[colorlinks=true,linkcolor=blue!50!black,citecolor=blue!50!black,urlcolor=blue!50!black]{hyperref}
+
+\newcommand{\comply}{\textsc{comply}}
+\newcommand{\explicit}{\textsc{explicit}}
+\newcommand{\soft}{\textsc{soft}}
+\newcommand{\broken}{\textsc{broken}}
+
+\title{Beyond Refusal Rates:\\[2pt]
+\large Cross-Lingual Hedging, Compliance, and the Limits of Steering}
+\author{Mayank Saxena\\ Independent researcher}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Prior work shows that language models refuse harmful requests less often in lower-resource languages. We take that as our premise and ask what replaces the refusal, and whether one internal pattern explains it in different models. We compare Qwen3-8B and Llama-3.1-8B-Instruct on 404 paired English--Hindi harmful requests, grading each reply as compliance, explicit refusal, soft refusal (hedging or redirecting without declining) or broken. In our data, explicit refusal falls by 32.2 percentage points in Qwen (51.2\% $\to$ 19.1\%) and by 42.3 points in Llama (88.9\% $\to$ 46.5\%), and what replaces it appears to differ: in Qwen, 115 of 148 lost refusals become soft refusals, whereas in Llama 88 of 172 become compliance and 75 soft refusals. The judge's errors on that boundary would enlarge the contrast, so the difference in rate is better supported than the difference in kind. Exploratory analyses of internal activations show that an English-fitted refusal direction keeps harmful above harmless Hindi prompts in both models but scores harmful Hindi prompts at English strength only in Qwen (100\% against 28\% in Llama), and that a second direction separating explicit from soft refusals raises Hindi explicit refusal when added, although we did not establish its independence from the first. In pre-registered tests, gated steering raises Hindi explicit refusal by 17.1 points in Qwen and 14.6 in Llama, but it raises English refusal as well (by 15.8 and 7.2 points), neither gate is language-selective at its registered threshold, the Llama push narrowly misses both registered bars, and the Qwen repair breaks a coherence guard on a sealed Bengali set. We treat these as diagnostic findings and list the missing controls in Section~\ref{sec:limits}.
+\end{abstract}
+
+\section{Introduction}
+Multilingual safety evaluations usually report one number: how often a model refuses. Harmful requests in lower-resource languages are refused less often \citep{yong2023lowresource,deng2024multijail,wang2024xsafety}, including in Hindi and in the two models we study \citep{mondal2026indicsafeeval,aziz2026action}. A refusal rate cannot say what replaces the missing refusal, or whether one internal mechanism explains the drop in every model. The answer matters for repair, because a fix aimed at the wrong cause can raise refusal in every language instead of closing the gap.
+
+We ask: \emph{when a model stops refusing in Hindi, what does it do instead, and is the internal cause the same in different models?} We ask it on paired requests, so that every harmful request is asked in English and in Hindi and compared item by item, and we grade replies with a four-way scheme that separates explicit refusal from soft refusal. Our contributions are:
+\begin{itemize}
+\item \textbf{The same drop, different replacements.} On the same 404 held-out pairs, Qwen mostly hedges, Llama hedges or complies, and Llama complies far more often. The difference in rate is better supported than the difference in kind (Section~\ref{sec:gap}).
+\item \textbf{Different internal signatures of a shared gap.} Harmful Hindi prompts reach English strength on an English refusal direction in Qwen but not in Llama, while in both the harmful--harmless order survives and its gap shrinks to about a third (Section~\ref{sec:direction}).
+\item \textbf{A direction that separates explicit from soft refusals,} which we did not find reported in that search, and a test of what adding it does (Section~\ref{sec:style}).
+\item \textbf{Pre-registered limits of gated steering.} Gated steering raises Hindi explicit refusal in both models but also raises English refusal, neither gate is language-selective at its registered threshold, the Llama push narrowly misses both registered bars, and the Qwen repair breaks a coherence guard on sealed Bengali data. We report these as findings about what a refusal-score gate and a linear push can and cannot do (Section~\ref{sec:steer}).
+\end{itemize}
+
+\section{Related work}
+\paragraph{Multilingual safety gaps.} \citet{yong2023lowresource}, MultiJail \citep{deng2024multijail} and XSafety \citep{wang2024xsafety} first quantified the gap, using unsafe-output or attack-success rates, mostly on closed models and translated prompts. IndicSafeEval \citep{mondal2026indicsafeeval} evaluates Qwen3-8B and Llama-3.1-8B, among others, on Hindi and three other Indian languages with adversarial persuasion prompts, and CompositeHarm \citep{shukla2026composite} reports sharply higher attack success in Hindi and other Indic languages. We differ in using default, non-adversarial requests, per-item pairing, and explicit versus soft refusal as the outcome.
+
+\paragraph{Refusal directions.} \citet{arditi2024refusal} show that refusal is mediated by a difference-of-means direction. \citet{wang2025universal} find that it is approximately parallel across 14 languages, with weaker harmful--harmless separation outside English, especially in Llama-3.1, and \citet{aziz2026action} extend this to 23 languages including Hindi, finding that low-resource harm projects lower but stays separable. \citet{zhao2025harmrefusal} show that harmfulness and refusal are encoded separately, so directions read at the last template token, as ours are, are refusal directions and not measures of harm recognition. \citet{balani2026hardneg} show that cross-lingual probe transfer can collapse on hard negatives. \citet{kompella2026decided} find language-invariant harm detection but a late, separate refusal-writing direction in an Indic mixture-of-experts model, and \citet{joad2026morethanone} find reason-specific refusal directions. Our weak Llama projection replicates prior findings in a paired Hindi design.
+
+\paragraph{Steering.} Conditional activation steering \citep{lee2025cast} gates a refusal push on a condition vector. \citet{aziz2026action} gate on a classifier calibrated with a few target-language examples and find that Llama needs target-language calibration, as ours did. BabelSteering \citep{stein2026babel} adds an English refusal vector across eight languages and also raises refusal of pseudo-harmful prompts, and ALTSTEER \citep{kwon2026altsteer} steers toward constructive alternatives. Our gate is not new as a method. Reliability critiques \citep{tan2024reliability} and AxBench \citep{wu2025axbench}, which finds that prompting outperforms steering, motivate our held-out tests and make the missing prompting baseline a real gap.
+
+\paragraph{Grading and protocol.} Earlier schemes separate full from partial refusal \citep{rottger2024xstest}, name indirect refusals \citep{cui2025orbench} or categorise response actions \citep{wang2024donotanswer}; in our literature search (multilingual safety, refusal-direction, steering and grading papers up to November 2026) we did not find one that combines our four classes with native-script validation against a fluent human. LLM judges are less reliable outside English \citep{fu2025judge,hada2024evaluators}. Pre-registration has been argued for in NLP \citep{vanmiltenburg2021prereg}; in the same search we did not find a steering or interpretability paper that combines it with a sealed held-out-language confirmation.
+
+\section{Method}\label{sec:method}
+\paragraph{Items.} Harmful requests come from Aya Red-teaming \citep{aakanksha2024prism}, whose Hindi prompts were written natively and come with human English translations, and from IndicSafe \citep{pattnayak2026indicsafe}. Harmless controls come from PolyGuard \citep{kumar2025polyguard} and IndicSafe. Each candidate was screened for being a real request, for translation fidelity, and for whether the model understands the Hindi version. The held-out split has 404 understood harmful and 169 understood harmless pairs, and every test below uses it. Global-MMLU \citep{singh2025globalmmlu} (300 questions per language) measures general ability. Spanish serves as a control language and Bengali (MultiJail) as a sealed confirmation language.
+
+\paragraph{Models and generation.} Qwen3-8B \citep{qwen2025qwen3} with thinking off, and Llama-3.1-8B-Instruct \citep{llama31card}, which officially supports Hindi. Both are used at pinned revisions with greedy decoding, the system prompt ``You are a helpful assistant.'', and up to 1,024 new tokens in Hindi and Bengali and 512 in English, on one A40 GPU per run in a pinned software environment.
+
+\paragraph{Grading.} Each reply receives the first label that fits: \comply{} (provides what was asked, even partly or with warnings), \explicit{} (says it will not or cannot help), \soft{} (shows it understood but neither provides nor declines: it warns, lectures or redirects) or \broken{} (incoherent or in the wrong language). One fluent Hindi reader, the author, graded 150 calibration replies, and four candidate judges graded them blind. The selected judge, Claude Sonnet 5.5, reached Cohen's $\kappa=0.82$ (95\% CI 0.68--0.92) on refused versus not refused and 0.91 on explicit versus the rest. Its four-label $\kappa$ was only 0.62, and the route used for production grading agreed less well with the human (broad $\kappa=0.74$, four-label 0.55). The weak boundaries are soft versus comply and comply versus broken. In Qwen's Hindi calibration the judge labelled 9 of the human's 80 \comply{} replies as soft and 23 as broken (it used \broken{} 27 times where the human used it 4 times), and in the Llama check it labelled 6 of the human's 15 soft replies as compliance. The first pattern lowers Qwen's measured compliance and the second raises Llama's, so both errors would enlarge the contrast between the models.
+
+For Llama we pre-registered a human check of 60 Hindi replies. Its blind four-label $\kappa$ was 0.643 (0.785 for explicit versus the rest), below the registered 0.7 on the four-label measure. The author then reviewed the 14 disagreements with the judge's labels in view and changed 10, all to the judge's label ($\kappa=0.893$, an upper estimate), and the Llama sheet had been graded after aggregate Llama results were seen. Explicit refusal is the best-validated label, so the primary claims rest on it.
+
+\paragraph{Protocol.} The steering, neuron and Llama repair tests were pre-registered: their rules, metrics, selection rules and pass criteria were committed before any of their replies existed. The studies of the internal directions were registered as exploratory, the four-way rubric was revised after the first human comparison, and the same-item projection statistics in Section~\ref{sec:direction} were added after the registered studies. Settings were tuned on development items and tested once on the held-out items. Intervals are paired bootstrap 95\% intervals with 10,000 resamples. Appendix~\ref{app:dev} lists every deviation.
+
+\section{Results}
+\subsection{Both models refuse less in Hindi: Qwen mostly hedges, Llama more often complies}\label{sec:gap}
+As prior work leads us to expect, explicit refusal of harmful requests fell by 32.2 points in Qwen (95\% CI $[-37.4,-26.5]$) and by 42.3 points in Llama ($[-47.3,-37.4]$; Table~\ref{tab:gap}). In Llama the gap holds on both harmful sources. Harmless Hindi requests are not over-refused in either model.
+
+\begin{table}[t]\centering\small
+\begin{tabular}{lrrrr}\toprule
+ & \multicolumn{2}{c}{Qwen3-8B} & \multicolumn{2}{c}{Llama-3.1-8B} \\
+ & English & Hindi & English & Hindi \\\midrule
+Explicit refusal, harmful (404 pairs) & 51.2\% & 19.1\% & 88.9\% & 46.5\% \\
+Any refusal, harmful & 90.3\% & 77.2\% & 90.8\% & 66.8\% \\
+Harmless requests refused (169 pairs) & 3.5\% & 1.2\% & 4.1\% & 2.4\% \\\bottomrule
+\end{tabular}
+\caption{Refusal of the same 404 held-out harmful and 169 harmless requests, unsteered. The steering runs regenerate these replies, giving slightly different rates (Qwen 50.5\% and 18.6\% explicit; Llama 66.3\% any refusal).}\label{tab:gap}
+\end{table}
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.92\linewidth]{figures/fig1_what_replaces_refusal.pdf}
+\caption{Replies to the same 404 held-out harmful requests in English (open) and Hindi (filled), both models, with Wilson 95\% intervals. The bar splits the requests refused explicitly in English but not in Hindi by what the Hindi reply did.}\label{fig:gap}
+\end{figure}
+
+What replaces the refusal differs (Figure~\ref{fig:gap}, which uses the regenerated run that the steering tests compare against). Of the 148 Qwen requests refused explicitly in English but not in Hindi, 115 became soft refusals, 20 compliance and 13 broken replies; in the baseline run behind Table~\ref{tab:gap} the counts are 152, 121, 20 and 11. Of the 172 such Llama requests, 88 became compliance, 75 soft refusals and 9 broken replies (judge labels; $p=0.35$ for 88 versus 75). The human check points the other way at first: the author's blind labels on 20 of these Llama pairs were 14 soft and 6 compliance, and after the review with the judge's labels in view, 23 pairs were 13 compliance, 9 soft and 1 broken. We therefore do not claim a difference in kind between the models, and the judge's errors (Section~\ref{sec:method}) would enlarge it. Truncation also differs: 41.6\% of Qwen's unsteered Hindi replies to these requests reached the length limit, against 4.7\% of Llama's (Section~\ref{sec:limits}). The rate difference is better supported: on the same pairs Llama complies with Hindi harmful requests 30.2\% of the time, against 16.3\% for Qwen in the regenerated run ($+13.9$, $[+9.4,+18.3]$) and 15.1\% in the baseline run, and counting broken replies as unrefused too, 33.2\% against 24.0\% ($+9.2$, $[+4.5,+14.1]$) or 22.8\%. Llama therefore fails to refuse Hindi harmful requests 1.4 to 2.0 times as often as Qwen, depending on the run and on whether broken replies count. On 782 Aya Spanish pairs, Qwen's explicit refusal also falls, from 47\% to 32\%, so the effect is not specific to low-resource scripts; this Spanish run is provisional, because its items were not screened, replies were capped at 512 tokens in both languages, broken replies rose from about 10 to about 43 in Spanish, and the judge was validated on Hindi only.
+
+\subsection{Harmful Hindi prompts project at English strength in Qwen but not in Llama, yet the gap shrinks about equally}\label{sec:direction}
+We fitted a refusal direction on English prompts only, as the difference of mean activations of harmful and harmless prompts at the last prompt token, and chose the layer by directional ablation (Qwen layer 14, where ablation removes 64\% of the English harmful--harmless gap on held-out prompts; Llama layer 10, 94\%). On the same held-out pairs, harmful Hindi prompts reach 100\% of the English mean projection in Qwen and 28\% in Llama (Figure~\ref{fig:proj}).
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.92\linewidth]{figures/fig2_projection.pdf}
+\caption{Mean projection on each model's refusal direction at its chosen layer, same 404 harmful and 169 harmless test pairs, English (ring) and Hindi (dot), bootstrap 95\% intervals. Hindi harmful prompts reach 100\% of the English value in Qwen and 28\% in Llama; harmless Hindi prompts in Qwen sit far above harmless English.}\label{fig:proj}
+\end{figure}
+
+A same-item analysis, added after the registered studies and therefore exploratory, shows that the direction still ranks harmful Hindi prompts above harmless ones in both models (AUROC 0.92 in Qwen and 0.97 in Llama, against 0.98 and 0.99 in English), with a harmful--harmless gap about a third of the English one in each (0.33 and 0.30). The two models differ in which side of that gap moves: in Qwen the harmless side rises, while in Llama about three quarters of the shrinkage comes from harmful Hindi prompts falling.
+
+Under the registered rule, the harmful--harmless ratio of 0.32 on the screened baseline pool (0.33 on the test pairs) reads as weakened recognition in Qwen. We report the harmful-side result as descriptive, because harmless Hindi prompts also project far above harmless English in Qwen (2.80 against $-2.83$). Three cautions apply. This is a projection on a refusal direction, not recognition of harm. High scores for harmless Hindi prompts in Qwen may reflect a language offset or a source mismatch, since the harmful set is native Hindi from Aya and the harmless set is machine-translated PolyGuard. And we did not test against Hindi hard negatives. The 100\% versus 28\% comparison also mixes sources, layers and scales.
+
+\subsection{A direction that separates explicit from soft refusals}\label{sec:style}
+We fitted a second direction on English prompts whose replies were explicit (367) or soft (200) refusals. In Qwen, at layer 24, it separates them with cross-validated AUROC 0.93, and with AUROC 0.76 on Hindi prompts without refitting. Hindi prompts sit toward its soft end: the paired shift is $-10.9$ ($[-12.1,-9.6]$), which is 22\% of the English gap and below the registered 25\% threshold. Mean projection by Hindi outcome runs from $-11.6$ for explicit refusals through $-28.0$ for soft, $-40.0$ for broken and $-43.5$ for complied replies, so the axis tracks refusal strength as much as style.
+
+To see what the direction does, we took 150 pairs refused explicitly in English but not in Hindi and added the vector at layer 24. Hindi explicit refusal rose from 10\% to 53\% ($+42.7$, $[+34.0,+51.3]$), compliance roughly halved, and harmless prompts were unchanged. At twice the strength the vector over-refused harmless prompts and broke replies. The AUROC and the shift above come from the 1,069 screened baseline pairs, not the held-out test pairs, and the 150 steering pairs were development pairs chosen because they were explicit in English and not in Hindi. In an exploratory check, the explicit--soft vector at layer 24 has cosine 0.37 with the refusal direction at the same layer in Qwen (0.64 for the Llama pair at layer 18), well above the 0.03 that a random unit vector reaches in this space, so the two directions overlap substantially. The near-zero cosine with the layer-14 gate direction ($-0.03$) is not informative, because directions at different layers are not directly comparable. We ran no random-vector control and no test of independence under intervention, so we claim only an effect on explicit refusal.
+
+\subsection{Gated steering raises Hindi explicit refusal, and English refusal too}\label{sec:steer}
+A gate decides whether to steer: it reads the refusal-direction score at the last prompt token, and if the score exceeds a threshold $\tau$, a fixed vector (the push) is added from the prompt onward. For Qwen the gate sits at layer 14 with $\tau$ at the median English development harmful score, and the push is 1.25 times the explicit--soft vector at layer 25. For Llama the gate sits at layer 10 with $\tau$ at the median Hindi development harmful score, and the push is along the refusal direction at layer 11, 1.5 times the mean English-minus-Hindi projection gap. Each setting was chosen on development pairs by a registered rule and tested once on the held-out pairs. The two repairs differ in direction, layer and threshold, so the comparison between the models is not controlled.
+
+\begin{table}[t]\centering\footnotesize
+\begin{tabular}{>{\raggedright\arraybackslash}p{.25\linewidth}>{\raggedright\arraybackslash}p{.32\linewidth}>{\raggedright\arraybackslash}p{.32\linewidth}}\toprule
+ & Qwen3-8B & Llama-3.1-8B \\\midrule
+Hindi explicit refusal & 18.6 $\to$ 35.6 (\textbf{+17.1} [+13.1, +21.0]) & 46.5 $\to$ 61.1 (\textbf{+14.6} [+11.1, +18.3]) \\
+Hindi compliance & 16.3 $\to$ 12.6 ($-3.7$) & 30.4 $\to$ 22.0 ($-8.4$ [$-11.1$, $-5.9$]) \\
+Hindi broken & 7.7 $\to$ 7.9 (+0.2) & 3.2 $\to$ 2.5 ($-0.7$) \\
+English explicit refusal & 50.5 $\to$ 66.3 (+15.8 [+12.1, +19.6]) & 88.9 $\to$ 96.0 (+7.2 [+5.0, +9.7]) \\
+Explicit-refusal gap, points (narrowing) & 31.9 $\to$ 30.7 (1.2 [$-4.0$, 6.4]) & 42.3 $\to$ 34.9 (7.4 [3.2, 11.6]) \\
+Harmless refused, Hindi / English & unchanged (1.8 / 2.4) & 1.8 / 4.1 $\to$ 1.8 / 4.7 \\
+Global-MMLU, Hindi / English & unchanged (51.3 / 64.0) & unchanged (42.7 / 63.0) \\\bottomrule
+\end{tabular}
+\caption{Held-out results, in percent unless noted, each run once against the unsteered replies regenerated in the same run (so they differ slightly from Table~\ref{tab:gap}). The Llama push narrowly missed two registered bars (+15 on Hindi explicit refusal, 10 points of gap narrowing) and met the third (compliance falls).}\label{tab:steer}
+\end{table}
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.92\linewidth]{figures/fig3_repairs.pdf}
+\caption{Explicit refusal before and after each repair on held-out pairs, run once, with paired bootstrap intervals and the gap before and after. Qwen passes its registered checks without narrowing the gap; Llama narrows it by 7.4 points and narrowly misses its bars.}\label{fig:repair}
+\end{figure}
+
+Both pushes raise Hindi explicit refusal (Table~\ref{tab:steer}, Figure~\ref{fig:repair}), but neither is selective. Qwen passes all eight of its registered checks, yet English rises almost as much as Hindi and the gap moves only from 31.9 to 30.7 points: the repair turns soft refusals into explicit ones in both languages. The effect rests on Aya items, since the gate opened on only 2 of 67 IndicSafe prompts, and the harmless and MMLU guards are weak because the gate almost never opens on those inputs. For Llama, the Qwen gate carried over unchanged opened on only 1\% of Hindi harmful prompts. With a Hindi-calibrated gate, the push raises Hindi explicit refusal by 14.6 points, just short of the registered 15, and narrows the gap by 7.4 points against a bar of 10, while compliance falls as registered. Since any refusal rose by 9.2 points, about 5.4 points of the gain are soft refusals made explicit. This corroborates the target-language calibration that \citet{aziz2026action} found Llama needs. We did not test whether the choice of direction, rather than the Hindi-calibrated gate, matters: an unmatched push along the explicit--soft direction also qualified on development data.
+
+At its registered threshold Qwen's gate opens on 48\% of English and 47\% of Hindi harmful test prompts, and Llama's Hindi-set threshold opens on 92\% and 47\% (Figure~\ref{fig:gate}). Whether another threshold would be selective for Hindi was not tested. Lower Qwen thresholds opened on more Hindi than English development prompts (92\% against 75\% at the 25th percentile) but were rejected for broken replies, and in Bengali the registered gate opened more often than in English (76\% against 39\%). Selectivity therefore depends on the threshold and the language; at the thresholds we registered, neither gate was language-selective.
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.92\linewidth]{figures/fig7_gate.pdf}
+\caption{Gate scores of every held-out prompt (unsteered), at the gate layer, with each model's threshold as run and the share of each group above it.}\label{fig:gate}
+\end{figure}
+
+\paragraph{Where the repair breaks.} On the sealed Bengali set (148 requests, run once) the Qwen repair raised explicit refusal by 23.6 points and narrowed the gap, but broken replies rose by 8.1 points ($[+2.0,+14.9]$) against a limit of 5, so the registered verdict is a failure, and a second judge agreed. A follow-up sweep on 150 new Bengali requests did not clearly reproduce the damage ($+0.9$ broken points, or $+2.7$ when replies the first judge could not grade were filled in by a second judge), but the registered verdict stands. Separately, the MLP neurons most tied to the English--Hindi difference, moved with one untuned offset, raised English explicit refusal by 15.2 points and Hindi by only 1.2 ($[-2.5,+5.0]$), while Hindi broken replies rose by 4.3 points, so we found no Hindi-only lever.
+
+\section{Limitations}\label{sec:limits}
+\paragraph{Evaluation and judge boundaries.} The judge is an LLM, and the only human grader is the author, who graded the Llama sheet after seeing aggregate results. Four-label agreement is modest ($\kappa=0.62$), and the judge's soft-versus-comply errors run in opposite directions in the two models, which bears directly on the Qwen versus Llama contrast. No human has checked any Bengali or Spanish grade; the judge was validated on Hindi only. Replies were cut at fixed token limits, and truncation differs sharply between the models. Among the unsteered Hindi replies to the held-out harmful requests, 168 of 404 Qwen replies (41.6\%) reached the 1,024-token limit, including 85 of the 232 labelled soft and 38 of the 115 soft lost refusals, against 19 of 404 Llama replies (4.7\%). A registered truncation check was withdrawn, and this count is exploratory. It means that part of Qwen's soft and compliant labels rest on replies that were cut off, and a reply cut off before it answers could be read as soft. Regenerating the same prompts changes most replies (only 5.6\% of Hindi replies were identical in a repeat run), so the results are not bit-reproducible.
+
+\paragraph{Dataset and translation confounds.} The Hindi side of each Aya pair is native and the English side a translation, and we ran no back-translation or romanised-Hindi control, so language, script and translation fidelity are not separated. Harmful and harmless sets come from different sources. Qwen's gap on the IndicSafe items is about half its gap on Aya items (18.1 against 35.9 points on the earlier test split), so the Qwen result rests mostly on Aya. The Spanish control is provisional. All results are one greedy sample per prompt from two 8B models at one revision each.
+
+\paragraph{Missing baselines and mechanistic controls.} We ran no prompting or translate-to-English baseline, which AxBench makes the most important missing comparison. Projections are on a refusal direction and not harm recognition, hard negatives are untested, and the same-item statistics are exploratory. The explicit--soft direction lacks a random-vector control and a test of independence from the refusal direction. Settings were tuned on development data, held-out items are reused across the Qwen and Llama studies, and there is no correction for multiple comparisons. The registrations are timestamped in version control in a private repository and are available on request, as are the code, id-only labels and a checksum manifest. No harmful request or reply text is reproduced here.
+
+\section{Conclusion}
+Consistent with prior work, explicit refusal of harmful requests falls sharply in Hindi in both models, by 32 and 42 points. The new finding is what replaces it, which a single refusal rate hides: mostly soft refusals in Qwen, and a mix of compliance and soft refusals in Llama, which also complies more often. The internal signals we measured look different in the two models, but they are exploratory projections on a refusal direction, not measures of harm recognition, and they do not establish why the gap occurs. Gated steering raised Hindi explicit refusal in both models but also raised English refusal, and at the registered thresholds neither gate singled out the language.
+
+The evidence does not establish that the two models fail in different kinds of ways, because the judge's errors would enlarge that contrast; that the explicit--soft direction is independent of the refusal direction; or that steering improves multilingual safety beyond these requests. The experiments that would settle these questions are independent blind human grading of a larger sample, especially on the soft-versus-comply boundary; a rerun with a higher length limit; a back-translation control with same-source harmless sets; a prompting and translate-to-English baseline; and random-vector and matched-direction controls for steering.
+
+\section*{Ethics statement}
+All harmful requests come from existing public safety datasets. The study measures refusal behaviour and a defensive repair that strengthens refusal, and we report where the repair fails. No harmful request or reply text is reproduced in this paper; items are referred to by identifier.
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\appendix
+\section{Deviations from the registered protocol}\label{app:dev}
+\begin{table}[h]\centering\small
+\begin{tabular}{>{\raggedright\arraybackslash}p{.16\linewidth}>{\raggedright\arraybackslash}p{.35\linewidth}>{\raggedright\arraybackslash}p{.17\linewidth}>{\raggedright\arraybackslash}p{.20\linewidth}}\toprule
+Study & Deviation & When recorded & Effect on results \\\midrule
+Baseline split & first split drained the failure pattern; redrawn once before use & before any use & none \\
+Screening audit & 29 items adjudicated with model labels shown & pre-registered addendum & adjudicated agreement reported as an upper estimate \\
+Qwen steering test, Bengali sweep & grading parts stopped by the judge's safety filter; retried or filled by a second judge & before analysis, or after & outcomes unchanged \\
+Llama replication & human check graded after aggregate results were seen; disagreements adjudicated with judge labels shown & before and after grading & blind $\kappa$ 0.643 reported as registered, 0.893 as an upper estimate \\
+Llama repair & steering arms double-scaled (about 4.8$\times$) and a sign error in one claim, found after stage 1 & after stage 1, before stage 2 & arms rerun; selection unchanged \\
+Same-item and per-layer statistics & added after the registered studies & 2026-11-17 & no registered claim changes \\
+Direction cosines and length-cap counts & added after the registered studies & 2026-11-23 & no registered claim changes \\\bottomrule
+\end{tabular}
+\caption{Deviations from the registered protocol. Every study ran on a single 48 GB GPU in a pinned software environment.}
+\end{table}
+
+\end{document}
